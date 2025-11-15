@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: multi-tenant-platform
+
+  # MySQL Connection
+  datasource:
+    url: jdbc:mysql://localhost:3306/saas_master?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+    username: root
+    password: Ankur265
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # JPA Settings
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  # 🚫 Disable Flyway completely
+  flyway:
+    enabled: false
+
+# Server
+server:
+  port: 8080
+
+# Logging
+logging:
+  level:
+    root: INFO
+    com.saas.platform: DEBUG
+#jwt
+app:
+ jwt:
+  secret: my-super-secret-key-for-jwt-token-generation-must-be-at-least-256-bits-long-for-security
+  expiration: 86400000
