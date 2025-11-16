@@ -9,14 +9,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * UserController - Fixed API endpoint to match frontend
+ */
 @RestController
-@RequestMapping("/api/v1/users") 
+@RequestMapping("/api/users")  // FIXED: Changed from /api/v1/users
 @CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
     
     private final UserService userService;
     
-    // Constructor
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -64,6 +66,4 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
-    
-    
 }
