@@ -2,36 +2,75 @@ spring:
   application:
     name: multi-tenant-platform
 
-  # MySQL Connection
+  # MySQL Connection - FIXED
   datasource:
-    url: ${DB_URL:jdbc:mysql://localhost:3306/saas_master?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC}
+    url: jdbc:mysql://localhost:3306/saas_master?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
     password: Ankur265
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
 
-  # JPA Settings - Let Hibernate handle schema
+  # JPA Settings - FIXED
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: update  # This will create/update tables automatically
-    show-sql: ${SHOW_SQL:false}
+      ddl-auto: update  # Will auto-create tables
+    show-sql: ${SHOW_SQL:true}
     properties:
       hibernate:
         format_sql: true
+        use_sql_comments: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
 
 # Server Configuration
 server:
   port: ${SERVER_PORT:8080}
+  error:
+    include-message: always
+    include-binding-errors: always
 
-# Logging
+# Logging - ENHANCED
 logging:
   level:
     root: INFO
     com.saas.platform: ${LOG_LEVEL:DEBUG}
     org.springframework.security: ${SECURITY_LOG_LEVEL:DEBUG}
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/application.log
 
-# JWT Configuration
+# JWT Configuration - ENHANCED
 app:
   jwt:
     secret: ${JWT_SECRET:my-super-secret-key-for-jwt-token-generation-must-be-at-least-256-bits-long-for-security}
-    expiration: ${JWT_EXPIRATION:86400000}
+    expiration: ${JWT_EXPIRATION:86400000}  # 24 hours in milliseconds
+    refresh-expiration: 604800000  # 7 days
+
+# CORS Configuration
+cors:
+  allowed-origins: http://localhost:3000,http://localhost:3001
+  allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+  allowed-headers: "*"
+  allow-credentials: true
+
+# Management Endpoints (optional - for monitoring)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always

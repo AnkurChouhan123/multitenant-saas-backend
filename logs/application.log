@@ -1,0 +1,966 @@
+2025-11-16 14:11:33 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - Starting MultiTenantPlatformApplication using Java 21.0.7 with PID 27560 (C:\Users\ankur\multi-tenant-platform\multi-tenant-platform\target\classes started by ankur in C:\Users\ankur\multi-tenant-platform\multi-tenant-platform)
+2025-11-16 14:11:33 [restartedMain] DEBUG c.s.p.MultiTenantPlatformApplication - Running with Spring Boot v3.5.7, Spring v6.2.12
+2025-11-16 14:11:33 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - No active profile set, falling back to 1 default profile: "default"
+2025-11-16 14:11:33 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-16 14:11:33 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-16 14:11:33 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 13 ms. Found 4 JPA repository interfaces.
+2025-11-16 14:11:33 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-16 14:11:33 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-16 14:11:33 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.ActivityLogRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 14:11:33 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.SubscriptionRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 14:11:33 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.TenantRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 14:11:33 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.UserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 14:11:33 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 1 ms. Found 0 Redis repository interfaces.
+2025-11-16 14:11:33 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-11-16 14:11:33 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-11-16 14:11:33 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.48]
+2025-11-16 14:11:33 [restartedMain] INFO  o.a.c.c.C.[Tomcat-1].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-11-16 14:11:33 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 314 ms
+2025-11-16 14:11:33 [restartedMain] DEBUG c.s.p.s.JwtAuthenticationFilter - Filter 'jwtAuthenticationFilter' configured for use
+2025-11-16 14:11:33 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-16 14:11:33 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-11-16 14:11:33 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-16 14:11:33 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-13 - Starting...
+2025-11-16 14:11:33 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-13 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1375e3ca
+2025-11-16 14:11:33 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-13 - Start completed.
+2025-11-16 14:11:33 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-16 14:11:33 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-13)']
+	Database driver: undefined/unknown
+	Database version: 8.0.44
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-16 14:11:33 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-16 14:11:33 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-16 14:11:34 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-16 14:11:34 [restartedMain] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: d4a94bc1-99f6-4157-83da-aab59a18fc1f
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-11-16 14:11:34 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-11-16 14:11:34 [restartedMain] DEBUG o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-11-16 14:11:34 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-11-16 14:11:34 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-11-16 14:11:34 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - Started MultiTenantPlatformApplication in 0.886 seconds (process running for 1281.16)
+2025-11-16 14:11:34 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-11-16 14:34:12 [HikariPool-13:housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-13 - Thread starvation or clock leap detected (housekeeper delta=17m8s464ms882µs).
+2025-11-16 14:45:22 [HikariPool-13:housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-13 - Thread starvation or clock leap detected (housekeeper delta=9m10s399ms940µs).
+2025-11-16 14:52:24 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat-1].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-16 14:52:24 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-11-16 14:52:25 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 333 ms
+2025-11-16 14:52:25 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing OPTIONS /api/users/tenant/1
+2025-11-16 14:52:25 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing OPTIONS /api/users/tenant/1
+2025-11-16 19:08:44 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - Starting MultiTenantPlatformApplication using Java 21.0.7 with PID 20896 (C:\Users\ankur\multi-tenant-platform\multi-tenant-platform\target\classes started by ankur in C:\Users\ankur\multi-tenant-platform\multi-tenant-platform)
+2025-11-16 19:08:44 [restartedMain] DEBUG c.s.p.MultiTenantPlatformApplication - Running with Spring Boot v3.5.7, Spring v6.2.12
+2025-11-16 19:08:44 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - No active profile set, falling back to 1 default profile: "default"
+2025-11-16 19:08:44 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-11-16 19:08:44 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-11-16 19:08:51 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-16 19:08:51 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-16 19:08:51 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 297 ms. Found 4 JPA repository interfaces.
+2025-11-16 19:08:51 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-16 19:08:51 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-16 19:08:52 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.ActivityLogRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:08:52 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.SubscriptionRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:08:52 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.TenantRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:08:52 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.UserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:08:52 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 25 ms. Found 0 Redis repository interfaces.
+2025-11-16 19:08:54 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-11-16 19:08:54 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-11-16 19:08:54 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.48]
+2025-11-16 19:08:54 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-11-16 19:08:54 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 9674 ms
+2025-11-16 19:08:54 [restartedMain] DEBUG c.s.p.s.JwtAuthenticationFilter - Filter 'jwtAuthenticationFilter' configured for use
+2025-11-16 19:08:55 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-16 19:08:55 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.33.Final
+2025-11-16 19:08:55 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-11-16 19:08:55 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-16 19:08:55 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-11-16 19:08:56 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@2a45cc30
+2025-11-16 19:08:56 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-11-16 19:08:56 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-16 19:08:56 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.44
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-16 19:08:58 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-16 19:08:58 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-16 19:08:59 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-16 19:09:05 [restartedMain] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 40cb6171-6a5c-42a4-b886-993c3607586e
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-11-16 19:09:05 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-11-16 19:09:06 [restartedMain] DEBUG o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-11-16 19:09:08 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-11-16 19:09:08 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-11-16 19:09:08 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - Started MultiTenantPlatformApplication in 25.315 seconds (process running for 26.411)
+2025-11-16 19:11:12 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-16 19:11:12 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-11-16 19:11:12 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 7 ms
+2025-11-16 19:11:12 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing OPTIONS /api/auth/login
+2025-11-16 19:11:12 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing POST /api/auth/login
+2025-11-16 19:11:12 [http-nio-8080-exec-2] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-11-16 19:11:12 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured POST /api/auth/login
+2025-11-16 19:11:12 [http-nio-8080-exec-2] INFO  c.s.p.config.RequestLoggingFilter - API Request: POST /api/auth/login from 0:0:0:0:0:0:0:1
+2025-11-16 19:11:12 [http-nio-8080-exec-2] DEBUG c.s.p.multitenancy.TenantFilter - No tenant identifier found in request
+2025-11-16 19:11:12 [http-nio-8080-exec-2] DEBUG c.s.p.multitenancy.TenantFilter - No tenant identifier found, using default
+2025-11-16 19:11:13 [http-nio-8080-exec-2] INFO  c.saas.platform.service.AuthService - Login attempt for email: xy@gmail.com
+2025-11-16 19:11:14 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.first_name,
+        u1_0.last_login,
+        u1_0.last_name,
+        u1_0.password,
+        u1_0.role,
+        u1_0.tenant_id 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+2025-11-16 19:11:16 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        t1_0.id,
+        t1_0.created_at,
+        t1_0.database_name,
+        t1_0.name,
+        t1_0.status,
+        t1_0.subdomain,
+        t1_0.updated_at 
+    from
+        tenants t1_0 
+    where
+        t1_0.id=?
+2025-11-16 19:11:17 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.saas.platform.model.ActivityLog */insert 
+    into
+        activity_logs (action, action_type, created_at, details, ip_address, tenant_id, user_agent, user_email, user_id, user_name) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-11-16 19:11:17 [http-nio-8080-exec-2] DEBUG c.s.p.service.ActivityLogService - Activity logged: Logged in by xy@gmail.com
+2025-11-16 19:11:17 [http-nio-8080-exec-2] INFO  c.saas.platform.service.AuthService - Login successful for user: xy@gmail.com
+2025-11-16 19:11:17 [http-nio-8080-exec-2] DEBUG c.s.p.multitenancy.TenantFilter - Tenant context cleared
+2025-11-16 19:11:17 [http-nio-8080-exec-2] INFO  c.s.p.config.RequestLoggingFilter - API Response: POST /api/auth/login completed in 5094ms
+2025-11-16 19:11:17 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Securing OPTIONS /api/users/tenant/1
+2025-11-16 19:11:17 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing OPTIONS /api/users/tenant/1
+2025-11-16 19:11:18 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing GET /api/users/tenant/1
+2025-11-16 19:11:18 [http-nio-8080-exec-5] DEBUG c.s.p.s.JwtAuthenticationFilter - Set tenant context: 1
+2025-11-16 19:11:18 [http-nio-8080-exec-5] DEBUG c.s.p.s.JwtAuthenticationFilter - JWT authentication successful for user: xy@gmail.com (tenant: 1)
+2025-11-16 19:11:18 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Secured GET /api/users/tenant/1
+2025-11-16 19:11:18 [http-nio-8080-exec-5] INFO  c.s.p.config.RequestLoggingFilter - API Request: GET /api/users/tenant/1 from 0:0:0:0:0:0:0:1
+2025-11-16 19:11:18 [http-nio-8080-exec-5] DEBUG c.s.p.multitenancy.TenantFilter - Tenant resolved from header: 1
+2025-11-16 19:11:18 [http-nio-8080-exec-5] DEBUG c.s.p.multitenancy.TenantFilter - Tenant context set to: 1
+2025-11-16 19:11:18 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.first_name,
+        u1_0.last_login,
+        u1_0.last_name,
+        u1_0.password,
+        u1_0.role,
+        u1_0.tenant_id 
+    from
+        users u1_0 
+    left join
+        tenants t1_0 
+            on t1_0.id=u1_0.tenant_id 
+    where
+        t1_0.id=?
+2025-11-16 19:11:18 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        t1_0.id,
+        t1_0.created_at,
+        t1_0.database_name,
+        t1_0.name,
+        t1_0.status,
+        t1_0.subdomain,
+        t1_0.updated_at 
+    from
+        tenants t1_0 
+    where
+        t1_0.id=?
+2025-11-16 19:11:18 [http-nio-8080-exec-5] DEBUG c.s.p.multitenancy.TenantFilter - Tenant context cleared
+2025-11-16 19:11:18 [http-nio-8080-exec-5] INFO  c.s.p.config.RequestLoggingFilter - API Response: GET /api/users/tenant/1 completed in 335ms
+2025-11-16 19:11:18 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Securing GET /api/users/tenant/1
+2025-11-16 19:11:18 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing OPTIONS /api/subscriptions/tenant/1
+2025-11-16 19:11:18 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Securing GET /api/subscriptions/tenant/1
+2025-11-16 19:11:18 [http-nio-8080-exec-6] DEBUG c.s.p.s.JwtAuthenticationFilter - Set tenant context: 1
+2025-11-16 19:11:18 [http-nio-8080-exec-6] DEBUG c.s.p.s.JwtAuthenticationFilter - JWT authentication successful for user: xy@gmail.com (tenant: 1)
+2025-11-16 19:11:18 [http-nio-8080-exec-7] DEBUG c.s.p.s.JwtAuthenticationFilter - Set tenant context: 1
+2025-11-16 19:11:18 [http-nio-8080-exec-7] DEBUG c.s.p.s.JwtAuthenticationFilter - JWT authentication successful for user: xy@gmail.com (tenant: 1)
+2025-11-16 19:11:18 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Secured GET /api/subscriptions/tenant/1
+2025-11-16 19:11:18 [http-nio-8080-exec-7] INFO  c.s.p.config.RequestLoggingFilter - API Request: GET /api/subscriptions/tenant/1 from 0:0:0:0:0:0:0:1
+2025-11-16 19:11:18 [http-nio-8080-exec-7] DEBUG c.s.p.multitenancy.TenantFilter - Tenant resolved from header: 1
+2025-11-16 19:11:18 [http-nio-8080-exec-7] DEBUG c.s.p.multitenancy.TenantFilter - Tenant context set to: 1
+2025-11-16 19:11:18 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Secured GET /api/users/tenant/1
+2025-11-16 19:11:18 [http-nio-8080-exec-6] INFO  c.s.p.config.RequestLoggingFilter - API Request: GET /api/users/tenant/1 from 0:0:0:0:0:0:0:1
+2025-11-16 19:11:18 [http-nio-8080-exec-6] DEBUG c.s.p.multitenancy.TenantFilter - Tenant resolved from header: 1
+2025-11-16 19:11:18 [http-nio-8080-exec-6] DEBUG c.s.p.multitenancy.TenantFilter - Tenant context set to: 1
+2025-11-16 19:11:18 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        s1_0.id,
+        s1_0.auto_renew,
+        s1_0.created_at,
+        s1_0.current_api_calls,
+        s1_0.current_users,
+        s1_0.end_date,
+        s1_0.is_active,
+        s1_0.plan,
+        s1_0.start_date,
+        s1_0.tenant_id,
+        s1_0.updated_at 
+    from
+        subscriptions s1_0 
+    left join
+        tenants t1_0 
+            on t1_0.id=s1_0.tenant_id 
+    where
+        t1_0.id=?
+2025-11-16 19:11:18 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.first_name,
+        u1_0.last_login,
+        u1_0.last_name,
+        u1_0.password,
+        u1_0.role,
+        u1_0.tenant_id 
+    from
+        users u1_0 
+    left join
+        tenants t1_0 
+            on t1_0.id=u1_0.tenant_id 
+    where
+        t1_0.id=?
+2025-11-16 19:11:18 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        t1_0.id,
+        t1_0.created_at,
+        t1_0.database_name,
+        t1_0.name,
+        t1_0.status,
+        t1_0.subdomain,
+        t1_0.updated_at 
+    from
+        tenants t1_0 
+    where
+        t1_0.id=?
+2025-11-16 19:11:19 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        t1_0.id,
+        t1_0.created_at,
+        t1_0.database_name,
+        t1_0.name,
+        t1_0.status,
+        t1_0.subdomain,
+        t1_0.updated_at 
+    from
+        tenants t1_0 
+    where
+        t1_0.id=?
+2025-11-16 19:11:19 [http-nio-8080-exec-6] DEBUG c.s.p.multitenancy.TenantFilter - Tenant context cleared
+2025-11-16 19:11:19 [http-nio-8080-exec-6] INFO  c.s.p.config.RequestLoggingFilter - API Response: GET /api/users/tenant/1 completed in 393ms
+2025-11-16 19:11:19 [http-nio-8080-exec-7] DEBUG c.s.p.multitenancy.TenantFilter - Tenant context cleared
+2025-11-16 19:11:19 [http-nio-8080-exec-7] INFO  c.s.p.config.RequestLoggingFilter - API Response: GET /api/subscriptions/tenant/1 completed in 519ms
+2025-11-16 19:11:19 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Securing GET /api/subscriptions/tenant/1
+2025-11-16 19:11:19 [http-nio-8080-exec-8] DEBUG c.s.p.s.JwtAuthenticationFilter - Set tenant context: 1
+2025-11-16 19:11:19 [http-nio-8080-exec-8] DEBUG c.s.p.s.JwtAuthenticationFilter - JWT authentication successful for user: xy@gmail.com (tenant: 1)
+2025-11-16 19:11:19 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Secured GET /api/subscriptions/tenant/1
+2025-11-16 19:11:19 [http-nio-8080-exec-8] INFO  c.s.p.config.RequestLoggingFilter - API Request: GET /api/subscriptions/tenant/1 from 0:0:0:0:0:0:0:1
+2025-11-16 19:11:19 [http-nio-8080-exec-8] DEBUG c.s.p.multitenancy.TenantFilter - Tenant resolved from header: 1
+2025-11-16 19:11:19 [http-nio-8080-exec-8] DEBUG c.s.p.multitenancy.TenantFilter - Tenant context set to: 1
+2025-11-16 19:11:19 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        s1_0.id,
+        s1_0.auto_renew,
+        s1_0.created_at,
+        s1_0.current_api_calls,
+        s1_0.current_users,
+        s1_0.end_date,
+        s1_0.is_active,
+        s1_0.plan,
+        s1_0.start_date,
+        s1_0.tenant_id,
+        s1_0.updated_at 
+    from
+        subscriptions s1_0 
+    left join
+        tenants t1_0 
+            on t1_0.id=s1_0.tenant_id 
+    where
+        t1_0.id=?
+2025-11-16 19:11:19 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        t1_0.id,
+        t1_0.created_at,
+        t1_0.database_name,
+        t1_0.name,
+        t1_0.status,
+        t1_0.subdomain,
+        t1_0.updated_at 
+    from
+        tenants t1_0 
+    where
+        t1_0.id=?
+2025-11-16 19:11:19 [http-nio-8080-exec-8] DEBUG c.s.p.multitenancy.TenantFilter - Tenant context cleared
+2025-11-16 19:11:19 [http-nio-8080-exec-8] INFO  c.s.p.config.RequestLoggingFilter - API Response: GET /api/subscriptions/tenant/1 completed in 126ms
+2025-11-16 19:17:50 [HikariPool-1:housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=3m54s258ms771µs).
+2025-11-16 19:17:55 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing OPTIONS /api/users/tenant/1
+2025-11-16 19:17:55 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing OPTIONS /api/users/tenant/1
+2025-11-16 19:17:55 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Securing GET /api/users/tenant/1
+2025-11-16 19:17:55 [http-nio-8080-exec-3] DEBUG c.s.p.s.JwtAuthenticationFilter - Set tenant context: 1
+2025-11-16 19:17:55 [http-nio-8080-exec-3] DEBUG c.s.p.s.JwtAuthenticationFilter - JWT authentication successful for user: xy@gmail.com (tenant: 1)
+2025-11-16 19:17:55 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Secured GET /api/users/tenant/1
+2025-11-16 19:17:55 [http-nio-8080-exec-3] INFO  c.s.p.config.RequestLoggingFilter - API Request: GET /api/users/tenant/1 from 0:0:0:0:0:0:0:1
+2025-11-16 19:17:55 [http-nio-8080-exec-3] DEBUG c.s.p.multitenancy.TenantFilter - Tenant resolved from header: 1
+2025-11-16 19:17:55 [http-nio-8080-exec-3] DEBUG c.s.p.multitenancy.TenantFilter - Tenant context set to: 1
+2025-11-16 19:17:55 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.first_name,
+        u1_0.last_login,
+        u1_0.last_name,
+        u1_0.password,
+        u1_0.role,
+        u1_0.tenant_id 
+    from
+        users u1_0 
+    left join
+        tenants t1_0 
+            on t1_0.id=u1_0.tenant_id 
+    where
+        t1_0.id=?
+2025-11-16 19:17:55 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        t1_0.id,
+        t1_0.created_at,
+        t1_0.database_name,
+        t1_0.name,
+        t1_0.status,
+        t1_0.subdomain,
+        t1_0.updated_at 
+    from
+        tenants t1_0 
+    where
+        t1_0.id=?
+2025-11-16 19:17:55 [http-nio-8080-exec-3] DEBUG c.s.p.multitenancy.TenantFilter - Tenant context cleared
+2025-11-16 19:17:55 [http-nio-8080-exec-3] INFO  c.s.p.config.RequestLoggingFilter - API Response: GET /api/users/tenant/1 completed in 15ms
+2025-11-16 19:17:55 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing GET /api/users/tenant/1
+2025-11-16 19:17:55 [http-nio-8080-exec-4] DEBUG c.s.p.s.JwtAuthenticationFilter - Set tenant context: 1
+2025-11-16 19:17:55 [http-nio-8080-exec-4] DEBUG c.s.p.s.JwtAuthenticationFilter - JWT authentication successful for user: xy@gmail.com (tenant: 1)
+2025-11-16 19:17:55 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Secured GET /api/users/tenant/1
+2025-11-16 19:17:55 [http-nio-8080-exec-4] INFO  c.s.p.config.RequestLoggingFilter - API Request: GET /api/users/tenant/1 from 0:0:0:0:0:0:0:1
+2025-11-16 19:17:55 [http-nio-8080-exec-4] DEBUG c.s.p.multitenancy.TenantFilter - Tenant resolved from header: 1
+2025-11-16 19:17:55 [http-nio-8080-exec-4] DEBUG c.s.p.multitenancy.TenantFilter - Tenant context set to: 1
+2025-11-16 19:17:55 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing OPTIONS /api/subscriptions/tenant/1
+2025-11-16 19:17:55 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        u1_0.id,
+        u1_0.active,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.first_name,
+        u1_0.last_login,
+        u1_0.last_name,
+        u1_0.password,
+        u1_0.role,
+        u1_0.tenant_id 
+    from
+        users u1_0 
+    left join
+        tenants t1_0 
+            on t1_0.id=u1_0.tenant_id 
+    where
+        t1_0.id=?
+2025-11-16 19:17:55 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        t1_0.id,
+        t1_0.created_at,
+        t1_0.database_name,
+        t1_0.name,
+        t1_0.status,
+        t1_0.subdomain,
+        t1_0.updated_at 
+    from
+        tenants t1_0 
+    where
+        t1_0.id=?
+2025-11-16 19:17:55 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Securing GET /api/subscriptions/tenant/1
+2025-11-16 19:17:55 [http-nio-8080-exec-4] DEBUG c.s.p.multitenancy.TenantFilter - Tenant context cleared
+2025-11-16 19:17:55 [http-nio-8080-exec-4] INFO  c.s.p.config.RequestLoggingFilter - API Response: GET /api/users/tenant/1 completed in 15ms
+2025-11-16 19:17:55 [http-nio-8080-exec-6] DEBUG c.s.p.s.JwtAuthenticationFilter - Set tenant context: 1
+2025-11-16 19:17:55 [http-nio-8080-exec-6] DEBUG c.s.p.s.JwtAuthenticationFilter - JWT authentication successful for user: xy@gmail.com (tenant: 1)
+2025-11-16 19:17:55 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Secured GET /api/subscriptions/tenant/1
+2025-11-16 19:17:55 [http-nio-8080-exec-6] INFO  c.s.p.config.RequestLoggingFilter - API Request: GET /api/subscriptions/tenant/1 from 0:0:0:0:0:0:0:1
+2025-11-16 19:17:55 [http-nio-8080-exec-6] DEBUG c.s.p.multitenancy.TenantFilter - Tenant resolved from header: 1
+2025-11-16 19:17:55 [http-nio-8080-exec-6] DEBUG c.s.p.multitenancy.TenantFilter - Tenant context set to: 1
+2025-11-16 19:17:55 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        s1_0.id,
+        s1_0.auto_renew,
+        s1_0.created_at,
+        s1_0.current_api_calls,
+        s1_0.current_users,
+        s1_0.end_date,
+        s1_0.is_active,
+        s1_0.plan,
+        s1_0.start_date,
+        s1_0.tenant_id,
+        s1_0.updated_at 
+    from
+        subscriptions s1_0 
+    left join
+        tenants t1_0 
+            on t1_0.id=s1_0.tenant_id 
+    where
+        t1_0.id=?
+2025-11-16 19:17:55 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        t1_0.id,
+        t1_0.created_at,
+        t1_0.database_name,
+        t1_0.name,
+        t1_0.status,
+        t1_0.subdomain,
+        t1_0.updated_at 
+    from
+        tenants t1_0 
+    where
+        t1_0.id=?
+2025-11-16 19:17:55 [http-nio-8080-exec-6] DEBUG c.s.p.multitenancy.TenantFilter - Tenant context cleared
+2025-11-16 19:17:55 [http-nio-8080-exec-6] INFO  c.s.p.config.RequestLoggingFilter - API Response: GET /api/subscriptions/tenant/1 completed in 21ms
+2025-11-16 19:17:55 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Securing GET /api/subscriptions/tenant/1
+2025-11-16 19:17:55 [http-nio-8080-exec-7] DEBUG c.s.p.s.JwtAuthenticationFilter - Set tenant context: 1
+2025-11-16 19:17:55 [http-nio-8080-exec-7] DEBUG c.s.p.s.JwtAuthenticationFilter - JWT authentication successful for user: xy@gmail.com (tenant: 1)
+2025-11-16 19:17:55 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Secured GET /api/subscriptions/tenant/1
+2025-11-16 19:17:55 [http-nio-8080-exec-7] INFO  c.s.p.config.RequestLoggingFilter - API Request: GET /api/subscriptions/tenant/1 from 0:0:0:0:0:0:0:1
+2025-11-16 19:17:55 [http-nio-8080-exec-7] DEBUG c.s.p.multitenancy.TenantFilter - Tenant resolved from header: 1
+2025-11-16 19:17:55 [http-nio-8080-exec-7] DEBUG c.s.p.multitenancy.TenantFilter - Tenant context set to: 1
+2025-11-16 19:17:55 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        s1_0.id,
+        s1_0.auto_renew,
+        s1_0.created_at,
+        s1_0.current_api_calls,
+        s1_0.current_users,
+        s1_0.end_date,
+        s1_0.is_active,
+        s1_0.plan,
+        s1_0.start_date,
+        s1_0.tenant_id,
+        s1_0.updated_at 
+    from
+        subscriptions s1_0 
+    left join
+        tenants t1_0 
+            on t1_0.id=s1_0.tenant_id 
+    where
+        t1_0.id=?
+2025-11-16 19:17:55 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        t1_0.id,
+        t1_0.created_at,
+        t1_0.database_name,
+        t1_0.name,
+        t1_0.status,
+        t1_0.subdomain,
+        t1_0.updated_at 
+    from
+        tenants t1_0 
+    where
+        t1_0.id=?
+2025-11-16 19:17:55 [http-nio-8080-exec-7] DEBUG c.s.p.multitenancy.TenantFilter - Tenant context cleared
+2025-11-16 19:17:55 [http-nio-8080-exec-7] INFO  c.s.p.config.RequestLoggingFilter - API Response: GET /api/subscriptions/tenant/1 completed in 13ms
+2025-11-16 19:26:22 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (1 addition, 0 deletions, 0 modifications)
+2025-11-16 19:26:22 [Thread-5] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-11-16 19:26:22 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-11-16 19:26:22 [Thread-5] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-16 19:26:22 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-11-16 19:26:22 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-11-16 19:26:22 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - Starting MultiTenantPlatformApplication using Java 21.0.7 with PID 20896 (C:\Users\ankur\multi-tenant-platform\multi-tenant-platform\target\classes started by ankur in C:\Users\ankur\multi-tenant-platform\multi-tenant-platform)
+2025-11-16 19:26:22 [restartedMain] DEBUG c.s.p.MultiTenantPlatformApplication - Running with Spring Boot v3.5.7, Spring v6.2.12
+2025-11-16 19:26:22 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - No active profile set, falling back to 1 default profile: "default"
+2025-11-16 19:26:23 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-16 19:26:23 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-16 19:26:23 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 53 ms. Found 4 JPA repository interfaces.
+2025-11-16 19:26:23 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-16 19:26:23 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-16 19:26:23 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.ActivityLogRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:26:23 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.SubscriptionRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:26:23 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.TenantRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:26:23 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.UserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:26:23 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 15 ms. Found 0 Redis repository interfaces.
+2025-11-16 19:26:23 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-11-16 19:26:23 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-11-16 19:26:23 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.48]
+2025-11-16 19:26:23 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-11-16 19:26:23 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1032 ms
+2025-11-16 19:26:24 [restartedMain] DEBUG c.s.p.s.JwtAuthenticationFilter - Filter 'jwtAuthenticationFilter' configured for use
+2025-11-16 19:26:24 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-16 19:26:24 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-11-16 19:26:24 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-16 19:26:24 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting...
+2025-11-16 19:26:24 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-2 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3404425
+2025-11-16 19:26:24 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed.
+2025-11-16 19:26:24 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-16 19:26:24 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-2)']
+	Database driver: undefined/unknown
+	Database version: 8.0.44
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-16 19:26:24 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-16 19:26:24 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-16 19:26:25 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-16 19:26:25 [restartedMain] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 40034e15-e7bf-422e-b445-c785c439a7b5
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-11-16 19:26:25 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-11-16 19:26:25 [restartedMain] DEBUG o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-11-16 19:26:25 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-11-16 19:26:25 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-11-16 19:26:25 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - Started MultiTenantPlatformApplication in 2.59 seconds (process running for 1062.982)
+2025-11-16 19:26:25 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-11-16 19:26:26 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 3 class path changes (0 additions, 0 deletions, 3 modifications)
+2025-11-16 19:26:26 [Thread-7] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-11-16 19:26:26 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-11-16 19:26:26 [Thread-7] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-16 19:26:26 [Thread-7] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated...
+2025-11-16 19:26:26 [Thread-7] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed.
+2025-11-16 19:26:27 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - Starting MultiTenantPlatformApplication using Java 21.0.7 with PID 20896 (C:\Users\ankur\multi-tenant-platform\multi-tenant-platform\target\classes started by ankur in C:\Users\ankur\multi-tenant-platform\multi-tenant-platform)
+2025-11-16 19:26:27 [restartedMain] DEBUG c.s.p.MultiTenantPlatformApplication - Running with Spring Boot v3.5.7, Spring v6.2.12
+2025-11-16 19:26:27 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - No active profile set, falling back to 1 default profile: "default"
+2025-11-16 19:26:28 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-16 19:26:28 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-16 19:26:28 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 57 ms. Found 4 JPA repository interfaces.
+2025-11-16 19:26:28 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-16 19:26:28 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-16 19:26:28 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.ActivityLogRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:26:28 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.SubscriptionRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:26:28 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.TenantRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:26:28 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.UserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:26:28 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 12 ms. Found 0 Redis repository interfaces.
+2025-11-16 19:26:28 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-11-16 19:26:28 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-11-16 19:26:28 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.48]
+2025-11-16 19:26:29 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-11-16 19:26:29 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1802 ms
+2025-11-16 19:26:29 [restartedMain] DEBUG c.s.p.s.JwtAuthenticationFilter - Filter 'jwtAuthenticationFilter' configured for use
+2025-11-16 19:26:29 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-16 19:26:29 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-11-16 19:26:29 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-16 19:26:29 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Starting...
+2025-11-16 19:26:29 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-3 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6c2e426f
+2025-11-16 19:26:29 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Start completed.
+2025-11-16 19:26:29 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-16 19:26:29 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-3)']
+	Database driver: undefined/unknown
+	Database version: 8.0.44
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-16 19:26:29 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-16 19:26:29 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-16 19:26:30 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-16 19:26:30 [restartedMain] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 86395fd9-2840-409d-a80c-e5eb6ba2b8b3
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-11-16 19:26:30 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-11-16 19:26:30 [restartedMain] DEBUG o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-11-16 19:26:30 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-11-16 19:26:30 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-11-16 19:26:30 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - Started MultiTenantPlatformApplication in 3.321 seconds (process running for 1068.0)
+2025-11-16 19:26:30 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-11-16 19:26:31 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-11-16 19:26:31 [Thread-11] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-11-16 19:26:31 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-11-16 19:26:31 [Thread-11] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-16 19:26:31 [Thread-11] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown initiated...
+2025-11-16 19:26:31 [Thread-11] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown completed.
+2025-11-16 19:26:32 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - Starting MultiTenantPlatformApplication using Java 21.0.7 with PID 20896 (C:\Users\ankur\multi-tenant-platform\multi-tenant-platform\target\classes started by ankur in C:\Users\ankur\multi-tenant-platform\multi-tenant-platform)
+2025-11-16 19:26:32 [restartedMain] DEBUG c.s.p.MultiTenantPlatformApplication - Running with Spring Boot v3.5.7, Spring v6.2.12
+2025-11-16 19:26:32 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - No active profile set, falling back to 1 default profile: "default"
+2025-11-16 19:26:32 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-16 19:26:32 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-16 19:26:32 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 41 ms. Found 4 JPA repository interfaces.
+2025-11-16 19:26:32 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-16 19:26:32 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-16 19:26:32 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.ActivityLogRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:26:32 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.SubscriptionRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:26:32 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.TenantRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:26:32 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.UserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:26:32 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 21 ms. Found 0 Redis repository interfaces.
+2025-11-16 19:26:32 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-11-16 19:26:32 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-11-16 19:26:32 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.48]
+2025-11-16 19:26:32 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-11-16 19:26:32 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 647 ms
+2025-11-16 19:26:32 [restartedMain] DEBUG c.s.p.s.JwtAuthenticationFilter - Filter 'jwtAuthenticationFilter' configured for use
+2025-11-16 19:26:32 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-16 19:26:32 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-11-16 19:26:32 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-16 19:26:32 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-4 - Starting...
+2025-11-16 19:26:32 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-4 - Added connection com.mysql.cj.jdbc.ConnectionImpl@11d8975d
+2025-11-16 19:26:32 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-4 - Start completed.
+2025-11-16 19:26:32 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-16 19:26:32 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-4)']
+	Database driver: undefined/unknown
+	Database version: 8.0.44
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-16 19:26:32 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-16 19:26:33 [restartedMain] DEBUG org.hibernate.SQL - 
+    create table api_keys (
+        id bigint not null auto_increment,
+        allowed_ips varchar(500),
+        created_at datetime(6) not null,
+        created_by bigint,
+        expires_at datetime(6),
+        is_active bit not null,
+        key_value varchar(64) not null,
+        last_used_at datetime(6),
+        name varchar(100) not null,
+        rate_limit_per_hour integer,
+        scopes varchar(500),
+        tenant_id bigint not null,
+        updated_at datetime(6),
+        usage_count bigint,
+        primary key (id)
+    ) engine=InnoDB
+2025-11-16 19:26:33 [restartedMain] DEBUG org.hibernate.SQL - 
+    alter table api_keys 
+       drop index UKpp6b99o4acta2wol0qnnod7bb
+2025-11-16 19:26:34 [restartedMain] DEBUG org.hibernate.SQL - 
+    alter table api_keys 
+       add constraint UKpp6b99o4acta2wol0qnnod7bb unique (key_value)
+2025-11-16 19:26:34 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-16 19:26:35 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-16 19:26:36 [restartedMain] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: faef265a-7ac6-4900-a642-6dc8570bd0c4
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-11-16 19:26:36 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-11-16 19:26:36 [restartedMain] DEBUG o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-11-16 19:26:37 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-11-16 19:26:37 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-11-16 19:26:37 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - Started MultiTenantPlatformApplication in 5.263 seconds (process running for 1074.817)
+2025-11-16 19:26:37 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-11-16 19:27:02 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (1 addition, 0 deletions, 0 modifications)
+2025-11-16 19:27:02 [Thread-15] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-11-16 19:27:02 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-11-16 19:27:02 [Thread-15] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-16 19:27:02 [Thread-15] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-4 - Shutdown initiated...
+2025-11-16 19:27:02 [Thread-15] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-4 - Shutdown completed.
+2025-11-16 19:27:02 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - Starting MultiTenantPlatformApplication using Java 21.0.7 with PID 20896 (C:\Users\ankur\multi-tenant-platform\multi-tenant-platform\target\classes started by ankur in C:\Users\ankur\multi-tenant-platform\multi-tenant-platform)
+2025-11-16 19:27:02 [restartedMain] DEBUG c.s.p.MultiTenantPlatformApplication - Running with Spring Boot v3.5.7, Spring v6.2.12
+2025-11-16 19:27:02 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - No active profile set, falling back to 1 default profile: "default"
+2025-11-16 19:27:03 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-16 19:27:03 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-16 19:27:03 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 43 ms. Found 4 JPA repository interfaces.
+2025-11-16 19:27:03 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-16 19:27:03 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-16 19:27:03 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.ActivityLogRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:27:03 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.SubscriptionRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:27:03 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.TenantRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:27:03 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.UserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:27:03 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 9 ms. Found 0 Redis repository interfaces.
+2025-11-16 19:27:03 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-11-16 19:27:03 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-11-16 19:27:03 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.48]
+2025-11-16 19:27:03 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-11-16 19:27:03 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 563 ms
+2025-11-16 19:27:03 [restartedMain] DEBUG c.s.p.s.JwtAuthenticationFilter - Filter 'jwtAuthenticationFilter' configured for use
+2025-11-16 19:27:03 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-16 19:27:03 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-11-16 19:27:03 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-16 19:27:03 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-5 - Starting...
+2025-11-16 19:27:03 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-5 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7653e7e8
+2025-11-16 19:27:03 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-5 - Start completed.
+2025-11-16 19:27:03 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-16 19:27:03 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-5)']
+	Database driver: undefined/unknown
+	Database version: 8.0.44
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-16 19:27:03 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-16 19:27:03 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-16 19:27:04 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-16 19:27:04 [restartedMain] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: f77b91d9-137c-4e94-bb37-659740d1b78e
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-11-16 19:27:04 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-11-16 19:27:04 [restartedMain] DEBUG o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-11-16 19:27:04 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-11-16 19:27:04 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-11-16 19:27:04 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - Started MultiTenantPlatformApplication in 1.75 seconds (process running for 1102.24)
+2025-11-16 19:27:04 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-11-16 19:27:06 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-11-16 19:27:06 [Thread-19] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-11-16 19:27:06 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-11-16 19:27:06 [Thread-19] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-16 19:27:06 [Thread-19] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-5 - Shutdown initiated...
+2025-11-16 19:27:06 [Thread-19] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-5 - Shutdown completed.
+2025-11-16 19:27:06 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - Starting MultiTenantPlatformApplication using Java 21.0.7 with PID 20896 (C:\Users\ankur\multi-tenant-platform\multi-tenant-platform\target\classes started by ankur in C:\Users\ankur\multi-tenant-platform\multi-tenant-platform)
+2025-11-16 19:27:06 [restartedMain] DEBUG c.s.p.MultiTenantPlatformApplication - Running with Spring Boot v3.5.7, Spring v6.2.12
+2025-11-16 19:27:06 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - No active profile set, falling back to 1 default profile: "default"
+2025-11-16 19:27:06 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-16 19:27:06 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-16 19:27:06 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 52 ms. Found 4 JPA repository interfaces.
+2025-11-16 19:27:06 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-16 19:27:06 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-16 19:27:06 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.ActivityLogRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:27:06 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.SubscriptionRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:27:06 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.TenantRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:27:06 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.UserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:27:06 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 8 ms. Found 0 Redis repository interfaces.
+2025-11-16 19:27:06 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-11-16 19:27:06 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-11-16 19:27:06 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.48]
+2025-11-16 19:27:07 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-11-16 19:27:07 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 737 ms
+2025-11-16 19:27:07 [restartedMain] DEBUG c.s.p.s.JwtAuthenticationFilter - Filter 'jwtAuthenticationFilter' configured for use
+2025-11-16 19:27:07 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-16 19:27:07 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-11-16 19:27:07 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-16 19:27:07 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-6 - Starting...
+2025-11-16 19:27:07 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-6 - Added connection com.mysql.cj.jdbc.ConnectionImpl@2a245a1d
+2025-11-16 19:27:07 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-6 - Start completed.
+2025-11-16 19:27:07 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-16 19:27:07 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-6)']
+	Database driver: undefined/unknown
+	Database version: 8.0.44
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-16 19:27:07 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-16 19:27:07 [restartedMain] DEBUG org.hibernate.SQL - 
+    create table webhooks (
+        id bigint not null auto_increment,
+        created_at datetime(6) not null,
+        events varchar(500) not null,
+        failure_count bigint,
+        is_active bit not null,
+        last_triggered_at datetime(6),
+        name varchar(100) not null,
+        retry_count integer,
+        secret_key varchar(64),
+        success_count bigint,
+        tenant_id bigint not null,
+        timeout_seconds integer,
+        updated_at datetime(6),
+        url varchar(500) not null,
+        primary key (id)
+    ) engine=InnoDB
+2025-11-16 19:27:07 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-16 19:27:07 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-16 19:27:07 [restartedMain] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: af83fd2d-6333-4631-8572-39444c1e82d3
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-11-16 19:27:07 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-11-16 19:27:07 [restartedMain] DEBUG o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-11-16 19:27:08 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-11-16 19:27:08 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-11-16 19:27:08 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - Started MultiTenantPlatformApplication in 1.826 seconds (process running for 1105.638)
+2025-11-16 19:27:08 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-11-16 19:41:40 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (1 addition, 0 deletions, 0 modifications)
+2025-11-16 19:41:40 [Thread-23] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-11-16 19:41:40 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-11-16 19:41:40 [Thread-23] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-16 19:41:40 [Thread-23] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-6 - Shutdown initiated...
+2025-11-16 19:41:40 [Thread-23] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-6 - Shutdown completed.
+2025-11-16 19:41:41 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - Starting MultiTenantPlatformApplication using Java 21.0.7 with PID 20896 (C:\Users\ankur\multi-tenant-platform\multi-tenant-platform\target\classes started by ankur in C:\Users\ankur\multi-tenant-platform\multi-tenant-platform)
+2025-11-16 19:41:41 [restartedMain] DEBUG c.s.p.MultiTenantPlatformApplication - Running with Spring Boot v3.5.7, Spring v6.2.12
+2025-11-16 19:41:41 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - No active profile set, falling back to 1 default profile: "default"
+2025-11-16 19:41:42 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-16 19:41:42 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-16 19:41:42 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 114 ms. Found 4 JPA repository interfaces.
+2025-11-16 19:41:42 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-16 19:41:42 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-16 19:41:42 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.ActivityLogRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:41:42 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.SubscriptionRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:41:42 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.TenantRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:41:42 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.UserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:41:42 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 47 ms. Found 0 Redis repository interfaces.
+2025-11-16 19:41:43 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-11-16 19:41:43 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-11-16 19:41:43 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.48]
+2025-11-16 19:41:43 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-11-16 19:41:43 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1914 ms
+2025-11-16 19:41:43 [restartedMain] DEBUG c.s.p.s.JwtAuthenticationFilter - Filter 'jwtAuthenticationFilter' configured for use
+2025-11-16 19:41:43 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-16 19:41:43 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-11-16 19:41:43 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-16 19:41:43 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-7 - Starting...
+2025-11-16 19:41:43 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-7 - Added connection com.mysql.cj.jdbc.ConnectionImpl@351cf0cd
+2025-11-16 19:41:43 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-7 - Start completed.
+2025-11-16 19:41:43 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-16 19:41:43 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-7)']
+	Database driver: undefined/unknown
+	Database version: 8.0.44
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-16 19:41:44 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-16 19:41:44 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-16 19:41:44 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-16 19:41:44 [restartedMain] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: c6fb235a-5e3d-4a68-91f2-622fcf7f9f4d
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-11-16 19:41:44 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-11-16 19:41:44 [restartedMain] DEBUG o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-11-16 19:41:44 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-11-16 19:41:44 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-11-16 19:41:44 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - Started MultiTenantPlatformApplication in 3.417 seconds (process running for 1982.447)
+2025-11-16 19:41:44 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-11-16 19:41:46 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-11-16 19:41:46 [Thread-27] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-11-16 19:41:46 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-11-16 19:41:46 [Thread-27] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-16 19:41:46 [Thread-27] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-7 - Shutdown initiated...
+2025-11-16 19:41:46 [Thread-27] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-7 - Shutdown completed.
+2025-11-16 19:41:46 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - Starting MultiTenantPlatformApplication using Java 21.0.7 with PID 20896 (C:\Users\ankur\multi-tenant-platform\multi-tenant-platform\target\classes started by ankur in C:\Users\ankur\multi-tenant-platform\multi-tenant-platform)
+2025-11-16 19:41:46 [restartedMain] DEBUG c.s.p.MultiTenantPlatformApplication - Running with Spring Boot v3.5.7, Spring v6.2.12
+2025-11-16 19:41:46 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - No active profile set, falling back to 1 default profile: "default"
+2025-11-16 19:41:46 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-16 19:41:46 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-16 19:41:46 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 24 ms. Found 4 JPA repository interfaces.
+2025-11-16 19:41:46 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-11-16 19:41:46 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-11-16 19:41:46 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.ActivityLogRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:41:46 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.SubscriptionRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:41:46 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.TenantRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:41:46 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.saas.platform.repository.UserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-11-16 19:41:46 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 8 ms. Found 0 Redis repository interfaces.
+2025-11-16 19:41:46 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-11-16 19:41:46 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-11-16 19:41:46 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.48]
+2025-11-16 19:41:46 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-11-16 19:41:46 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 447 ms
+2025-11-16 19:41:46 [restartedMain] DEBUG c.s.p.s.JwtAuthenticationFilter - Filter 'jwtAuthenticationFilter' configured for use
+2025-11-16 19:41:46 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-16 19:41:46 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-11-16 19:41:47 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-16 19:41:47 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-8 - Starting...
+2025-11-16 19:41:47 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-8 - Added connection com.mysql.cj.jdbc.ConnectionImpl@36e6fba6
+2025-11-16 19:41:47 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-8 - Start completed.
+2025-11-16 19:41:47 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-16 19:41:47 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-8)']
+	Database driver: undefined/unknown
+	Database version: 8.0.44
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-16 19:41:47 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-16 19:41:47 [restartedMain] DEBUG org.hibernate.SQL - 
+    create table tenant_settings (
+        id bigint not null auto_increment,
+        address TEXT,
+        auto_delete_inactive_users bit,
+        company_website varchar(255),
+        created_at datetime(6) not null,
+        custom_email_domain varchar(100),
+        data_retention_days integer,
+        date_format varchar(20),
+        email_from_name varchar(100),
+        enable_2fa bit not null,
+        enable_api_access bit not null,
+        enable_email_notifications bit not null,
+        enable_in_app_notifications bit not null,
+        enable_sso bit not null,
+        enable_webhooks bit not null,
+        favicon_url varchar(500),
+        language varchar(10),
+        logo_url varchar(500),
+        max_concurrent_sessions integer,
+        phone_number varchar(20),
+        primary_color varchar(7),
+        secondary_color varchar(7),
+        session_timeout_minutes integer,
+        support_email varchar(150),
+        timezone varchar(50),
+        updated_at datetime(6),
+        tenant_id bigint not null,
+        primary key (id)
+    ) engine=InnoDB
+2025-11-16 19:41:47 [restartedMain] DEBUG org.hibernate.SQL - 
+    alter table tenant_settings 
+       drop index UKqeu728yvicy5pono3chubpcic
+2025-11-16 19:41:47 [restartedMain] DEBUG org.hibernate.SQL - 
+    alter table tenant_settings 
+       add constraint UKqeu728yvicy5pono3chubpcic unique (tenant_id)
+2025-11-16 19:41:47 [restartedMain] DEBUG org.hibernate.SQL - 
+    alter table tenant_settings 
+       add constraint FKiakkc7wc7l3i5h65ekd6tlb4n 
+       foreign key (tenant_id) 
+       references tenants (id)
+2025-11-16 19:41:47 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-16 19:41:48 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-16 19:41:48 [restartedMain] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 0d99c242-8588-4200-8776-feb498a8c57b
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-11-16 19:41:48 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-11-16 19:41:48 [restartedMain] DEBUG o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, LogoutFilter, JwtAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-11-16 19:41:48 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-11-16 19:41:48 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-11-16 19:41:48 [restartedMain] INFO  c.s.p.MultiTenantPlatformApplication - Started MultiTenantPlatformApplication in 1.92 seconds (process running for 1985.919)
+2025-11-16 19:41:48 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
