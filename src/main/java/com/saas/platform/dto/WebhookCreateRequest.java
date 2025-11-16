@@ -1,5 +1,5 @@
 package com.saas.platform.dto;
-class WebhookCreateRequest {
+public class WebhookCreateRequest {
     private String name;
     private String url;
     private String events;
