@@ -20,12 +20,14 @@ public class AuthService {
     private final UserService userService;
     private final TenantService tenantService;
     private final JwtUtil jwtUtil;
+    private final ActivityLogService activityLogService;
     
-    // Constructor
-    public AuthService(UserService userService, TenantService tenantService, JwtUtil jwtUtil) {
+    public AuthService(UserService userService, TenantService tenantService, 
+                      JwtUtil jwtUtil, ActivityLogService activityLogService) {
         this.userService = userService;
         this.tenantService = tenantService;
         this.jwtUtil = jwtUtil;
+        this.activityLogService = activityLogService;
     }
     
     /**
@@ -39,11 +41,13 @@ public class AuthService {
         
         // Verify password
         if (!userService.verifyPassword(request.getPassword(), user.getPassword())) {
+            log.warn("Invalid password for user: {}", request.getEmail());
             throw new IllegalArgumentException("Invalid credentials");
         }
         
         // Check if user is active
         if (!user.getActive()) {
+            log.warn("Inactive user attempted login: {}", request.getEmail());
             throw new IllegalArgumentException("User account is inactive");
         }
         
@@ -53,6 +57,17 @@ public class AuthService {
                 user.getId(),
                 user.getTenant().getId(),
                 user.getRole().toString()
+        );
+        
+        // Log activity
+        activityLogService.logActivity(
+            user.getTenant().getId(),
+            user.getId(),
+            user.getEmail(),
+            user.getFirstName() + " " + user.getLastName(),
+            "Logged in",
+            "auth",
+            "User successfully authenticated"
         );
         
         log.info("Login successful for user: {}", user.getEmail());
@@ -91,7 +106,7 @@ public class AuthService {
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
-        user.setRole(UserRole.TENANT_ADMIN);  // Now this will work!
+        user.setRole(UserRole.TENANT_ADMIN);
         
         User savedUser = userService.createUser(user, savedTenant.getId());
         
@@ -101,6 +116,17 @@ public class AuthService {
                 savedUser.getId(),
                 savedTenant.getId(),
                 savedUser.getRole().toString()
+        );
+        
+        // Log activity
+        activityLogService.logActivity(
+            savedTenant.getId(),
+            savedUser.getId(),
+            savedUser.getEmail(),
+            savedUser.getFirstName() + " " + savedUser.getLastName(),
+            "Account registered",
+            "auth",
+            "New tenant and admin user created"
         );
         
         log.info("Registration successful for: {}", savedUser.getEmail());

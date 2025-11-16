@@ -18,12 +18,14 @@ public class UserService {
     
     private final UserRepository userRepository;
     private final TenantService tenantService;
+    private final ActivityLogService activityLogService;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     
-    // Constructor
-    public UserService(UserRepository userRepository, TenantService tenantService) {
+    public UserService(UserRepository userRepository, TenantService tenantService,
+                      ActivityLogService activityLogService) {
         this.userRepository = userRepository;
         this.tenantService = tenantService;
+        this.activityLogService = activityLogService;
     }
     
     @Transactional
@@ -37,7 +39,6 @@ public class UserService {
         Tenant tenant = tenantService.getTenantById(tenantId);
         user.setTenant(tenant);
         
-        // Set active by default if not set
         if (user.getActive() == null) {
             user.setActive(true);
         }
@@ -45,6 +46,18 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         
         User savedUser = userRepository.save(user);
+        
+        // Log activity
+        activityLogService.logActivity(
+            tenantId,
+            savedUser.getId(),
+            savedUser.getEmail(),
+            savedUser.getFirstName() + " " + savedUser.getLastName(),
+            "User created: " + savedUser.getEmail(),
+            "user",
+            "New user added to tenant"
+        );
+        
         log.info("User created successfully with ID: {}", savedUser.getId());
         
         return savedUser;
@@ -68,17 +81,48 @@ public class UserService {
     public User updateUser(Long id, User userDetails) {
         User user = getUserById(id);
         
+        String oldData = String.format("Name: %s %s, Role: %s, Active: %s", 
+            user.getFirstName(), user.getLastName(), user.getRole(), user.getActive());
+        
         user.setFirstName(userDetails.getFirstName());
         user.setLastName(userDetails.getLastName());
         user.setRole(userDetails.getRole());
         user.setActive(userDetails.getActive());
         
-        return userRepository.save(user);
+        User updated = userRepository.save(user);
+        
+        String newData = String.format("Name: %s %s, Role: %s, Active: %s", 
+            updated.getFirstName(), updated.getLastName(), updated.getRole(), updated.getActive());
+        
+        // Log activity
+        activityLogService.logActivity(
+            user.getTenant().getId(),
+            user.getId(),
+            user.getEmail(),
+            user.getFirstName() + " " + user.getLastName(),
+            "User updated: " + user.getEmail(),
+            "user",
+            String.format("Changed from [%s] to [%s]", oldData, newData)
+        );
+        
+        return updated;
     }
     
     @Transactional
     public void deleteUser(Long id) {
         User user = getUserById(id);
+        
+        // Log activity before deletion
+        activityLogService.logActivity(
+            user.getTenant().getId(),
+            user.getId(),
+            user.getEmail(),
+            user.getFirstName() + " " + user.getLastName(),
+            "User deleted: " + user.getEmail(),
+            "user",
+            "User removed from tenant"
+        );
+        
         userRepository.delete(user);
         log.info("User deleted: {}", user.getEmail());
     }
