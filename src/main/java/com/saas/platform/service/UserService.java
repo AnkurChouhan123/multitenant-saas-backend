@@ -1,5 +1,6 @@
 package com.saas.platform.service;
 
+import com.saas.platform.dto.PasswordChangeRequest;
 import com.saas.platform.model.Tenant;
 import com.saas.platform.model.User;
 import com.saas.platform.repository.UserRepository;
@@ -127,7 +128,25 @@ public class UserService {
         log.info("User deleted: {}", user.getEmail());
     }
     
+    
+    
     public boolean verifyPassword(String rawPassword, String encodedPassword) {
         return passwordEncoder.matches(rawPassword, encodedPassword);
+    }
+    
+    @Transactional
+    public void changePassword(Long userId, PasswordChangeRequest request) {
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new IllegalArgumentException("Passwords do not match");
+        }
+        
+        User user = getUserById(userId);
+        
+        if (!verifyPassword(request.getOldPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Current password is incorrect");
+        }
+        
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 }

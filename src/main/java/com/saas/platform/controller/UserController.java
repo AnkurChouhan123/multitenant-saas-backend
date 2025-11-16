@@ -1,5 +1,6 @@
 package com.saas.platform.controller;
 
+import com.saas.platform.dto.PasswordChangeRequest;
 import com.saas.platform.model.User;
 import com.saas.platform.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users") 
 @CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
     
@@ -44,6 +45,14 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
     
+    @PostMapping("/{id}/change-password")
+    public ResponseEntity<String> changePassword(
+            @PathVariable Long id,
+            @RequestBody PasswordChangeRequest request) {
+        userService.changePassword(id, request);
+        return ResponseEntity.ok("Password changed successfully");
+    }
+    
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
         User updatedUser = userService.updateUser(id, user);
@@ -55,4 +64,6 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
+    
+    
 }

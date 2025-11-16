@@ -1,6 +1,10 @@
 package com.saas.platform.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
 
@@ -17,14 +21,19 @@ public class User {
     private Long id;
     
     @Column(nullable = false, length = 100)
+    @NotBlank(message = "First name is required")
     private String firstName;
     
+    @NotBlank(message = "Last name is required")
     @Column(nullable = false, length = 100)
     private String lastName;
     
     @Column(nullable = false, unique = true, length = 150)
+    @Email(message = "Invalid email format")
+    @NotBlank(message = "Email is required")
     private String email;
     
+    @Size(min = 6, message = "Password must be at least 6 characters")
     @Column(nullable = false)
     private String password;
     
