@@ -1,6 +1,7 @@
 package com.saas.platform.service;
 
 import com.saas.platform.dto.PasswordChangeRequest;
+import com.saas.platform.dto.UpdateProfileRequest;
 import com.saas.platform.model.Tenant;
 import com.saas.platform.model.User;
 import com.saas.platform.repository.UserRepository;
@@ -12,6 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * UserService - FIXED
+ * Added updateProfile method for profile updates
+ */
 @Service
 public class UserService {
     
@@ -109,6 +114,58 @@ public class UserService {
         return updated;
     }
     
+    /**
+     * FIXED: Added profile update method
+     * This allows users to update their own profile without changing role/active status
+     */
+    @Transactional
+    public User updateProfile(Long id, UpdateProfileRequest request) {
+        log.info("Updating profile for user ID: {}", id);
+        
+        User user = getUserById(id);
+        
+        String oldData = String.format("Name: %s %s, Email: %s", 
+            user.getFirstName(), user.getLastName(), user.getEmail());
+        
+        // Update profile fields
+        if (request.getFirstName() != null && !request.getFirstName().isEmpty()) {
+            user.setFirstName(request.getFirstName());
+        }
+        
+        if (request.getLastName() != null && !request.getLastName().isEmpty()) {
+            user.setLastName(request.getLastName());
+        }
+        
+        if (request.getEmail() != null && !request.getEmail().isEmpty()) {
+            // Check if new email is already taken by another user
+            if (!request.getEmail().equals(user.getEmail()) && 
+                userRepository.existsByEmail(request.getEmail())) {
+                throw new IllegalArgumentException("Email already exists: " + request.getEmail());
+            }
+            user.setEmail(request.getEmail());
+        }
+        
+        User updated = userRepository.save(user);
+        
+        String newData = String.format("Name: %s %s, Email: %s", 
+            updated.getFirstName(), updated.getLastName(), updated.getEmail());
+        
+        // Log activity
+        activityLogService.logActivity(
+            user.getTenant().getId(),
+            user.getId(),
+            user.getEmail(),
+            user.getFirstName() + " " + user.getLastName(),
+            "Profile updated",
+            "user",
+            String.format("Changed from [%s] to [%s]", oldData, newData)
+        );
+        
+        log.info("Profile updated successfully for user ID: {}", id);
+        
+        return updated;
+    }
+    
     @Transactional
     public void deleteUser(Long id) {
         User user = getUserById(id);
@@ -128,8 +185,6 @@ public class UserService {
         log.info("User deleted: {}", user.getEmail());
     }
     
-    
-    
     public boolean verifyPassword(String rawPassword, String encodedPassword) {
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }
@@ -148,5 +203,18 @@ public class UserService {
         
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
+        
+        // Log activity
+        activityLogService.logActivity(
+            user.getTenant().getId(),
+            user.getId(),
+            user.getEmail(),
+            user.getFirstName() + " " + user.getLastName(),
+            "Password changed",
+            "security",
+            "User changed their password"
+        );
+        
+        log.info("Password changed successfully for user ID: {}", userId);
     }
 }

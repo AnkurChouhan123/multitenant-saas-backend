@@ -18,8 +18,11 @@ import java.io.IOException;
 import java.util.Collections;
 
 /**
- * JWT Authentication Filter
- * Validates JWT tokens and sets security context
+ * JWT Authentication Filter - FIXED
+ * Fixed issues:
+ * 1. Better error handling
+ * 2. Clear authentication on invalid tokens
+ * 3. Proper role prefix handling
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -42,44 +45,60 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = extractTokenFromRequest(request);
             
             if (token != null && !token.isEmpty()) {
-                String email = jwtUtil.extractEmail(token);
-                
-                if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                try {
+                    String email = jwtUtil.extractEmail(token);
                     
-                    if (jwtUtil.validateToken(token, email)) {
-                        // Extract user details from token
-                        Long userId = jwtUtil.extractUserId(token);
-                        Long tenantId = jwtUtil.extractTenantId(token);
-                        String role = jwtUtil.extractRole(token);
+                    if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                         
-                        // Set tenant context
-                        if (tenantId != null) {
-                            TenantContext.setCurrentTenant(tenantId.toString());
-                            log.debug("Set tenant context: {}", tenantId);
+                        if (jwtUtil.validateToken(token, email)) {
+                            // Extract user details from token
+                            Long userId = jwtUtil.extractUserId(token);
+                            Long tenantId = jwtUtil.extractTenantId(token);
+                            String role = jwtUtil.extractRole(token);
+                            
+                            // Set tenant context
+                            if (tenantId != null) {
+                                TenantContext.setCurrentTenant(tenantId.toString());
+                                log.debug("Set tenant context: {}", tenantId);
+                            }
+                            
+                            // FIXED: Ensure role has proper prefix
+                            String roleWithPrefix = role;
+                            if (!role.startsWith("ROLE_")) {
+                                roleWithPrefix = "ROLE_" + role;
+                            }
+                            
+                            // Create authentication token
+                            SimpleGrantedAuthority authority = new SimpleGrantedAuthority(roleWithPrefix);
+                            UsernamePasswordAuthenticationToken authentication = 
+                                new UsernamePasswordAuthenticationToken(
+                                    email, 
+                                    null, 
+                                    Collections.singletonList(authority)
+                                );
+                            
+                            // CRITICAL: Mark as authenticated
+                            authentication.setAuthenticated(true);
+                            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                            
+                            // Set security context
+                            SecurityContextHolder.getContext().setAuthentication(authentication);
+                            
+                            log.debug("JWT authentication successful for user: {} with role: {} (tenant: {})", 
+                                     email, roleWithPrefix, tenantId);
+                        } else {
+                            log.warn("Invalid JWT token for email: {}", email);
                         }
-                        
-                        // Create authentication token
-                        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
-                        UsernamePasswordAuthenticationToken authentication = 
-                            new UsernamePasswordAuthenticationToken(
-                                email, 
-                                null, 
-                                Collections.singletonList(authority)
-                            );
-                        
-                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        
-                        // Set security context
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
-                        
-                        log.debug("JWT authentication successful for user: {} (tenant: {})", email, tenantId);
-                    } else {
-                        log.warn("Invalid JWT token for email: {}", email);
                     }
+                } catch (Exception e) {
+                    log.error("JWT token validation error: {}", e.getMessage());
+                    // Clear the security context on invalid token
+                    SecurityContextHolder.clearContext();
                 }
             }
         } catch (Exception e) {
             log.error("Cannot set user authentication: {}", e.getMessage());
+            SecurityContextHolder.clearContext();
         }
         
         filterChain.doFilter(request, response);
@@ -96,7 +115,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        // Don't filter auth endpoints
-        return path.startsWith("/api/auth/");
+        // Don't filter auth endpoints and error endpoint
+        return path.startsWith("/api/auth/") || path.equals("/error");
     }
 }

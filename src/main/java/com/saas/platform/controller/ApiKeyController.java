@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * API Key Management Controller
- * Allows tenants to create and manage API keys for external integrations
+ * API Key Management Controller - FIXED
+ * Fixed authorization to allow regular users to view their API keys
  */
 @RestController
 @RequestMapping("/api/keys")
@@ -29,9 +29,10 @@ public class ApiKeyController {
     
     /**
      * GET /api/keys/tenant/{tenantId} - Get all API keys for tenant
+     * FIXED: Added USER role to access
      */
     @GetMapping("/tenant/{tenantId}")
-    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN', 'USER')")
     public ResponseEntity<List<ApiKeyResponse>> getTenantApiKeys(@PathVariable Long tenantId) {
         List<ApiKey> apiKeys = apiKeyService.getApiKeysByTenant(tenantId);
         List<ApiKeyResponse> response = apiKeys.stream()
@@ -82,9 +83,10 @@ public class ApiKeyController {
     
     /**
      * GET /api/keys/{keyId}/usage - Get API key usage statistics
+     * FIXED: Added USER role to access
      */
     @GetMapping("/{keyId}/usage")
-    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN', 'USER')")
     public ResponseEntity<ApiKeyResponse> getApiKeyUsage(@PathVariable Long keyId) {
         ApiKey apiKey = apiKeyService.getApiKeyById(keyId);
         return ResponseEntity.ok(convertToResponse(apiKey));
