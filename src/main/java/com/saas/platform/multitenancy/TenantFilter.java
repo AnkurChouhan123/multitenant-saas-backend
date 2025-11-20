@@ -40,9 +40,11 @@ public class TenantFilter implements Filter {
             // Continue with the request
             chain.doFilter(request, response);
             
-        } finally {
+        } 
+        
+        finally {
             // ALWAYS clear context after request completes
-            TenantContext.clear();
+//            TenantContext.clear();
             log.debug("Tenant context cleared");
         }
     }

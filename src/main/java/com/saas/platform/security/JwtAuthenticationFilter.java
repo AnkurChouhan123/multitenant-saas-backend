@@ -70,19 +70,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             
                             // Create authentication token
                             SimpleGrantedAuthority authority = new SimpleGrantedAuthority(roleWithPrefix);
-                            UsernamePasswordAuthenticationToken authentication = 
-                                new UsernamePasswordAuthenticationToken(
-                                    email, 
-                                    null, 
-                                    Collections.singletonList(authority)
-                                );
-                            
-                            // CRITICAL: Mark as authenticated
-                            authentication.setAuthenticated(true);
+
+                            UsernamePasswordAuthenticationToken authentication =
+                                    new UsernamePasswordAuthenticationToken(
+                                            email,
+                                            null,
+                                            Collections.singletonList(authority) // authorities already set = authenticated
+                                    );
+
                             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                            
-                            // Set security context
+
                             SecurityContextHolder.getContext().setAuthentication(authentication);
+
                             
                             log.debug("JWT authentication successful for user: {} with role: {} (tenant: {})", 
                                      email, roleWithPrefix, tenantId);
