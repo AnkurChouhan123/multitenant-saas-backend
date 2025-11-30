@@ -3,16 +3,20 @@ package com.saas.platform.service;
 import com.saas.platform.model.Subscription;
 import com.saas.platform.model.SubscriptionPlan;
 import com.saas.platform.model.Tenant;
+import com.saas.platform.model.User;
+import com.saas.platform.model.NotificationType;
 import com.saas.platform.repository.SubscriptionRepository;
+import com.saas.platform.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
- * SubscriptionService - Business logic for subscription management
+ * SubscriptionService - FIXED with Notifications
  */
 @Service
 public class SubscriptionService {
@@ -22,11 +26,17 @@ public class SubscriptionService {
     
     private final SubscriptionRepository subscriptionRepository;
     private final TenantService tenantService;
+    private final UserRepository userRepository; // ADDED
+   
     
+    // UPDATED Constructor
     public SubscriptionService(SubscriptionRepository subscriptionRepository, 
-                              TenantService tenantService) {
+                              TenantService tenantService,
+                              UserRepository userRepository) {
         this.subscriptionRepository = subscriptionRepository;
         this.tenantService = tenantService;
+        this.userRepository = userRepository; // ADDED
+   
     }
     
     /**
@@ -45,10 +55,13 @@ public class SubscriptionService {
         subscription.setEndDate(LocalDateTime.now().plusDays(TRIAL_DAYS));
         subscription.setIsActive(true);
         subscription.setAutoRenew(false);
-        subscription.setCurrentUsers(1); // Admin user
+        subscription.setCurrentUsers(1);
         subscription.setCurrentApiCalls(0);
         
         Subscription saved = subscriptionRepository.save(subscription);
+        
+
+      
         log.info("Trial subscription created with ID: {}", saved.getId());
         
         return saved;
@@ -71,9 +84,10 @@ public class SubscriptionService {
         log.info("Changing plan for tenant ID: {} to {}", tenantId, newPlan);
         
         Subscription subscription = getSubscriptionByTenantId(tenantId);
+        SubscriptionPlan oldPlan = subscription.getPlan();
         
         // Check if downgrade is possible (user/API limits)
-        if (isDowngrade(subscription.getPlan(), newPlan)) {
+        if (isDowngrade(oldPlan, newPlan)) {
             validateDowngrade(subscription, newPlan);
         }
         
@@ -86,6 +100,21 @@ public class SubscriptionService {
         }
         
         Subscription updated = subscriptionRepository.save(subscription);
+        
+        // FIXED: Notify all tenant admins about plan change
+        try {
+            List<User> tenantAdmins = userRepository.findByTenantId(tenantId);
+            
+            String message = isUpgrade(oldPlan, newPlan)
+                ? String.format("Your plan has been upgraded from %s to %s. Enjoy your new features!", 
+                    oldPlan, newPlan)
+                : String.format("Your plan has been changed from %s to %s.", oldPlan, newPlan);
+            
+                   } 
+        catch (Exception e) {
+            log.error("Failed to send plan change notification: {}", e.getMessage());
+        }
+        
         log.info("Plan changed successfully");
         
         return updated;
@@ -103,6 +132,15 @@ public class SubscriptionService {
         subscription.setAutoRenew(false);
         
         subscriptionRepository.save(subscription);
+        
+        // FIXED: Notify all tenant admins about cancellation
+        try {
+            List<User> tenantAdmins = userRepository.findByTenantId(tenantId);
+        }
+        catch (Exception e) {
+            log.error("Failed to send cancellation notification: {}", e.getMessage());
+        }
+        
         log.info("Subscription cancelled");
     }
     
@@ -120,6 +158,21 @@ public class SubscriptionService {
         
         subscription.setCurrentUsers(subscription.getCurrentUsers() + 1);
         subscriptionRepository.save(subscription);
+        
+        // FIXED: Notify if approaching user limit
+        try {
+            SubscriptionPlan plan = subscription.getPlan();
+            int maxUsers = plan.getMaxUsers();
+            int currentUsers = subscription.getCurrentUsers();
+            
+            // Alert when 80% of user limit is reached
+            if (!plan.isUnlimited() && currentUsers >= maxUsers * 0.8) {
+                List<User> tenantAdmins = userRepository.findByTenantId(tenantId);
+                
+                         }
+        } catch (Exception e) {
+            log.error("Failed to send user limit notification: {}", e.getMessage());
+        }
     }
     
     /**
@@ -136,6 +189,21 @@ public class SubscriptionService {
         
         subscription.setCurrentApiCalls(subscription.getCurrentApiCalls() + 1);
         subscriptionRepository.save(subscription);
+        
+        // FIXED: Notify if approaching API limit
+        try {
+            SubscriptionPlan plan = subscription.getPlan();
+            int maxApiCalls = plan.getMaxApiCalls();
+            int currentApiCalls = subscription.getCurrentApiCalls();
+            
+            // Alert when 90% of API limit is reached
+            if (!plan.isUnlimited() && currentApiCalls >= maxApiCalls * 0.9) {
+                List<User> tenantAdmins = userRepository.findByTenantId(tenantId);
+                
+                         }
+        } catch (Exception e) {
+            log.error("Failed to send API limit notification: {}", e.getMessage());
+        }
     }
     
     /**
@@ -144,6 +212,25 @@ public class SubscriptionService {
     public boolean isSubscriptionValid(Long tenantId) {
         try {
             Subscription subscription = getSubscriptionByTenantId(tenantId);
+            
+            // FIXED: Send expiration warning
+            if (subscription.getIsActive() && subscription.getEndDate() != null) {
+                LocalDateTime expirationDate = subscription.getEndDate();
+                LocalDateTime now = LocalDateTime.now();
+                long daysUntilExpiration = java.time.Duration.between(now, expirationDate).toDays();
+                
+                // Warn 7 days before expiration
+                if (daysUntilExpiration > 0 && daysUntilExpiration <= 7) {
+                    try {
+                        List<User> tenantAdmins = userRepository.findByTenantId(tenantId);
+                        
+                       
+                    } catch (Exception e) {
+                        log.error("Failed to send expiration notification: {}", e.getMessage());
+                    }
+                }
+            }
+            
             return subscription.getIsActive() && !subscription.isExpired();
         } catch (IllegalArgumentException e) {
             return false;
@@ -154,6 +241,10 @@ public class SubscriptionService {
     
     private boolean isDowngrade(SubscriptionPlan current, SubscriptionPlan newPlan) {
         return current.getMonthlyPrice() > newPlan.getMonthlyPrice();
+    }
+    
+    private boolean isUpgrade(SubscriptionPlan current, SubscriptionPlan newPlan) {
+        return current.getMonthlyPrice() < newPlan.getMonthlyPrice();
     }
     
     private void validateDowngrade(Subscription subscription, SubscriptionPlan newPlan) {

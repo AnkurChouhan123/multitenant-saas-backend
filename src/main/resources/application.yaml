@@ -2,7 +2,13 @@ spring:
   application:
     name: multi-tenant-platform
 
-  # MySQL Connection - FIXED
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  # MySQL Connection
   datasource:
     url: jdbc:mysql://localhost:3306/saas_master?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
@@ -15,11 +21,11 @@ spring:
       idle-timeout: 600000
       max-lifetime: 1800000
 
-  # JPA Settings - FIXED
+  # JPA Settings
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: update  # Will auto-create tables
+      ddl-auto: update
     show-sql: ${SHOW_SQL:true}
     properties:
       hibernate:
@@ -30,14 +36,32 @@ spring:
         order_inserts: true
         order_updates: true
 
-# Server Configuration
+  # Email Configuration (FIXED)
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:ankurchouhan265@gmail.com}
+    password: ${MAIL_PASSWORD:arwx jsfo nvoh jutw}
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+# Server Config
 server:
   port: ${SERVER_PORT:8080}
   error:
     include-message: always
     include-binding-errors: always
 
-# Logging - ENHANCED
+# Logging
 logging:
   level:
     root: INFO
@@ -51,12 +75,22 @@ logging:
   file:
     name: logs/application.log
 
-# JWT Configuration - ENHANCED
+# JWT Configuration
 app:
   jwt:
     secret: ${JWT_SECRET:my-super-secret-key-for-jwt-token-generation-must-be-at-least-256-bits-long-for-security}
-    expiration: ${JWT_EXPIRATION:86400000}  # 24 hours in milliseconds
-    refresh-expiration: 604800000  # 7 days
+    expiration: ${JWT_EXPIRATION:86400000}
+    refresh-expiration: 604800000
+
+  mail:
+    from: ${MAIL_FROM:noreply@yourapp.com}
+    from-name: ${MAIL_FROM_NAME:Your App Name}
+
+  frontend:
+    url: ${FRONTEND_URL:http://localhost:3000}
+
+  password-reset:
+    token-expiry: 30
 
 # CORS Configuration
 cors:
@@ -65,7 +99,7 @@ cors:
   allowed-headers: "*"
   allow-credentials: true
 
-# Management Endpoints (optional - for monitoring)
+# Management Endpoints
 management:
   endpoints:
     web:
@@ -74,3 +108,10 @@ management:
   endpoint:
     health:
       show-details: always
+
+# File Upload Configuration
+file:
+  upload:
+    dir: uploads
+  max:
+    size: 10485760

@@ -1,6 +1,8 @@
 package com.saas.platform.controller;
 
 import com.saas.platform.model.Tenant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.saas.platform.service.TenantService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,8 @@ import java.util.List;
 @RequestMapping("/api/tenants")
 @CrossOrigin(origins = "http://localhost:3000")
 public class TenantController {
+	
+	private static final Logger log = LoggerFactory.getLogger(TenantController.class);
     
     private final TenantService tenantService;
     
@@ -48,7 +52,21 @@ public class TenantController {
     
     @PutMapping("/{id}")
     public ResponseEntity<Tenant> updateTenant(@PathVariable Long id, @RequestBody Tenant tenant) {
+        // ADD THESE LOGS
+        log.info("═══════════════════════════════");
+        log.info("🔹 UPDATE TENANT REQUEST");
+        log.info("  Tenant ID: {}", id);
+        log.info("  New Name: {}", tenant.getName());
+        log.info("  Subdomain: {}", tenant.getSubdomain());
+        log.info("  Status: {}", tenant.getStatus());
+        log.info("═══════════════════════════════");
+        
         Tenant updatedTenant = tenantService.updateTenant(id, tenant);
+        
+        log.info("✅ Tenant updated successfully");
+        log.info("  Saved Name: {}", updatedTenant.getName());
+        log.info("═══════════════════════════════");
+        
         return ResponseEntity.ok(updatedTenant);
     }
     

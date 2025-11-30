@@ -21,13 +21,18 @@ public class AuthService {
     private final TenantService tenantService;
     private final JwtUtil jwtUtil;
     private final ActivityLogService activityLogService;
+    private final EmailService emailService;
     
-    public AuthService(UserService userService, TenantService tenantService, 
-                      JwtUtil jwtUtil, ActivityLogService activityLogService) {
+    public AuthService(UserService userService,
+    		           TenantService tenantService, 
+                      JwtUtil jwtUtil,
+                      ActivityLogService activityLogService,
+                      EmailService emailService) {
         this.userService = userService;
         this.tenantService = tenantService;
         this.jwtUtil = jwtUtil;
         this.activityLogService = activityLogService;
+        this.emailService = emailService;
     }
     
     /**
@@ -110,6 +115,13 @@ public class AuthService {
         
         User savedUser = userService.createUser(user, savedTenant.getId());
         
+        try {
+            emailService.sendWelcomeEmail(savedUser, savedTenant.getName());
+        } catch (Exception e) {
+            log.error("Failed to send welcome email: {}", e.getMessage());
+            // Don't fail registration if email fails
+        }
+        
         // Generate JWT token
         String token = jwtUtil.generateToken(
                 savedUser.getEmail(),
@@ -142,6 +154,7 @@ public class AuthService {
         response.setTenantId(savedTenant.getId());
         response.setTenantName(savedTenant.getName());
         response.setSubdomain(savedTenant.getSubdomain());
+        
         
         return response;
     }
