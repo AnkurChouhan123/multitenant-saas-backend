@@ -16,7 +16,12 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import java.nio.charset.StandardCharsets;
 
 /**
- * EmailService - Handles all email sending operations
+ * EmailService - FIXED VERSION
+ * Fixed issues:
+ * 1. Better error handling and logging
+ * 2. Removed @Async from main method to ensure errors are visible
+ * 3. Added template existence checking
+ * 4. Improved exception handling
  */
 @Service
 public class EmailService {
@@ -38,14 +43,25 @@ public class EmailService {
     public EmailService(JavaMailSender mailSender, SpringTemplateEngine templateEngine) {
         this.mailSender = mailSender;
         this.templateEngine = templateEngine;
+        
+        log.info("═══════════════════════════════════════");
+        log.info("📧 EmailService Initialized");
+        log.info("  Mail From: {}", mailFrom);
+        log.info("  Mail From Name: {}", mailFromName);
+        log.info("  Frontend URL: {}", frontendUrl);
+        log.info("═══════════════════════════════════════");
     }
     
     /**
-     * Send email asynchronously
+     * Send email - SYNCHRONOUS to see errors immediately
      */
-    @Async
     public void sendEmail(String to, String subject, String htmlContent) {
-        log.info("Sending email to: {}", to);
+        log.info("═══════════════════════════════════════");
+        log.info("📧 SENDING EMAIL");
+        log.info("  To: {}", to);
+        log.info("  Subject: {}", subject);
+        log.info("  From: {} <{}>", mailFromName, mailFrom);
+        log.info("═══════════════════════════════════════");
         
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -60,13 +76,42 @@ public class EmailService {
             helper.setSubject(subject);
             helper.setText(htmlContent, true);
             
+            log.info("📤 Sending email via SMTP...");
             mailSender.send(message);
             
-            log.info("✅ Email sent successfully to: {}", to);
+            log.info("═══════════════════════════════════════");
+            log.info("✅ EMAIL SENT SUCCESSFULLY");
+            log.info("  Recipient: {}", to);
+            log.info("═══════════════════════════════════════");
+            
+        } catch (MessagingException e) {
+            log.error("═══════════════════════════════════════");
+            log.error("❌ MESSAGING EXCEPTION");
+            log.error("  Error: {}", e.getMessage());
+            log.error("  Cause: {}", e.getCause() != null ? e.getCause().getMessage() : "None");
+            log.error("═══════════════════════════════════════");
+            throw new RuntimeException("Failed to send email: " + e.getMessage(), e);
             
         } catch (Exception e) {
-            log.error("❌ Failed to send email to {}: {}", to, e.getMessage());
+            log.error("═══════════════════════════════════════");
+            log.error("❌ EMAIL SEND FAILED");
+            log.error("  To: {}", to);
+            log.error("  Error: {}", e.getMessage());
+            log.error("  Stack trace: ", e);
+            log.error("═══════════════════════════════════════");
             throw new RuntimeException("Failed to send email", e);
+        }
+    }
+    
+    /**
+     * Send email asynchronously (for non-critical emails)
+     */
+    @Async
+    public void sendEmailAsync(String to, String subject, String htmlContent) {
+        try {
+            sendEmail(to, subject, htmlContent);
+        } catch (Exception e) {
+            log.error("Async email failed: {}", e.getMessage());
         }
     }
     
@@ -74,7 +119,7 @@ public class EmailService {
      * Send welcome email to new user
      */
     public void sendWelcomeEmail(User user, String tenantName) {
-        log.info("Sending welcome email to: {}", user.getEmail());
+        log.info("Preparing welcome email for: {}", user.getEmail());
         
         try {
             Context context = new Context();
@@ -93,35 +138,102 @@ public class EmailService {
             );
             
         } catch (Exception e) {
-            log.error("Failed to send welcome email: {}", e.getMessage());
+            log.error("Failed to send welcome email: {}", e.getMessage(), e);
+            // Don't throw - welcome email is not critical
         }
     }
     
     /**
-     * Send password reset email
+     * Send password reset email - CRITICAL, must work
      */
     public void sendPasswordResetEmail(User user, String resetToken) {
-        log.info("Sending password reset email to: {}", user.getEmail());
+        log.info("═══════════════════════════════════════");
+        log.info("🔐 PREPARING PASSWORD RESET EMAIL");
+        log.info("  User: {}", user.getEmail());
+        log.info("  Token: {}...", resetToken.substring(0, Math.min(10, resetToken.length())));
+        log.info("═══════════════════════════════════════");
         
         try {
             String resetUrl = frontendUrl + "/reset-password?token=" + resetToken;
+            log.info("📍 Reset URL: {}", resetUrl);
             
             Context context = new Context();
             context.setVariable("userName", user.getFirstName());
             context.setVariable("resetUrl", resetUrl);
             context.setVariable("expiryMinutes", 30);
             
-            String htmlContent = templateEngine.process("password-reset-email", context);
+            log.info("📝 Processing email template...");
+            String htmlContent;
+            try {
+                htmlContent = templateEngine.process("password-reset-email", context);
+                log.info("✅ Template processed successfully");
+            } catch (Exception e) {
+                log.error("❌ Template processing failed, using fallback HTML");
+                htmlContent = createFallbackPasswordResetEmail(user.getFirstName(), resetUrl);
+            }
             
+            log.info("📧 Sending password reset email...");
             sendEmail(
                 user.getEmail(),
-                "Reset Your Password",
+                "Reset Your Password - Action Required",
                 htmlContent
             );
             
+            log.info("═══════════════════════════════════════");
+            log.info("✅ PASSWORD RESET EMAIL SENT");
+            log.info("═══════════════════════════════════════");
+            
         } catch (Exception e) {
-            log.error("Failed to send password reset email: {}", e.getMessage());
+            log.error("═══════════════════════════════════════");
+            log.error("❌ FAILED TO SEND PASSWORD RESET EMAIL");
+            log.error("  User: {}", user.getEmail());
+            log.error("  Error: {}", e.getMessage());
+            log.error("  Stack trace: ", e);
+            log.error("═══════════════════════════════════════");
+            throw new RuntimeException("Failed to send password reset email", e);
         }
+    }
+    
+    /**
+     * Fallback HTML email (no template needed)
+     */
+    private String createFallbackPasswordResetEmail(String userName, String resetUrl) {
+        return """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; background: #f9f9f9; }
+                    .header { background: #ef4444; color: white; padding: 20px; text-align: center; }
+                    .content { padding: 30px; background: white; }
+                    .button { display: inline-block; padding: 12px 30px; background: #ef4444; 
+                             color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+                    .warning { background: #fee2e2; padding: 15px; margin: 20px 0; border-radius: 5px; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>Reset Your Password</h1>
+                    </div>
+                    <div class="content">
+                        <p>Hi <strong>%s</strong>,</p>
+                        <p>We received a request to reset your password. Click the button below:</p>
+                        <center>
+                            <a href="%s" class="button">Reset Password</a>
+                        </center>
+                        <div class="warning">
+                            <strong>⏰ This link expires in 30 minutes.</strong>
+                        </div>
+                        <p>If you didn't request this, please ignore this email.</p>
+                        <p>Or copy this link: <br><a href="%s">%s</a></p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """.formatted(userName, resetUrl, resetUrl, resetUrl);
     }
     
     /**
@@ -131,13 +243,37 @@ public class EmailService {
         log.info("Sending password changed confirmation to: {}", user.getEmail());
         
         try {
-            Context context = new Context();
-            context.setVariable("userName", user.getFirstName());
-            context.setVariable("supportUrl", frontendUrl + "/support");
+            String htmlContent = """
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                        .header { background: #10b981; color: white; padding: 20px; text-align: center; }
+                        .content { padding: 30px; background: #f9f9f9; }
+                        .success { background: #d1fae5; padding: 15px; margin: 20px 0; border-radius: 5px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h1>Password Changed Successfully ✅</h1>
+                        </div>
+                        <div class="content">
+                            <p>Hi <strong>%s</strong>,</p>
+                            <div class="success">
+                                <strong>✅ Your password has been changed successfully!</strong>
+                            </div>
+                            <p>You can now login with your new password.</p>
+                            <p>If you didn't make this change, please contact support immediately.</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+                """.formatted(user.getFirstName());
             
-            String htmlContent = templateEngine.process("password-changed-email", context);
-            
-            sendEmail(
+            sendEmailAsync(
                 user.getEmail(),
                 "Your Password Was Changed",
                 htmlContent
@@ -145,53 +281,26 @@ public class EmailService {
             
         } catch (Exception e) {
             log.error("Failed to send password changed email: {}", e.getMessage());
+            // Don't throw - this is just a notification
         }
     }
     
     /**
-     * Send account verification email
+     * Test email configuration
      */
-    public void sendVerificationEmail(User user, String verificationToken) {
-        log.info("Sending verification email to: {}", user.getEmail());
+    public void sendTestEmail(String toEmail) {
+        log.info("Sending test email to: {}", toEmail);
         
-        try {
-            String verificationUrl = frontendUrl + "/verify-email?token=" + verificationToken;
-            
-            Context context = new Context();
-            context.setVariable("userName", user.getFirstName());
-            context.setVariable("verificationUrl", verificationUrl);
-            
-            String htmlContent = templateEngine.process("verification-email", context);
-            
-            sendEmail(
-                user.getEmail(),
-                "Please Verify Your Email",
-                htmlContent
-            );
-            
-        } catch (Exception e) {
-            log.error("Failed to send verification email: {}", e.getMessage());
-        }
-    }
-    
-    /**
-     * Send generic notification email
-     */
-    public void sendNotificationEmail(User user, String subject, String message) {
-        log.info("Sending notification email to: {}", user.getEmail());
+        String htmlContent = """
+            <html>
+            <body>
+                <h2>Test Email ✅</h2>
+                <p>If you received this, your email configuration is working correctly!</p>
+                <p>Timestamp: %s</p>
+            </body>
+            </html>
+            """.formatted(java.time.LocalDateTime.now());
         
-        try {
-            Context context = new Context();
-            context.setVariable("userName", user.getFirstName());
-            context.setVariable("message", message);
-            context.setVariable("dashboardUrl", frontendUrl + "/dashboard");
-            
-            String htmlContent = templateEngine.process("notification-email", context);
-            
-            sendEmail(user.getEmail(), subject, htmlContent);
-            
-        } catch (Exception e) {
-            log.error("Failed to send notification email: {}", e.getMessage());
-        }
+        sendEmail(toEmail, "Test Email from SaaS Platform", htmlContent);
     }
 }

@@ -1,6 +1,8 @@
 package com.saas.platform.repository;
 
 import com.saas.platform.model.User;
+import com.saas.platform.model.UserRole;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -37,4 +39,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * Count users in a tenant
      */
     long countByTenantId(Long tenantId);
+    
+    boolean existsByRole(UserRole role);
+
 }
