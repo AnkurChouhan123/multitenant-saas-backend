@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * PasswordResetController - REST API for password reset
- */
+
 @RestController
 @RequestMapping("/api/password-reset")
 @CrossOrigin(origins = "http://localhost:3000")
@@ -24,9 +22,7 @@ public class PasswordResetController {
         this.passwordResetService = passwordResetService;
     }
     
-    /**
-     * POST /api/password-reset/request - Request password reset
-     */
+   // reset password request
     @PostMapping("/request")
     public ResponseEntity<Map<String, String>> requestPasswordReset(
             @RequestBody PasswordResetRequest request) {
@@ -50,9 +46,7 @@ public class PasswordResetController {
         }
     }
     
-    /**
-     * GET /api/password-reset/validate/{token} - Validate reset token
-     */
+    // validate reset token
     @GetMapping("/validate/{token}")
     public ResponseEntity<Map<String, Object>> validateToken(@PathVariable String token) {
         Map<String, Object> response = new HashMap<>();
@@ -79,9 +73,7 @@ public class PasswordResetController {
         }
     }
     
-    /**
-     * POST /api/password-reset/reset - Reset password with token
-     */
+    // reset password with token
     @PostMapping("/reset")
     public ResponseEntity<Map<String, String>> resetPassword(
             @RequestBody ResetPasswordRequest request) {

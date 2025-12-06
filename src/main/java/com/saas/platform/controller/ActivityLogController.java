@@ -1,3 +1,4 @@
+
 package com.saas.platform.controller;
 
 import com.saas.platform.model.ActivityLog;
@@ -5,14 +6,12 @@ import com.saas.platform.service.ActivityLogService;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * ActivityLogController - REST API for activity logs
- */
 @RestController
 @RequestMapping("/api/activities")
 @CrossOrigin(origins = "http://localhost:3000")
@@ -24,19 +23,17 @@ public class ActivityLogController {
         this.activityLogService = activityLogService;
     }
     
-    /**
-     * GET /api/activities/tenant/{tenantId} - Get all activities for tenant
-     */
+    //view tenant activities
     @GetMapping("/tenant/{tenantId}")
+    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN', 'USER', 'VIEWER')")
     public ResponseEntity<List<ActivityLog>> getActivitiesByTenant(@PathVariable Long tenantId) {
         List<ActivityLog> activities = activityLogService.getActivitiesByTenant(tenantId);
         return ResponseEntity.ok(activities);
     }
     
-    /**
-     * GET /api/activities/tenant/{tenantId}/page - Get activities with pagination
-     */
+    //anyone can view activity page
     @GetMapping("/tenant/{tenantId}/page")
+    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN', 'USER', 'VIEWER')")
     public ResponseEntity<Page<ActivityLog>> getActivitiesPage(
             @PathVariable Long tenantId,
             @RequestParam(defaultValue = "0") int page,
@@ -45,10 +42,9 @@ public class ActivityLogController {
         return ResponseEntity.ok(activities);
     }
     
-    /**
-     * GET /api/activities/tenant/{tenantId}/type/{actionType} - Filter by type
-     */
+    // filter activities by type
     @GetMapping("/tenant/{tenantId}/type/{actionType}")
+    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN', 'USER', 'VIEWER')")
     public ResponseEntity<List<ActivityLog>> getActivitiesByType(
             @PathVariable Long tenantId,
             @PathVariable String actionType) {
@@ -56,10 +52,9 @@ public class ActivityLogController {
         return ResponseEntity.ok(activities);
     }
     
-    /**
-     * GET /api/activities/tenant/{tenantId}/range - Get activities in date range
-     */
+    // can see activities by date ranges
     @GetMapping("/tenant/{tenantId}/range")
+    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN', 'USER', 'VIEWER')")
     public ResponseEntity<List<ActivityLog>> getActivitiesByDateRange(
             @PathVariable Long tenantId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,

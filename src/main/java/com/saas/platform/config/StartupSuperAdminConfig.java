@@ -53,7 +53,7 @@ public class StartupSuperAdminConfig implements CommandLineRunner {
         superAdmin.setEmail("superadmin@saas.com");
         superAdmin.setPassword("Admin@1234");
         superAdmin.setRole(UserRole.SUPER_ADMIN);
-        superAdmin.setTenant(masterTenant); // 🔥 FIXED: assign master tenant
+        superAdmin.setTenant(masterTenant); //
 
         userService.saveWithoutTenant(superAdmin); // saves user with encoded password
 

@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * TenantController - REST API for tenant management
- */
+
 @RestController
 @RequestMapping("/api/tenants")
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})
@@ -31,9 +29,8 @@ public class TenantController {
         this.roleValidator = roleValidator;
     }
     
-    /**
-     * Get all tenants - SUPER_ADMIN only
-     */
+   // Get all tenants - SUPER_ADMIN only
+     
     @GetMapping
     @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<List<Tenant>> getAllTenants() {
@@ -42,9 +39,7 @@ public class TenantController {
         return ResponseEntity.ok(tenants);
     }
     
-    /**
-     * Get tenant by ID - Any authenticated user can view their tenant
-     */
+   // Get tenant by ID - Any authenticated user can view their tenant
     @GetMapping("/{id}")
     public ResponseEntity<Tenant> getTenantById(@PathVariable Long id) {
         log.info("🔍 Fetching tenant by ID: {}", id);
@@ -52,9 +47,7 @@ public class TenantController {
         return ResponseEntity.ok(tenant);
     }
     
-    /**
-     * Get tenant by subdomain - Public for login purposes
-     */
+   // Get tenant by subdomain - Public for login purposes
     @GetMapping("/subdomain/{subdomain}")
     public ResponseEntity<Tenant> getTenantBySubdomain(@PathVariable String subdomain) {
         log.info("🔍 Fetching tenant by subdomain: {}", subdomain);
@@ -62,9 +55,7 @@ public class TenantController {
         return ResponseEntity.ok(tenant);
     }
     
-    /**
-     * Create tenant - Handled by registration, SUPER_ADMIN only for direct creation
-     */
+    // Create tenant - Handled by registration, SUPER_ADMIN only for direct creation
     @PostMapping
     @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<Tenant> createTenant(@RequestBody Tenant tenant) {
@@ -73,10 +64,10 @@ public class TenantController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTenant);
     }
     
-    /**
-     * Update tenant - ONLY TENANT_OWNER or SUPER_ADMIN
-     * 🔒 CRITICAL: This is where company name/settings are changed
-     */
+    
+     // Update tenant - ONLY TENANT_OWNER or SUPER_ADMIN
+     //🔒 CRITICAL: This is where company name/settings are changed
+     
     @PutMapping("/{id}")
     public ResponseEntity<Tenant> updateTenant(
             @PathVariable Long id, 
@@ -101,9 +92,7 @@ public class TenantController {
         return ResponseEntity.ok(updatedTenant);
     }
     
-    /**
-     * Delete tenant - SUPER_ADMIN only
-     */
+//    Delete tenant - SUPER_ADMIN only
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     public ResponseEntity<Void> deleteTenant(@PathVariable Long id) {

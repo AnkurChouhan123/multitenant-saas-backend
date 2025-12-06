@@ -1,3 +1,4 @@
+
 package com.saas.platform.controller;
 
 import com.saas.platform.dto.ApiKeyCreateRequest;
@@ -12,10 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * API Key Management Controller - FIXED
- * Fixed authorization to allow regular users to view their API keys
- */
 @RestController
 @RequestMapping("/api/keys")
 @CrossOrigin(origins = "http://localhost:3000")
@@ -27,12 +24,10 @@ public class ApiKeyController {
         this.apiKeyService = apiKeyService;
     }
     
-    /**
-     * GET /api/keys/tenant/{tenantId} - Get all API keys for tenant
-     * FIXED: Added USER role to access
-     */
+    // VIEWER CAN VIEW API KEYS (but not modify)
+     
     @GetMapping("/tenant/{tenantId}")
-    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN', 'USER')")
+    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN', 'USER', 'VIEWER')")
     public ResponseEntity<List<ApiKeyResponse>> getTenantApiKeys(@PathVariable Long tenantId) {
         List<ApiKey> apiKeys = apiKeyService.getApiKeysByTenant(tenantId);
         List<ApiKeyResponse> response = apiKeys.stream()
@@ -41,9 +36,9 @@ public class ApiKeyController {
         return ResponseEntity.ok(response);
     }
     
-    /**
-     * POST /api/keys/tenant/{tenantId} - Create new API key
-     */
+  
+     // Anyone can create api keys (except viewer and user)
+    
     @PostMapping("/tenant/{tenantId}")
     @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<ApiKeyResponse> createApiKey(
@@ -61,9 +56,7 @@ public class ApiKeyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(convertToResponse(apiKey));
     }
     
-    /**
-     * PUT /api/keys/{keyId}/revoke - Revoke API key
-     */
+   // revoke or cancel or invalidate api key (only tenant admin and super admin)
     @PutMapping("/{keyId}/revoke")
     @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<String> revokeApiKey(@PathVariable Long keyId) {
@@ -71,9 +64,7 @@ public class ApiKeyController {
         return ResponseEntity.ok("API key revoked successfully");
     }
     
-    /**
-     * DELETE /api/keys/{keyId} - Delete API key
-     */
+    // delete api keys
     @DeleteMapping("/{keyId}")
     @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<Void> deleteApiKey(@PathVariable Long keyId) {
@@ -81,12 +72,9 @@ public class ApiKeyController {
         return ResponseEntity.noContent().build();
     }
     
-    /**
-     * GET /api/keys/{keyId}/usage - Get API key usage statistics
-     * FIXED: Added USER role to access
-     */
+   // view usage of api key
     @GetMapping("/{keyId}/usage")
-    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN', 'USER')")
+    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN', 'USER', 'VIEWER')")
     public ResponseEntity<ApiKeyResponse> getApiKeyUsage(@PathVariable Long keyId) {
         ApiKey apiKey = apiKeyService.getApiKeyById(keyId);
         return ResponseEntity.ok(convertToResponse(apiKey));

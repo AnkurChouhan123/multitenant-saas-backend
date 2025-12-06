@@ -22,10 +22,7 @@ public class EmailTestController {
         this.emailService = emailService;
     }
     
-    /**
-     * Test email sending
-     * GET /api/test/email?to=your@email.com
-     */
+   
     @GetMapping("/email")
     public ResponseEntity<Map<String, String>> testEmail(@RequestParam String to) {
         Map<String, String> response = new HashMap<>();

@@ -1,3 +1,4 @@
+
 package com.saas.platform.controller;
 
 import com.saas.platform.model.TenantSettings;
@@ -6,10 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * TenantSettingsController - REST API for tenant customization
- * Allows tenants to configure branding, features, and preferences
- */
 @RestController
 @RequestMapping("/api/settings")
 @CrossOrigin(origins = "http://localhost:3000")
@@ -21,19 +18,15 @@ public class TenantSettingsController {
         this.settingsService = settingsService;
     }
     
-    /**
-     * GET /api/settings/tenant/{tenantId} - Get tenant settings
-     */
+    // view settings
     @GetMapping("/tenant/{tenantId}")
-    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN', 'USER')")
+    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN', 'USER', 'VIEWER')")
     public ResponseEntity<TenantSettings> getSettings(@PathVariable Long tenantId) {
         TenantSettings settings = settingsService.getSettingsByTenantId(tenantId);
         return ResponseEntity.ok(settings);
     }
     
-    /**
-     * PUT /api/settings/tenant/{tenantId} - Update tenant settings
-     */
+    // update settings
     @PutMapping("/tenant/{tenantId}")
     @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<TenantSettings> updateSettings(
@@ -48,9 +41,7 @@ public class TenantSettingsController {
         return ResponseEntity.ok(updated);
     }
     
-    /**
-     * PUT /api/settings/tenant/{tenantId}/branding - Update branding only
-     */
+//    update branding
     @PutMapping("/tenant/{tenantId}/branding")
     @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<TenantSettings> updateBranding(
@@ -68,9 +59,7 @@ public class TenantSettingsController {
         return ResponseEntity.ok(updated);
     }
     
-    /**
-     * POST /api/settings/tenant/{tenantId}/reset - Reset to defaults
-     */
+    // reset settings
     @PostMapping("/tenant/{tenantId}/reset")
     @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<TenantSettings> resetSettings(
@@ -82,11 +71,9 @@ public class TenantSettingsController {
         return ResponseEntity.ok(defaults);
     }
     
-    /**
-     * GET /api/settings/tenant/{tenantId}/feature/{feature} - Check if feature enabled
-     */
+    // check features
     @GetMapping("/tenant/{tenantId}/feature/{feature}")
-    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN', 'USER')")
+    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN', 'USER', 'VIEWER')")
     public ResponseEntity<Boolean> isFeatureEnabled(
             @PathVariable Long tenantId,
             @PathVariable String feature) {

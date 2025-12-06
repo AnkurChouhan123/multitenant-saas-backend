@@ -2,6 +2,7 @@ package com.saas.platform.controller;
 
 import com.saas.platform.dto.WebhookCreateRequest;
 import com.saas.platform.model.Webhook;
+import com.saas.platform.security.RoleValidator;
 import com.saas.platform.service.WebhookService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,24 +11,24 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * WebhookController - REST API for webhook management
- * Allows tenants to configure webhooks for receiving event notifications
- */
+
 @RestController
 @RequestMapping("/api/webhooks")
 @CrossOrigin(origins = "http://localhost:3000")
 public class WebhookController {
     
     private final WebhookService webhookService;
+    private final RoleValidator roleValidator;
     
-    public WebhookController(WebhookService webhookService) {
-        this.webhookService = webhookService;
-    }
+    public WebhookController(WebhookService webhookService, RoleValidator roleValidator) {
+		super();
+		this.webhookService = webhookService;
+		this.roleValidator = roleValidator;
+	}
     
-    /**
-     * GET /api/webhooks/tenant/{tenantId} - Get all webhooks for tenant
-     */
+    
+     // Get all webhooks for tenant
+     
     @GetMapping("/tenant/{tenantId}")
     @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<List<Webhook>> getTenantWebhooks(@PathVariable Long tenantId) {
@@ -35,15 +36,18 @@ public class WebhookController {
         return ResponseEntity.ok(webhooks);
     }
     
-    /**
-     * POST /api/webhooks/tenant/{tenantId} - Create new webhook
-     */
+    
+    // Create new webhook
+     
     @PostMapping("/tenant/{tenantId}")
     @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<Webhook> createWebhook(
             @PathVariable Long tenantId,
             @RequestParam Long userId,
             @RequestBody WebhookCreateRequest request) {
+    	
+    	roleValidator.requireWebhookPermission(tenantId);
+
         
         Webhook webhook = webhookService.createWebhook(
             tenantId,
@@ -56,9 +60,7 @@ public class WebhookController {
         return ResponseEntity.status(HttpStatus.CREATED).body(webhook);
     }
     
-    /**
-     * PUT /api/webhooks/{webhookId} - Update webhook
-     */
+     // update webhook
     @PutMapping("/{webhookId}")
     @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<Webhook> updateWebhook(
@@ -76,9 +78,7 @@ public class WebhookController {
         return ResponseEntity.ok(webhook);
     }
     
-    /**
-     * DELETE /api/webhooks/{webhookId} - Delete webhook
-     */
+    // Delete webhook
     @DeleteMapping("/{webhookId}")
     @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<Void> deleteWebhook(@PathVariable Long webhookId) {
@@ -86,9 +86,9 @@ public class WebhookController {
         return ResponseEntity.noContent().build();
     }
     
-    /**
-     * POST /api/webhooks/{webhookId}/test - Test webhook by sending ping
-     */
+    
+     //Test webhook by sending ping
+     
     @PostMapping("/{webhookId}/test")
     @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<String> testWebhook(@PathVariable Long webhookId) {
@@ -102,9 +102,8 @@ public class WebhookController {
         }
     }
     
-    /**
-     * GET /api/webhooks/{webhookId}/stats - Get webhook statistics
-     */
+    
+     //Get webhook statistics
     @GetMapping("/{webhookId}/stats")
     @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN')")
     public ResponseEntity<WebhookService.WebhookStats> getWebhookStats(
