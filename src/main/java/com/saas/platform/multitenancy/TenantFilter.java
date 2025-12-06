@@ -10,7 +10,8 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 /**
- * TenantFilter - Extracts tenant identifier from each HTTP request
+ * TenantFilter - SECURITY FIXED
+ * Extracts tenant identifier from each HTTP request
  * This runs BEFORE any controller logic
  */
 @Component
@@ -40,11 +41,9 @@ public class TenantFilter implements Filter {
             // Continue with the request
             chain.doFilter(request, response);
             
-        } 
-        
-        finally {
-            // ALWAYS clear context after request completes
-//            TenantContext.clear();
+        } finally {
+            // 🔒 CRITICAL SECURITY FIX: UNCOMMENTED - Always clear context after request
+            TenantContext.clear();
             log.debug("Tenant context cleared");
         }
     }

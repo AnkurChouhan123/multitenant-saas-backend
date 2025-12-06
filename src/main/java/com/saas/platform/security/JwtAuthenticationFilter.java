@@ -18,11 +18,8 @@ import java.io.IOException;
 import java.util.Collections;
 
 /**
- * JWT Authentication Filter - FIXED
- * Fixed issues:
- * 1. Better error handling
- * 2. Clear authentication on invalid tokens
- * 3. Proper role prefix handling
+ * JWT Authentication Filter - SECURITY FIXED
+ * Fixed: Added proper TenantContext cleanup to prevent data leakage
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -62,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                 log.debug("Set tenant context: {}", tenantId);
                             }
                             
-                            // FIXED: Ensure role has proper prefix
+                            // Ensure role has proper prefix
                             String roleWithPrefix = role;
                             if (!role.startsWith("ROLE_")) {
                                 roleWithPrefix = "ROLE_" + role;
@@ -75,13 +72,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     new UsernamePasswordAuthenticationToken(
                                             email,
                                             null,
-                                            Collections.singletonList(authority) // authorities already set = authenticated
+                                            Collections.singletonList(authority)
                                     );
 
                             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                             SecurityContextHolder.getContext().setAuthentication(authentication);
-
                             
                             log.debug("JWT authentication successful for user: {} with role: {} (tenant: {})", 
                                      email, roleWithPrefix, tenantId);
@@ -91,16 +86,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     }
                 } catch (Exception e) {
                     log.error("JWT token validation error: {}", e.getMessage());
-                    // Clear the security context on invalid token
                     SecurityContextHolder.clearContext();
                 }
             }
+            
+            filterChain.doFilter(request, response);
+            
         } catch (Exception e) {
             log.error("Cannot set user authentication: {}", e.getMessage());
             SecurityContextHolder.clearContext();
+            throw e;
+            
+        } finally {
+            // 🔒 CRITICAL SECURITY FIX: Always clear tenant context after request
+            TenantContext.clear();
+            log.debug("Tenant context cleared after request");
         }
-        
-        filterChain.doFilter(request, response);
     }
     
     private String extractTokenFromRequest(HttpServletRequest request) {

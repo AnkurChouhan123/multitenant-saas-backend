@@ -1,17 +1,17 @@
 package com.saas.platform.service;
 
 import org.springframework.stereotype.Service;
-
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuditService {
     private final ActivityLogService activityLogService;
     
     public AuditService(ActivityLogService activityLogService) {
-    	this.activityLogService=activityLogService;
+        this.activityLogService = activityLogService;
     }
     
+ 
     @Transactional
     public void auditChange(Long tenantId, String userId, String entityType, 
                            String action, Object before, Object after) {
@@ -19,8 +19,13 @@ public class AuditService {
             entityType, before, after);
         
         activityLogService.logActivity(
-            tenantId, Long.parseLong(userId), "", "",
-            "Updated " + entityType, "data", details
+            tenantId, 
+            Long.parseLong(userId), 
+            "", 
+            "",
+            "Updated " + entityType, 
+            "data", 
+            details
         );
     }
 }

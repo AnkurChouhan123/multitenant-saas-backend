@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * WebhookService - Manages webhook configurations and triggers
- * Allows tenants to receive real-time notifications about events
+ * WebhookService - FIXED
+ * Fixed: RestTemplate now injected via constructor instead of new instance
  */
 @Service
 public class WebhookService {
@@ -31,11 +31,15 @@ public class WebhookService {
     private final ActivityLogService activityLogService;
     private final RestTemplate restTemplate;
     
+    /**
+     * ✅ FIXED: RestTemplate injected via constructor
+     */
     public WebhookService(WebhookRepository webhookRepository,
-                         ActivityLogService activityLogService) {
+                         ActivityLogService activityLogService,
+                         RestTemplate restTemplate) {
         this.webhookRepository = webhookRepository;
         this.activityLogService = activityLogService;
-        this.restTemplate = new RestTemplate();
+        this.restTemplate = restTemplate;
     }
     
     /**
