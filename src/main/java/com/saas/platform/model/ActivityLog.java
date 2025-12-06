@@ -7,7 +7,11 @@ import java.time.LocalDateTime;
  * ActivityLog Entity - Tracks all user actions
  */
 @Entity
-@Table(name = "activity_logs")
+@Table(name = "activity_logs", indexes = {
+	    @Index(name = "idx_tenant_created", columnList = "tenant_id, created_at"),
+	    @Index(name = "idx_action_type", columnList = "action_type"),
+	    @Index(name = "idx_user_id", columnList = "user_id")
+	})
 public class ActivityLog {
     
     @Id

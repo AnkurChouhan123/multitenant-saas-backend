@@ -9,6 +9,7 @@ import com.saas.platform.repository.SubscriptionRepository;
 import com.saas.platform.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -175,9 +176,17 @@ public class SubscriptionService {
         }
     }
     
-    /**
-     * Increment API call count
-     */
+    @Scheduled(cron = "0 0 0 1 * ?") // First day of month at midnight
+    public void resetMonthlyApiCounts() {
+        List<Subscription> subscriptions = subscriptionRepository.findAll();
+        subscriptions.forEach(sub -> {
+            sub.setCurrentApiCalls(0);
+            subscriptionRepository.save(sub);
+        });
+    }
+    
+    // Increment API call count
+
     @Transactional
     public void incrementApiCallCount(Long tenantId) {
         Subscription subscription = getSubscriptionByTenantId(tenantId);

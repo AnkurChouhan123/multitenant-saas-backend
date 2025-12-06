@@ -6,11 +6,15 @@ import com.saas.platform.repository.UserRepository;
 import com.saas.platform.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class StartupSuperAdminConfig implements CommandLineRunner {
+	
+	@Value("${app.superadmin.default-password:CHANGE_ME_IN_PRODUCTION}")
+	private String defaultPassword;
 
     private static final Logger log = LoggerFactory.getLogger(StartupSuperAdminConfig.class);
 
@@ -51,7 +55,7 @@ public class StartupSuperAdminConfig implements CommandLineRunner {
         superAdmin.setFirstName("Super");
         superAdmin.setLastName("Admin");
         superAdmin.setEmail("superadmin@saas.com");
-        superAdmin.setPassword("Admin@1234");
+        superAdmin.setPassword(defaultPassword);
         superAdmin.setRole(UserRole.SUPER_ADMIN);
         superAdmin.setTenant(masterTenant); //
 

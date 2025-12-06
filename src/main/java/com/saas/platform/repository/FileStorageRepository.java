@@ -3,6 +3,7 @@ package com.saas.platform.repository;
 import com.saas.platform.model.FileStorage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -37,8 +38,8 @@ public interface FileStorageRepository extends JpaRepository<FileStorage, Long> 
     List<FileStorage> findByTenantIdAndTagsContainingAndDeletedAtIsNull(Long tenantId, String tag);
     
     // Find shared files for a user
-    @Query("SELECT f FROM FileStorage f WHERE f.tenantId = ?1 AND f.sharedWith LIKE %?2% AND f.deletedAt IS NULL")
-    List<FileStorage> findSharedFiles(Long tenantId, String userId);
+    @Query("SELECT f FROM FileStorage f WHERE f.tenantId = :tenantId AND f.sharedWith LIKE CONCAT('%', :userId, '%') AND f.deletedAt IS NULL")
+    List<FileStorage> findSharedFiles(@Param("tenantId") Long tenantId, @Param("userId") String userId);
     
     // Find expired files
     List<FileStorage> findByExpiresAtBeforeAndDeletedAtIsNull(LocalDateTime dateTime);

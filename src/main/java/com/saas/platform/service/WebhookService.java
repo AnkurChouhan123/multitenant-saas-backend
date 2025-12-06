@@ -2,6 +2,8 @@ package com.saas.platform.service;
 
 import com.saas.platform.model.Webhook;
 import com.saas.platform.repository.WebhookRepository;
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
@@ -12,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
@@ -245,9 +248,11 @@ public class WebhookService {
      * Generate secret key for webhook signature
      */
     private String generateSecretKey() {
-        return "whsec_" + UUID.randomUUID().toString().replace("-", "");
+        SecureRandom random = new SecureRandom();
+        byte[] bytes = new byte[32];
+        random.nextBytes(bytes);
+        return "whsec_" + Base64.getEncoder().encodeToString(bytes).replace("=", "");
     }
-    
     /**
      * Generate HMAC signature for webhook payload
      */

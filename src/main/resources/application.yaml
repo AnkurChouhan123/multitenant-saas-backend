@@ -91,7 +91,8 @@ app:
 
   password-reset:
     token-expiry: 30
-
+  superadmin:
+    default-password: ${SUPERADMIN_PASSWORD:Admin@1234}
 # CORS Configuration
 cors:
   allowed-origins: http://localhost:3000,http://localhost:3001
