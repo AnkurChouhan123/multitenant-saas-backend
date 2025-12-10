@@ -7,15 +7,21 @@ import com.saas.platform.security.RoleValidator;
 import com.saas.platform.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-
+/**
+ * UserController with proper permissions:
+ * - TENANT_OWNER, TENANT_ADMIN: Full management (view, create, edit, delete)
+ * - USER: View only (can see user list, no modifications)
+ * - VIEWER: No access to user management
+ */
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})
 public class UserController {
     
     private final UserService userService;
@@ -26,98 +32,197 @@ public class UserController {
         this.roleValidator = roleValidator;
     }
     
-    // Get all users in tenant
+    /**
+     * Get all users in tenant
+     * VIEW ACCESS: TENANT_OWNER, TENANT_ADMIN, USER (read-only)
+     * NO ACCESS: VIEWER
+     */
     @GetMapping("/tenant/{tenantId}")
-    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN')")
-    public ResponseEntity<List<User>> getUsersByTenant(@PathVariable Long tenantId) {
-        // Verify user management permission
-        roleValidator.requireUserManagementPermission(tenantId);
-        
-        List<User> users = userService.getUsersByTenant(tenantId);
-        return ResponseEntity.ok(users);
+    public ResponseEntity<?> getUsersByTenant(@PathVariable Long tenantId) {
+        try {
+            // Check if user can view users in this tenant
+            roleValidator.requireUserViewPermission(tenantId);
+            
+            List<User> users = userService.getUsersByTenant(tenantId);
+            return ResponseEntity.ok(users);
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(createErrorResponse(e.getMessage()));
+        }
     }
     
-    // Get user by ID
+    /**
+     * Get user by ID - Anyone in tenant can view
+     */
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN', 'USER', 'VIEWER')")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        User user = userService.getUserById(id);
-        return ResponseEntity.ok(user);
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
+        try {
+            User user = userService.getUserById(id);
+            
+            // Verify tenant access
+            roleValidator.requireTenantAccess(user.getTenant().getId());
+            
+            return ResponseEntity.ok(user);
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(createErrorResponse(e.getMessage()));
+        }
     }
     
-    //Get user by email
+    /**
+     * Get user by email - Anyone in tenant can view
+     */
     @GetMapping("/email/{email}")
-    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN', 'USER', 'VIEWER')")
-    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
-        User user = userService.getUserByEmail(email);
-        return ResponseEntity.ok(user);
+    public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
+        try {
+            User user = userService.getUserByEmail(email);
+            
+            // Verify tenant access
+            roleValidator.requireTenantAccess(user.getTenant().getId());
+            
+            return ResponseEntity.ok(user);
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(createErrorResponse(e.getMessage()));
+        }
     }
     
-    // Create new user
+    /**
+     * Create new user
+     * MANAGEMENT ACCESS: TENANT_OWNER, TENANT_ADMIN only
+     */
     @PostMapping
-    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN')")
-    public ResponseEntity<User> createUser(@RequestBody User user, @RequestParam Long tenantId) {
-        // Verify user management permission
-        roleValidator.requireUserManagementPermission(tenantId);
-        
-        // Verify role assignment permission
-        roleValidator.requireRoleAssignmentPermission(user.getRole());
-        
-        User createdUser = userService.createUser(user, tenantId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+    public ResponseEntity<?> createUser(@RequestBody User user, @RequestParam Long tenantId) {
+        try {
+            // Verify user management permission (TENANT_OWNER, TENANT_ADMIN)
+            roleValidator.requireUserManagementPermission(tenantId);
+            
+            // Verify role assignment permission
+            roleValidator.requireRoleAssignmentPermission(user.getRole());
+            
+            User createdUser = userService.createUser(user, tenantId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(createErrorResponse(e.getMessage()));
+        }
     }
     
-    //change password
-     
+    /**
+     * Change password - Users can change their own password
+     */
     @PostMapping("/{id}/change-password")
-    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN', 'USER', 'VIEWER')")
-    public ResponseEntity<String> changePassword(
+    public ResponseEntity<?> changePassword(
             @PathVariable Long id,
             @RequestBody PasswordChangeRequest request) {
-        userService.changePassword(id, request);
-        return ResponseEntity.ok("Password changed successfully");
-    }
-    
-    // Update user
-    @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN')")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        // Get target user
-        User targetUser = userService.getUserById(id);
-        
-        // Verify modification permission (checks role hierarchy)
-        roleValidator.requireUserModificationPermission(targetUser);
-        
-        // If role is changing, verify role assignment permission
-        if (!targetUser.getRole().equals(user.getRole())) {
-            roleValidator.requireRoleAssignmentPermission(user.getRole());
+        try {
+            // Users can only change their own password
+            User currentUser = roleValidator.getCurrentUser();
+            if (!currentUser.getId().equals(id) && !roleValidator.isAdmin()) {
+                throw new SecurityException("You can only change your own password");
+            }
+            
+            userService.changePassword(id, request);
+            return ResponseEntity.ok("Password changed successfully");
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(createErrorResponse(e.getMessage()));
         }
-        
-        User updatedUser = userService.updateUser(id, user);
-        return ResponseEntity.ok(updatedUser);
     }
     
-    // Update own profile 
+    /**
+     * Update user
+     * MANAGEMENT ACCESS: TENANT_OWNER, TENANT_ADMIN only
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User user) {
+        try {
+            // Get target user
+            User targetUser = userService.getUserById(id);
+            
+            // Verify modification permission (checks role hierarchy)
+            roleValidator.requireUserModificationPermission(targetUser);
+            
+            // If role is changing, verify role assignment permission
+            if (!targetUser.getRole().equals(user.getRole())) {
+                roleValidator.requireRoleAssignmentPermission(user.getRole());
+            }
+            
+            User updatedUser = userService.updateUser(id, user);
+            return ResponseEntity.ok(updatedUser);
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(createErrorResponse(e.getMessage()));
+        }
+    }
+    
+    /**
+     * Update own profile - Everyone can update their own profile
+     */
     @PatchMapping("/{id}/profile")
-    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN', 'USER', 'VIEWER')")
-    public ResponseEntity<User> updateProfile(
+    public ResponseEntity<?> updateProfile(
             @PathVariable Long id,
             @RequestBody UpdateProfileRequest request) {
-        User updatedUser = userService.updateProfile(id, request);
-        return ResponseEntity.ok(updatedUser);
+        try {
+            // Users can only update their own profile
+            User currentUser = roleValidator.getCurrentUser();
+            if (!currentUser.getId().equals(id) && !roleValidator.isAdmin()) {
+                throw new SecurityException("You can only update your own profile");
+            }
+            
+            User updatedUser = userService.updateProfile(id, request);
+            return ResponseEntity.ok(updatedUser);
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(createErrorResponse(e.getMessage()));
+        }
     }
     
-    // Delete user
+    /**
+     * Delete user
+     * MANAGEMENT ACCESS: TENANT_OWNER, TENANT_ADMIN only
+     */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN')")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        // Get target user
-        User targetUser = userService.getUserById(id);
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        try {
+            // Get target user
+            User targetUser = userService.getUserById(id);
+            
+            // Verify modification permission (checks role hierarchy)
+            roleValidator.requireUserModificationPermission(targetUser);
+            
+            userService.deleteUser(id);
+            return ResponseEntity.noContent().build();
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(createErrorResponse(e.getMessage()));
+        }
+    }
+    
+    /**
+     * Check current user's permissions for user management
+     */
+    @GetMapping("/check-permission/{tenantId}")
+    public ResponseEntity<Map<String, Object>> checkPermission(@PathVariable Long tenantId) {
+        Map<String, Object> response = new HashMap<>();
         
-        // Verify modification permission (checks role hierarchy)
-        roleValidator.requireUserModificationPermission(targetUser);
+        try {
+            response.put("canView", roleValidator.canViewUsers(tenantId));
+            response.put("canManage", roleValidator.canManageUsers(tenantId));
+            response.put("role", roleValidator.getCurrentUser().getRole().toString());
+        } catch (Exception e) {
+            response.put("canView", false);
+            response.put("canManage", false);
+            response.put("error", e.getMessage());
+        }
         
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(response);
+    }
+    
+    // Helper method
+    private Map<String, String> createErrorResponse(String message) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", message);
+        return response;
     }
 }

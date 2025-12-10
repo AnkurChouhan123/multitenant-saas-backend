@@ -338,23 +338,26 @@ public class RoleValidator {
      * Check if user can manage subscriptions
      * Only SUPER_ADMIN and TENANT_OWNER
      */
-    public boolean canManageSubscription(Long tenantId) {
-        User user = getCurrentUser();
-        return user.getRole() == UserRole.SUPER_ADMIN ||
-               (user.getRole() == UserRole.TENANT_OWNER && 
-                user.getTenant().getId().equals(tenantId));
-    }
+//    public boolean canManageSubscription(Long tenantId) {
+//        User user = getCurrentUser();
+//        return user.getRole() == UserRole.SUPER_ADMIN ||
+//               (user.getRole() == UserRole.TENANT_OWNER && 
+//                user.getTenant().getId().equals(tenantId));
+//    }
     
     /**
      * Require subscription management permission
      */
-    public void requireSubscriptionPermission(Long tenantId) {
-        if (!canManageSubscription(tenantId)) {
-            throw new AccessDeniedException(
-                "Only TENANT_OWNER or SUPER_ADMIN can manage subscriptions"
-            );
-        }
-    }
+//    public void requireSubscriptionPermission(Long tenantId) {
+//        User currentUser = getCurrentUser();
+//        
+//        // Only SUPER_ADMIN can manage subscriptions
+//        if (currentUser.getRole() != UserRole.SUPER_ADMIN) {
+//            throw new SecurityException(
+//                "Access denied: Only SUPER_ADMIN can manage subscriptions"
+//            );
+//        }
+//    }
     
     /**
      * Check if user can manage webhooks
@@ -362,18 +365,23 @@ public class RoleValidator {
      */
     public boolean canManageWebhooks(Long tenantId) {
         User user = getCurrentUser();
-        return user.getRole() == UserRole.SUPER_ADMIN ||
-               (user.getRole() == UserRole.TENANT_OWNER && 
-                user.getTenant().getId().equals(tenantId));
+        
+        // Must be in the correct tenant AND have TENANT_OWNER or TENANT_ADMIN role
+        if (user.getTenant().getId().equals(tenantId) &&
+            (user.getRole() == UserRole.TENANT_OWNER || 
+             user.getRole() == UserRole.TENANT_ADMIN)) {
+            return true;
+        }
+        
+        return false;
     }
-    
     /**
      * Require webhook management permission
      */
     public void requireWebhookPermission(Long tenantId) {
         if (!canManageWebhooks(tenantId)) {
             throw new AccessDeniedException(
-                "Only TENANT_OWNER or SUPER_ADMIN can manage webhooks"
+                "Only TENANT_OWNER or TENANT_ADMIN can manage webhooks"
             );
         }
     }
@@ -448,4 +456,140 @@ public class RoleValidator {
             );
         }
     }
+    
+    public boolean hasSubscriptionPermission() {
+        try {
+            User currentUser = getCurrentUser();
+            return currentUser.getRole() == UserRole.SUPER_ADMIN;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    
+    public boolean canViewSubscription(Long tenantId) {
+        User user = getCurrentUser();
+        
+        // SUPER_ADMIN can view any tenant's subscription (for support)
+        if (user.getRole() == UserRole.SUPER_ADMIN) {
+            return true;
+        }
+        
+        // Must belong to the tenant
+        if (!user.getTenant().getId().equals(tenantId)) {
+            return false;
+        }
+        
+        // TENANT_OWNER and TENANT_ADMIN can view their own tenant's subscription
+        return user.getRole() == UserRole.TENANT_OWNER || 
+               user.getRole() == UserRole.TENANT_ADMIN;
+    }
+
+    /**
+     * Check if user can MANAGE (change/upgrade/cancel) subscriptions
+     * ONLY TENANT_OWNER can manage
+     */
+    public boolean canManageSubscription(Long tenantId) {
+        User user = getCurrentUser();
+        
+        // Only TENANT_OWNER can manage their own tenant's subscription
+        return user.getRole() == UserRole.TENANT_OWNER && 
+               user.getTenant().getId().equals(tenantId);
+    }
+
+    /**
+     * Require VIEW subscription permission
+     * TENANT_OWNER, TENANT_ADMIN, SUPER_ADMIN can view
+     */
+    public void requireSubscriptionViewPermission(Long tenantId) {
+        if (!canViewSubscription(tenantId)) {
+            throw new AccessDeniedException(
+                "Access denied: Only TENANT_OWNER, TENANT_ADMIN, or SUPER_ADMIN can view subscription details"
+            );
+        }
+    }
+
+    /**
+     * Require MANAGE subscription permission (change/upgrade/cancel)
+     * ONLY TENANT_OWNER can manage
+     */
+    public void requireSubscriptionPermission(Long tenantId) {
+        if (!canManageSubscription(tenantId)) {
+            throw new AccessDeniedException(
+                "Access denied: Only TENANT_OWNER can manage subscriptions"
+            );
+        }
+    }
+
+    /**
+     * Check if user has subscription management permission
+     * Used by frontend to show/hide UI elements
+     */
+    public boolean hasSubscriptionManagementPermission() {
+        try {
+            User currentUser = getCurrentUser();
+            return currentUser.getRole() == UserRole.TENANT_OWNER;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Check if user has subscription view permission
+     * Used by frontend to determine if user can see the page
+     */
+    public boolean hasSubscriptionViewPermission() {
+        try {
+            User currentUser = getCurrentUser();
+            UserRole role = currentUser.getRole();
+            return role == UserRole.TENANT_OWNER || 
+                   role == UserRole.TENANT_ADMIN || 
+                   role == UserRole.SUPER_ADMIN;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+ // Add these methods to your existing RoleValidator.java
+
+    /**
+     * Check if user can VIEW users in tenant
+     * TENANT_OWNER, TENANT_ADMIN, USER can view
+     * VIEWER cannot view
+     */
+    public boolean canViewUsers(Long tenantId) {
+        User user = getCurrentUser();
+        
+        // SUPER_ADMIN can view any tenant's users
+        if (user.getRole() == UserRole.SUPER_ADMIN) {
+            return true;
+        }
+        
+        // Must belong to the tenant
+        if (!user.getTenant().getId().equals(tenantId)) {
+            return false;
+        }
+        
+        // TENANT_OWNER, TENANT_ADMIN, and USER can view
+        return user.getRole() == UserRole.TENANT_OWNER || 
+               user.getRole() == UserRole.TENANT_ADMIN ||
+               user.getRole() == UserRole.USER;
+    }
+
+    /**
+     * Require permission to VIEW users
+     * TENANT_OWNER, TENANT_ADMIN, USER can view
+     * VIEWER is denied
+     */
+    public void requireUserViewPermission(Long tenantId) {
+        if (!canViewUsers(tenantId)) {
+            throw new AccessDeniedException(
+                "Access denied: Only TENANT_OWNER, TENANT_ADMIN, and USER can view user list. Viewers cannot access user management."
+            );
+        }
+    }
+
+    
+
+
 }
