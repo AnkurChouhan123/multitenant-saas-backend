@@ -589,7 +589,17 @@ public class RoleValidator {
         }
     }
 
-    
+    /**
+     * Require permission to view detailed logs and analytics
+     * Only TENANT_OWNER and TENANT_ADMIN can view
+     */
+    public void requireDetailedLogPermission(Long tenantId) {
+        if (!canViewDetailedLogs(tenantId)) {
+            throw new AccessDeniedException(
+                "Access denied: Only TENANT_OWNER and TENANT_ADMIN can view analytics and activity logs"
+            );
+        }
+    }
 
 
 }
