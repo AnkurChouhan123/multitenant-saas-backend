@@ -75,7 +75,7 @@ public class AuthService {
             "User successfully authenticated"
         );
         
-        log.info("Login successful for user: {}", user.getEmail());
+        log.info("Login successful for user: {} with role: {}", user.getEmail(), user.getRole());
         
         // Build response
         AuthResponse response = new AuthResponse();
@@ -93,32 +93,41 @@ public class AuthService {
     }
     
     /**
-     * Register - Create new tenant and admin user
+     * Register - Create new tenant and TENANT_OWNER user
+     * UPDATED: First user is now TENANT_OWNER instead of TENANT_ADMIN
      */
     @Transactional
     public AuthResponse register(RegisterRequest request) {
-        log.info("Registration attempt for: {}", request.getEmail());
+        log.info("═══════════════════════════════════════");
+        log.info("📝 REGISTRATION STARTED");
+        log.info("  Email: {}", request.getEmail());
+        log.info("  Company: {}", request.getCompanyName());
+        log.info("═══════════════════════════════════════");
         
         // Create tenant
         Tenant tenant = new Tenant();
         tenant.setName(request.getCompanyName());
         tenant.setSubdomain(request.getSubdomain());
         Tenant savedTenant = tenantService.createTenant(tenant);
+        log.info("✅ Tenant created: {} (ID: {})", savedTenant.getName(), savedTenant.getId());
         
-        // Create admin user
+        // Create TENANT_OWNER user (first user of tenant)
         User user = new User();
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
-        user.setRole(UserRole.TENANT_ADMIN);
+        user.setRole(UserRole.TENANT_OWNER); // ✅ CHANGED: First user is TENANT_OWNER
         
         User savedUser = userService.createUser(user, savedTenant.getId());
+        log.info("✅ TENANT_OWNER created: {} (ID: {})", savedUser.getEmail(), savedUser.getId());
         
+        // Send welcome email
         try {
             emailService.sendWelcomeEmail(savedUser, savedTenant.getName());
+            log.info("✅ Welcome email sent");
         } catch (Exception e) {
-            log.error("Failed to send welcome email: {}", e.getMessage());
+            log.error("❌ Failed to send welcome email: {}", e.getMessage());
             // Don't fail registration if email fails
         }
         
@@ -136,12 +145,16 @@ public class AuthService {
             savedUser.getId(),
             savedUser.getEmail(),
             savedUser.getFirstName() + " " + savedUser.getLastName(),
-            "Account registered",
+            "Account registered as TENANT_OWNER",
             "auth",
-            "New tenant and admin user created"
+            "New tenant and owner user created"
         );
         
-        log.info("Registration successful for: {}", savedUser.getEmail());
+        log.info("═══════════════════════════════════════");
+        log.info("✅ REGISTRATION COMPLETED");
+        log.info("  User: {} (TENANT_OWNER)", savedUser.getEmail());
+        log.info("  Tenant: {}", savedTenant.getName());
+        log.info("═══════════════════════════════════════");
         
         // Build response
         AuthResponse response = new AuthResponse();
@@ -154,7 +167,6 @@ public class AuthService {
         response.setTenantId(savedTenant.getId());
         response.setTenantName(savedTenant.getName());
         response.setSubdomain(savedTenant.getSubdomain());
-        
         
         return response;
     }
