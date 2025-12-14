@@ -1,6 +1,4 @@
 package com.saas.platform.dto;
-
-
 public class GlobalAnalyticsDto {
     // Growth metrics
     private Long newTenantsLast30Days;

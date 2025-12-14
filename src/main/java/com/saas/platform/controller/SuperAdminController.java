@@ -38,7 +38,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/superadmin")
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})
-@PreAuthorize("hasAuthority('SUPER_ADMIN')")
+@PreAuthorize("hasAuthority('ROLE_SUPER_ADMIN')")
 public class SuperAdminController {
     
     private final SuperAdminService superAdminService;
