@@ -9,35 +9,35 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * UserRepository - Database operations for User
- */
+//
+// UserRepository - Database operations for User
+ 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     
-    /**
-     * Find user by email (for login)
-     */
+    //
+// Find user by email (for login)
+     
     Optional<User> findByEmail(String email);
     
-    /**
-     * Check if email exists
-     */
+    //
+// Check if email exists
+     
     boolean existsByEmail(String email);
     
-    /**
-     * Find all users belonging to a specific tenant
-     */
+    //
+// Find all users belonging to a specific tenant
+     
     List<User> findByTenantId(Long tenantId);
     
-    /**
-     * Find user by email and tenant (ensures tenant isolation)
-     */
+    //
+// Find user by email and tenant (ensures tenant isolation)
+     
     Optional<User> findByEmailAndTenantId(String email, Long tenantId);
     
-    /**
-     * Count users in a tenant
-     */
+    //
+// Count users in a tenant
+     
     long countByTenantId(Long tenantId);
     
     boolean existsByRole(UserRole role);

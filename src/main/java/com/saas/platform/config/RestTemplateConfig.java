@@ -9,17 +9,17 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
 
-/**
- * RestTemplateConfig - Configuration for RestTemplate
- * Provides proper timeout and connection pooling settings
- */
+
+//  RestTemplateConfig - Configuration for RestTemplate
+//  Provides proper timeout and connection pooling settings
+
 @Configuration
 public class RestTemplateConfig {
     
-    /**
-     * Create RestTemplate bean with proper timeouts
-     * Used by WebhookService for HTTP requests
-     */
+    
+     // Create RestTemplate bean with proper timeouts
+     // Used by WebhookService for HTTP requests
+     
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         return builder
@@ -29,9 +29,9 @@ public class RestTemplateConfig {
             .build();
     }
     
-    /**
-     * Configure HTTP client factory with timeouts
-     */
+    
+      //  configure HTTP client factory with timeouts
+     
     private ClientHttpRequestFactory clientHttpRequestFactory() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(5000);  // 5 seconds connection timeout

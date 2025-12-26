@@ -3,9 +3,9 @@ package com.saas.platform.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-/**
- * ActivityLog Entity - Tracks all user actions
- */
+//
+// ActivityLog Entity - Tracks all user actions
+ 
 @Entity
 @Table(name = "activity_logs", indexes = {
 	    @Index(name = "idx_tenant_created", columnList = "tenant_id, created_at"),

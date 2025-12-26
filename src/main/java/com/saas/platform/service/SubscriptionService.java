@@ -16,9 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * SubscriptionService - FIXED with Notifications
- */
+//
+// SubscriptionService - FIXED with Notifications
+ 
 @Service
 public class SubscriptionService {
     
@@ -40,9 +40,9 @@ public class SubscriptionService {
    
     }
     
-    /**
-     * Create FREE trial subscription for new tenant
-     */
+    //
+// Create FREE trial subscription for new tenant
+     
     @Transactional
     public Subscription createTrialSubscription(Long tenantId) {
         log.info("Creating trial subscription for tenant ID: {}", tenantId);
@@ -68,18 +68,18 @@ public class SubscriptionService {
         return saved;
     }
     
-    /**
-     * Get subscription by tenant ID
-     */
+    //
+// Get subscription by tenant ID
+     
     public Subscription getSubscriptionByTenantId(Long tenantId) {
         return subscriptionRepository.findByTenantId(tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "No subscription found for tenant ID: " + tenantId));
     }
     
-    /**
-     * Upgrade/Downgrade subscription plan
-     */
+    //
+// Upgrade/Downgrade subscription plan
+     
     @Transactional
     public Subscription changePlan(Long tenantId, SubscriptionPlan newPlan) {
         log.info("Changing plan for tenant ID: {} to {}", tenantId, newPlan);
@@ -121,9 +121,9 @@ public class SubscriptionService {
         return updated;
     }
     
-    /**
-     * Cancel subscription
-     */
+    //
+// Cancel subscription
+     
     @Transactional
     public void cancelSubscription(Long tenantId) {
         log.info("Cancelling subscription for tenant ID: {}", tenantId);
@@ -145,9 +145,9 @@ public class SubscriptionService {
         log.info("Subscription cancelled");
     }
     
-    /**
-     * Increment user count
-     */
+    //
+// Increment user count
+     
     @Transactional
     public void incrementUserCount(Long tenantId) {
         Subscription subscription = getSubscriptionByTenantId(tenantId);
@@ -215,9 +215,9 @@ public class SubscriptionService {
         }
     }
     
-    /**
-     * Check if subscription is valid
-     */
+    //
+// Check if subscription is valid
+     
     public boolean isSubscriptionValid(Long tenantId) {
         try {
             Subscription subscription = getSubscriptionByTenantId(tenantId);

@@ -11,9 +11,9 @@ import org.springframework.web.context.request.WebRequest;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
-/**
- * Global Exception Handler
- */
+//
+// Global Exception Handler
+ 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     

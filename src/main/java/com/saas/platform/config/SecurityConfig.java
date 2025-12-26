@@ -38,15 +38,14 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 // Public endpoints
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/health").permitAll()
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                .requestMatchers(
-                    "/api/password-reset/request",
-                    "/api/password-reset/validate/**",
-                    "/api/password-reset/reset"
-                ).permitAll()
-                
+            		.requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/api/health").permitAll()
+                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                    .requestMatchers(
+                        "/api/password-reset/request",
+                        "/api/password-reset/validate/**",
+                        "/api/password-reset/reset"
+                    ).permitAll()
                 // All other endpoints require authentication
                 .anyRequest().authenticated()
             )

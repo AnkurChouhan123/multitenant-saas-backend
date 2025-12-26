@@ -9,9 +9,9 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * FileStorageRepository - Database operations for file storage
- */
+//
+// FileStorageRepository - Database operations for file storage
+ 
 @Repository
 public interface FileStorageRepository extends JpaRepository<FileStorage, Long> {
     

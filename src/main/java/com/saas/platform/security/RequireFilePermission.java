@@ -3,9 +3,9 @@ package com.saas.platform.security;
 
 import java.lang.annotation.*;
 
-/**
- * Custom annotation for file operations
- */
+//
+// Custom annotation for file operations
+ 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

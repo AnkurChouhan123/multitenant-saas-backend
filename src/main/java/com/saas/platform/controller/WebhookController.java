@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * WebhookController - UPDATED
- * Only TENANT_OWNER and TENANT_ADMIN can manage webhooks
- * SUPER_ADMIN, USER, and VIEWER are NOT allowed
- */
+//
+// WebhookController - UPDATED
+// Only TENANT_OWNER and TENANT_ADMIN can manage webhooks
+// SUPER_ADMIN, USER, and VIEWER are NOT allowed
+ 
 @RestController
 @RequestMapping("/api/webhooks")
 @CrossOrigin(origins = "http://localhost:3000")
@@ -31,10 +31,10 @@ public class WebhookController {
     }
     
     
-    /**
-     * Get all webhooks for tenant
-     * Only TENANT_OWNER and TENANT_ADMIN
-     */
+    //
+// Get all webhooks for tenant
+// Only TENANT_OWNER and TENANT_ADMIN
+     
     @GetMapping("/tenant/{tenantId}")
     @PreAuthorize("hasAnyRole('TENANT_OWNER', 'TENANT_ADMIN')")
     public ResponseEntity<List<Webhook>> getTenantWebhooks(@PathVariable Long tenantId) {
@@ -44,10 +44,10 @@ public class WebhookController {
     }
     
     
-    /**
-     * Create new webhook
-     * Only TENANT_OWNER and TENANT_ADMIN
-     */
+    //
+// Create new webhook
+// Only TENANT_OWNER and TENANT_ADMIN
+     
     @PostMapping("/tenant/{tenantId}")
     @PreAuthorize("hasAnyRole('TENANT_OWNER', 'TENANT_ADMIN')")
     public ResponseEntity<Webhook> createWebhook(
@@ -68,10 +68,10 @@ public class WebhookController {
         return ResponseEntity.status(HttpStatus.CREATED).body(webhook);
     }
     
-    /**
-     * Update webhook
-     * Only TENANT_OWNER and TENANT_ADMIN
-     */
+    //
+// Update webhook
+// Only TENANT_OWNER and TENANT_ADMIN
+     
     @PutMapping("/{webhookId}")
     @PreAuthorize("hasAnyRole('TENANT_OWNER', 'TENANT_ADMIN')")
     public ResponseEntity<Webhook> updateWebhook(
@@ -89,10 +89,10 @@ public class WebhookController {
         return ResponseEntity.ok(webhook);
     }
     
-    /**
-     * Delete webhook
-     * Only TENANT_OWNER and TENANT_ADMIN
-     */
+    //
+// Delete webhook
+// Only TENANT_OWNER and TENANT_ADMIN
+     
     @DeleteMapping("/{webhookId}")
     @PreAuthorize("hasAnyRole('TENANT_OWNER', 'TENANT_ADMIN')")
     public ResponseEntity<Void> deleteWebhook(@PathVariable Long webhookId) {
@@ -101,10 +101,10 @@ public class WebhookController {
     }
     
     
-    /**
-     * Test webhook by sending ping
-     * Only TENANT_OWNER and TENANT_ADMIN
-     */
+    //
+// Test webhook by sending ping
+// Only TENANT_OWNER and TENANT_ADMIN
+     
     @PostMapping("/{webhookId}/test")
     @PreAuthorize("hasAnyRole('TENANT_OWNER', 'TENANT_ADMIN')")
     public ResponseEntity<String> testWebhook(@PathVariable Long webhookId) {
@@ -119,10 +119,10 @@ public class WebhookController {
     }
     
     
-    /**
-     * Get webhook statistics
-     * Only TENANT_OWNER and TENANT_ADMIN
-     */
+    //
+// Get webhook statistics
+// Only TENANT_OWNER and TENANT_ADMIN
+     
     @GetMapping("/{webhookId}/stats")
     @PreAuthorize("hasAnyRole('TENANT_OWNER', 'TENANT_ADMIN')")
     public ResponseEntity<WebhookService.WebhookStats> getWebhookStats(

@@ -1,8 +1,8 @@
 package com.saas.platform.dto;
 
-/**
- * PasswordResetRequest DTO
- */
+//
+// PasswordResetRequest DTO
+ 
 public class PasswordResetRequest {
     private String email;
     

@@ -3,10 +3,10 @@ package com.saas.platform.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-/**
- * TenantSettings - Stores customizable settings per tenant
- * Allows white-labeling and configuration
- */
+//
+// TenantSettings - Stores customizable settings per tenant
+// Allows white-labeling and configuration
+ 
 @Entity
 @Table(name = "tenant_settings")
 public class TenantSettings {

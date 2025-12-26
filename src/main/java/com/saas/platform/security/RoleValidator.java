@@ -9,10 +9,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-/**
- * RoleValidator - COMPLETE TENANT_OWNER IMPLEMENTATION
- * This version adds full TENANT_OWNER support without affecting other roles
- */
+//
+// RoleValidator - COMPLETE TENANT_OWNER IMPLEMENTATION
+// This version adds full TENANT_OWNER support without affecting other roles
+ 
 @Component
 public class RoleValidator {
 	
@@ -26,9 +26,9 @@ public class RoleValidator {
     // CORE AUTHENTICATION METHODS
     // ========================================
     
-    /**
-     * Get current authenticated user
-     */
+    //
+// Get current authenticated user
+     
     public User getCurrentUser() {
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -51,9 +51,9 @@ public class RoleValidator {
         }
     }
 
-    /**
-     * Check if current user has required role
-     */
+    //
+// Check if current user has required role
+     
     public boolean hasRole(UserRole... roles) {
         User user = getCurrentUser();
         for (UserRole role : roles) {
@@ -68,27 +68,27 @@ public class RoleValidator {
     // TENANT_OWNER SPECIFIC PERMISSIONS
     // ========================================
     
-    /**
-     * Check if user is TENANT_OWNER
-     */
+    //
+// Check if user is TENANT_OWNER
+     
     public boolean isTenantOwner() {
         return getCurrentUser().getRole() == UserRole.TENANT_OWNER;
     }
     
-    /**
-     * Check if user is TENANT_OWNER of specific tenant
-     */
+    //
+// Check if user is TENANT_OWNER of specific tenant
+     
     public boolean isTenantOwnerOf(Long tenantId) {
         User user = getCurrentUser();
         return user.getRole() == UserRole.TENANT_OWNER && 
                user.getTenant().getId().equals(tenantId);
     }
     
-    /**
-     * Check if user can modify tenant settings
-     * TENANT_OWNER and SUPER_ADMIN can modify
-     * TENANT_ADMIN cannot modify
-     */
+    //
+// Check if user can modify tenant settings
+// TENANT_OWNER and SUPER_ADMIN can modify
+// TENANT_ADMIN cannot modify
+     
     public boolean canModifyTenantSettings(Long tenantId) {
         User user = getCurrentUser();
         
@@ -107,10 +107,10 @@ public class RoleValidator {
         return false;
     }
     
-    /**
-     * Require tenant settings permission
-     * Only TENANT_OWNER and SUPER_ADMIN
-     */
+    //
+// Require tenant settings permission
+// Only TENANT_OWNER and SUPER_ADMIN
+     
     public void requireTenantSettingsPermission(Long tenantId) {
         User user = getCurrentUser();
 
@@ -135,11 +135,11 @@ public class RoleValidator {
     // USER MANAGEMENT PERMISSIONS
     // ========================================
     
-    /**
-     * Check if user can manage users in tenant
-     * TENANT_OWNER, TENANT_ADMIN can manage
-     * USER and VIEWER cannot
-     */
+    //
+// Check if user can manage users in tenant
+// TENANT_OWNER, TENANT_ADMIN can manage
+// USER and VIEWER cannot
+     
     public boolean canManageUsers(Long tenantId) {
         User user = getCurrentUser();
         
@@ -158,11 +158,11 @@ public class RoleValidator {
                user.getRole() == UserRole.TENANT_ADMIN;
     }
     
-    /**
-     * Check if user can VIEW users
-     * TENANT_OWNER, TENANT_ADMIN, USER can view
-     * VIEWER cannot
-     */
+    //
+// Check if user can VIEW users
+// TENANT_OWNER, TENANT_ADMIN, USER can view
+// VIEWER cannot
+     
     public boolean canViewUsers(Long tenantId) {
         User user = getCurrentUser();
         
@@ -182,15 +182,15 @@ public class RoleValidator {
                user.getRole() == UserRole.USER;
     }
     
-    /**
-     * Check if user can modify a specific target user
-     * Hierarchy:
-     * - SUPER_ADMIN: can modify anyone
-     * - TENANT_OWNER: can modify anyone in their tenant (including TENANT_ADMIN)
-     * - TENANT_ADMIN: can modify USER and VIEWER only
-     * - USER: can only modify themselves
-     * - VIEWER: can only modify themselves
-     */
+    //
+// Check if user can modify a specific target user
+// Hierarchy:
+// - SUPER_ADMIN: can modify anyone
+// - TENANT_OWNER: can modify anyone in their tenant (including TENANT_ADMIN)
+// - TENANT_ADMIN: can modify USER and VIEWER only
+// - USER: can only modify themselves
+// - VIEWER: can only modify themselves
+     
     public boolean canModifyUser(User targetUser) {
         User currentUser = getCurrentUser();
         
@@ -227,14 +227,14 @@ public class RoleValidator {
         return false;
     }
     
-    /**
-     * Check if user can assign a specific role
-     * Rules:
-     * - SUPER_ADMIN: can assign any role
-     * - TENANT_OWNER: can assign TENANT_ADMIN, USER, VIEWER (NOT TENANT_OWNER or SUPER_ADMIN)
-     * - TENANT_ADMIN: can only assign USER and VIEWER
-     * - USER/VIEWER: cannot assign roles
-     */
+    //
+// Check if user can assign a specific role
+// Rules:
+// - SUPER_ADMIN: can assign any role
+// - TENANT_OWNER: can assign TENANT_ADMIN, USER, VIEWER (NOT TENANT_OWNER or SUPER_ADMIN)
+// - TENANT_ADMIN: can only assign USER and VIEWER
+// - USER/VIEWER: cannot assign roles
+     
     public boolean canAssignRole(UserRole targetRole) {
         User currentUser = getCurrentUser();
         
@@ -260,9 +260,9 @@ public class RoleValidator {
         return false;
     }
     
-    /**
-     * Require permission to modify target user
-     */
+    //
+// Require permission to modify target user
+     
     public void requireUserModificationPermission(User targetUser) {
         if (!canModifyUser(targetUser)) {
             throw new AccessDeniedException(
@@ -273,9 +273,9 @@ public class RoleValidator {
         }
     }
     
-    /**
-     * Require permission to assign role
-     */
+    //
+// Require permission to assign role
+     
     public void requireRoleAssignmentPermission(UserRole targetRole) {
         if (!canAssignRole(targetRole)) {
             throw new AccessDeniedException(
@@ -285,9 +285,9 @@ public class RoleValidator {
         }
     }
     
-    /**
-     * Require user management permission
-     */
+    //
+// Require user management permission
+     
     public void requireUserManagementPermission(Long tenantId) {
         if (!canManageUsers(tenantId)) {
             throw new AccessDeniedException(
@@ -296,9 +296,9 @@ public class RoleValidator {
         }
     }
     
-    /**
-     * Require user view permission
-     */
+    //
+// Require user view permission
+     
     public void requireUserViewPermission(Long tenantId) {
         if (!canViewUsers(tenantId)) {
             throw new AccessDeniedException(
@@ -312,10 +312,10 @@ public class RoleValidator {
     // SUBSCRIPTION MANAGEMENT
     // ========================================
     
-    /**
-     * Check if user can VIEW subscription details
-     * TENANT_OWNER, TENANT_ADMIN, SUPER_ADMIN can view
-     */
+    //
+// Check if user can VIEW subscription details
+// TENANT_OWNER, TENANT_ADMIN, SUPER_ADMIN can view
+     
     public boolean canViewSubscription(Long tenantId) {
         User user = getCurrentUser();
         
@@ -334,10 +334,10 @@ public class RoleValidator {
                user.getRole() == UserRole.TENANT_ADMIN;
     }
 
-    /**
-     * Check if user can MANAGE subscriptions (upgrade/downgrade/cancel)
-     * ONLY TENANT_OWNER can manage
-     */
+    //
+// Check if user can MANAGE subscriptions (upgrade/downgrade/cancel)
+// ONLY TENANT_OWNER can manage
+     
     public boolean canManageSubscription(Long tenantId) {
         User user = getCurrentUser();
         
@@ -346,9 +346,9 @@ public class RoleValidator {
                user.getTenant().getId().equals(tenantId);
     }
 
-    /**
-     * Require VIEW subscription permission
-     */
+    //
+// Require VIEW subscription permission
+     
     public void requireSubscriptionViewPermission(Long tenantId) {
         if (!canViewSubscription(tenantId)) {
             throw new AccessDeniedException(
@@ -357,9 +357,9 @@ public class RoleValidator {
         }
     }
 
-    /**
-     * Require MANAGE subscription permission
-     */
+    //
+// Require MANAGE subscription permission
+     
     public void requireSubscriptionPermission(Long tenantId) {
         if (!canManageSubscription(tenantId)) {
             throw new AccessDeniedException(
@@ -368,9 +368,9 @@ public class RoleValidator {
         }
     }
 
-    /**
-     * Check if has subscription management permission (for UI)
-     */
+    //
+// Check if has subscription management permission (for UI)
+     
     public boolean hasSubscriptionManagementPermission() {
         try {
             return getCurrentUser().getRole() == UserRole.TENANT_OWNER;
@@ -379,9 +379,9 @@ public class RoleValidator {
         }
     }
 
-    /**
-     * Check if has subscription view permission (for UI)
-     */
+    //
+// Check if has subscription view permission (for UI)
+     
     public boolean hasSubscriptionViewPermission() {
         try {
             User currentUser = getCurrentUser();
@@ -398,27 +398,27 @@ public class RoleValidator {
     // FILE MANAGEMENT PERMISSIONS
     // ========================================
     
-    /**
-     * Check if user can upload files
-     * All except VIEWER can upload
-     */
+    //
+// Check if user can upload files
+// All except VIEWER can upload
+     
     public boolean canUploadFiles() {
         return getCurrentUser().getRole() != UserRole.VIEWER;
     }
     
-    /**
-     * Require upload permission
-     */
+    //
+// Require upload permission
+     
     public void requireUploadPermission() {
         if (!canUploadFiles()) {
             throw new AccessDeniedException("Viewers cannot upload files");
         }
     }
     
-    /**
-     * Check if user can permanently delete files
-     * Only SUPER_ADMIN and TENANT_OWNER
-     */
+    //
+// Check if user can permanently delete files
+// Only SUPER_ADMIN and TENANT_OWNER
+     
     public boolean canPermanentlyDeleteFiles(Long tenantId) {
         User user = getCurrentUser();
         return user.getRole() == UserRole.SUPER_ADMIN ||
@@ -426,9 +426,9 @@ public class RoleValidator {
                 user.getTenant().getId().equals(tenantId));
     }
     
-    /**
-     * Require permanent delete permission
-     */
+    //
+// Require permanent delete permission
+     
     public void requirePermanentDeletePermission(Long tenantId) {
         if (!canPermanentlyDeleteFiles(tenantId)) {
             throw new AccessDeniedException(
@@ -441,10 +441,10 @@ public class RoleValidator {
     // API KEY MANAGEMENT
     // ========================================
     
-    /**
-     * Check if user can create API keys
-     * TENANT_OWNER and TENANT_ADMIN can create
-     */
+    //
+// Check if user can create API keys
+// TENANT_OWNER and TENANT_ADMIN can create
+     
     public boolean canCreateApiKeys(Long tenantId) {
         User user = getCurrentUser();
         
@@ -461,9 +461,9 @@ public class RoleValidator {
         return false;
     }
     
-    /**
-     * Require API key creation permission
-     */
+    //
+// Require API key creation permission
+     
     public void requireApiKeyCreationPermission(Long tenantId) {
         if (!canCreateApiKeys(tenantId)) {
             throw new AccessDeniedException(
@@ -476,10 +476,10 @@ public class RoleValidator {
     // WEBHOOK MANAGEMENT
     // ========================================
     
-    /**
-     * Check if user can manage webhooks
-     * TENANT_OWNER and TENANT_ADMIN only
-     */
+    //
+// Check if user can manage webhooks
+// TENANT_OWNER and TENANT_ADMIN only
+     
     public boolean canManageWebhooks(Long tenantId) {
         User user = getCurrentUser();
         
@@ -492,9 +492,9 @@ public class RoleValidator {
         return false;
     }
     
-    /**
-     * Require webhook management permission
-     */
+    //
+// Require webhook management permission
+     
     public void requireWebhookPermission(Long tenantId) {
         if (!canManageWebhooks(tenantId)) {
             throw new AccessDeniedException(
@@ -507,10 +507,10 @@ public class RoleValidator {
     // ANALYTICS & LOGS
     // ========================================
     
-    /**
-     * Check if user can view detailed logs
-     * TENANT_OWNER and TENANT_ADMIN can view
-     */
+    //
+// Check if user can view detailed logs
+// TENANT_OWNER and TENANT_ADMIN can view
+     
     public boolean canViewDetailedLogs(Long tenantId) {
         User user = getCurrentUser();
         
@@ -527,9 +527,9 @@ public class RoleValidator {
         return false;
     }
     
-    /**
-     * Require detailed log permission
-     */
+    //
+// Require detailed log permission
+     
     public void requireDetailedLogPermission(Long tenantId) {
         if (!canViewDetailedLogs(tenantId)) {
             throw new AccessDeniedException(
@@ -542,9 +542,9 @@ public class RoleValidator {
     // UTILITY METHODS
     // ========================================
     
-    /**
-     * Check if user is admin (any admin role)
-     */
+    //
+// Check if user is admin (any admin role)
+     
     public boolean isAdmin() {
         UserRole role = getCurrentUser().getRole();
         return role == UserRole.SUPER_ADMIN || 
@@ -552,41 +552,41 @@ public class RoleValidator {
                role == UserRole.TENANT_ADMIN;
     }
     
-    /**
-     * Check if user is super admin
-     */
+    //
+// Check if user is super admin
+     
     public boolean isSuperAdmin() {
         return getCurrentUser().getRole() == UserRole.SUPER_ADMIN;
     }
     
-    /**
-     * Check if user can view tenant
-     */
+    //
+// Check if user can view tenant
+     
     public boolean canViewTenant(Long tenantId) {
         User user = getCurrentUser();
         return user.getRole() == UserRole.SUPER_ADMIN || 
                user.getTenant().getId().equals(tenantId);
     }
     
-    /**
-     * Require tenant access
-     */
+    //
+// Require tenant access
+     
     public void requireTenantAccess(Long tenantId) {
         if (!canViewTenant(tenantId)) {
             throw new AccessDeniedException("Access denied to this tenant");
         }
     }
     
-    /**
-     * Get current user's tenant ID
-     */
+    //
+// Get current user's tenant ID
+     
     public Long getCurrentTenantId() {
         return getCurrentUser().getTenant().getId();
     }
     
-    /**
-     * Validate tenant isolation
-     */
+    //
+// Validate tenant isolation
+     
     public void validateTenantIsolation(Long resourceTenantId) {
         User currentUser = getCurrentUser();
         
@@ -603,9 +603,9 @@ public class RoleValidator {
         }
     }
     
-    /**
-     * Require role
-     */
+    //
+// Require role
+     
     public void requireRole(UserRole... roles) {
         if (!hasRole(roles)) {
             User user = getCurrentUser();

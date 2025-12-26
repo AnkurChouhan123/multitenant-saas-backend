@@ -6,24 +6,24 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-/**
- * TenantSettingsRepository - Database operations for TenantSettings
- */
+//
+// TenantSettingsRepository - Database operations for TenantSettings
+ 
 @Repository
 public interface TenantSettingsRepository extends JpaRepository<TenantSettings, Long> {
     
-    /**
-     * Find settings by tenant ID
-     */
+    //
+// Find settings by tenant ID
+     
     Optional<TenantSettings> findByTenantId(Long tenantId);
     
-    /**
-     * Check if settings exist for tenant
-     */
+    //
+// Check if settings exist for tenant
+     
     boolean existsByTenantId(Long tenantId);
     
-    /**
-     * Delete settings by tenant ID
-     */
+    //
+// Delete settings by tenant ID
+     
     void deleteByTenantId(Long tenantId);
 }

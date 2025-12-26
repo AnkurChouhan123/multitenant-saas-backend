@@ -35,9 +35,9 @@ public class AuthService {
         this.emailService = emailService;
     }
     
-    /**
-     * Login - Authenticate user and return JWT token
-     */
+    //
+// Login - Authenticate user and return JWT token
+     
     public AuthResponse login(LoginRequest request) {
         log.info("Login attempt for email: {}", request.getEmail());
         
@@ -92,10 +92,10 @@ public class AuthService {
         return response;
     }
     
-    /**
-     * Register - Create new tenant and TENANT_OWNER user
-     * UPDATED: First user is now TENANT_OWNER instead of TENANT_ADMIN
-     */
+    //
+// Register - Create new tenant and TENANT_OWNER user
+// UPDATED: First user is now TENANT_OWNER instead of TENANT_ADMIN
+     
     @Transactional
     public AuthResponse register(RegisterRequest request) {
         log.info("═══════════════════════════════════════");

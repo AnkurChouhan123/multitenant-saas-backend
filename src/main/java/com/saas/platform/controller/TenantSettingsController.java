@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * TenantSettingsController with proper permissions:
- * - VIEW: TENANT_OWNER, TENANT_ADMIN, USER, VIEWER (anyone in tenant)
- * - UPDATE: TENANT_OWNER ONLY
- */
+//
+// TenantSettingsController with proper permissions:
+// - VIEW: TENANT_OWNER, TENANT_ADMIN, USER, VIEWER (anyone in tenant)
+// - UPDATE: TENANT_OWNER ONLY
+ 
 @RestController
 @RequestMapping("/api/settings")
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})
@@ -29,9 +29,9 @@ public class TenantSettingsController {
         this.roleValidator = roleValidator;
     }
     
-    /**
-     * Get settings - Anyone in tenant can view
-     */
+    //
+// Get settings - Anyone in tenant can view
+     
     @GetMapping("/tenant/{tenantId}")
     public ResponseEntity<?> getSettings(@PathVariable Long tenantId) {
         try {
@@ -46,9 +46,9 @@ public class TenantSettingsController {
         }
     }
     
-    /**
-     * Update settings - TENANT_OWNER ONLY
-     */
+    //
+// Update settings - TENANT_OWNER ONLY
+     
     @PutMapping("/tenant/{tenantId}")
     public ResponseEntity<?> updateSettings(
             @PathVariable Long tenantId,
@@ -70,9 +70,9 @@ public class TenantSettingsController {
         }
     }
     
-    /**
-     * Update branding - TENANT_OWNER ONLY
-     */
+    //
+// Update branding - TENANT_OWNER ONLY
+     
     @PutMapping("/tenant/{tenantId}/branding")
     public ResponseEntity<?> updateBranding(
             @PathVariable Long tenantId,
@@ -97,9 +97,9 @@ public class TenantSettingsController {
         }
     }
     
-    /**
-     * Reset settings - TENANT_OWNER ONLY
-     */
+    //
+// Reset settings - TENANT_OWNER ONLY
+     
     @PostMapping("/tenant/{tenantId}/reset")
     public ResponseEntity<?> resetSettings(
             @PathVariable Long tenantId,
@@ -118,9 +118,9 @@ public class TenantSettingsController {
         }
     }
     
-    /**
-     * Check if feature is enabled - Anyone in tenant can view
-     */
+    //
+// Check if feature is enabled - Anyone in tenant can view
+     
     @GetMapping("/tenant/{tenantId}/feature/{feature}")
     public ResponseEntity<?> isFeatureEnabled(
             @PathVariable Long tenantId,
@@ -138,9 +138,9 @@ public class TenantSettingsController {
         }
     }
     
-    /**
-     * Check if current user can manage tenant settings
-     */
+    //
+// Check if current user can manage tenant settings
+     
     @GetMapping("/tenant/{tenantId}/check-permission")
     public ResponseEntity<Map<String, Object>> checkPermission(@PathVariable Long tenantId) {
         Map<String, Object> response = new HashMap<>();

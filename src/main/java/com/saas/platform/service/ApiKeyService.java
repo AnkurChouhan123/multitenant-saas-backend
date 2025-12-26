@@ -11,10 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * ApiKeyService - Business logic for API Key management
- * Handles creation, validation, and management of API keys for tenant integrations
- */
+//
+// ApiKeyService - Business logic for API Key management
+// Handles creation, validation, and management of API keys for tenant integrations
+ 
 @Service
 public class ApiKeyService {
     
@@ -32,9 +32,9 @@ public class ApiKeyService {
         this.userService = userService;
     }
     
-    /**
-     * Create a new API key for a tenant
-     */
+    //
+// Create a new API key for a tenant
+     
     @Transactional
     public ApiKey createApiKey(Long tenantId, Long userId, String name, 
                                String scopes, Integer expiresInDays) {
@@ -78,32 +78,32 @@ public class ApiKeyService {
         return savedKey;
     }
     
-    /**
-     * Get all API keys for a tenant
-     */
+    //
+// Get all API keys for a tenant
+     
     public List<ApiKey> getApiKeysByTenant(Long tenantId) {
         return apiKeyRepository.findByTenantIdOrderByCreatedAtDesc(tenantId);
     }
     
-    /**
-     * Get API key by ID
-     */
+    //
+// Get API key by ID
+     
     public ApiKey getApiKeyById(Long keyId) {
         return apiKeyRepository.findById(keyId)
             .orElseThrow(() -> new IllegalArgumentException("API key not found with ID: " + keyId));
     }
     
-    /**
-     * Get API key by key value (for authentication)
-     */
+    //
+// Get API key by key value (for authentication)
+     
     public ApiKey getApiKeyByValue(String keyValue) {
         return apiKeyRepository.findByKeyValue(keyValue)
             .orElseThrow(() -> new IllegalArgumentException("Invalid API key"));
     }
     
-    /**
-     * Validate API key and check permissions
-     */
+    //
+// Validate API key and check permissions
+     
     public boolean validateApiKey(String keyValue, String requiredScope) {
         try {
             ApiKey apiKey = getApiKeyByValue(keyValue);
@@ -137,9 +137,9 @@ public class ApiKeyService {
         }
     }
     
-    /**
-     * Record API key usage
-     */
+    //
+// Record API key usage
+     
     @Transactional
     public void recordApiKeyUsage(Long keyId) {
         ApiKey apiKey = getApiKeyById(keyId);
@@ -147,9 +147,9 @@ public class ApiKeyService {
         apiKeyRepository.save(apiKey);
     }
     
-    /**
-     * Revoke (deactivate) an API key
-     */
+    //
+// Revoke (deactivate) an API key
+     
     @Transactional
     public void revokeApiKey(Long keyId) {
         log.info("Revoking API key ID: {}", keyId);
@@ -172,9 +172,9 @@ public class ApiKeyService {
         log.info("API key revoked successfully");
     }
     
-    /**
-     * Delete an API key permanently
-     */
+    //
+// Delete an API key permanently
+     
     @Transactional
     public void deleteApiKey(Long keyId) {
         log.info("Deleting API key ID: {}", keyId);
@@ -199,24 +199,24 @@ public class ApiKeyService {
         log.info("API key deleted successfully");
     }
     
-    /**
-     * Get active API keys count for tenant
-     */
+    //
+// Get active API keys count for tenant
+     
     public long getActiveApiKeysCount(Long tenantId) {
         return apiKeyRepository.countByTenantIdAndIsActiveTrue(tenantId);
     }
     
-    /**
-     * Check if tenant has reached API key limit
-     */
+    //
+// Check if tenant has reached API key limit
+     
     public boolean hasReachedApiKeyLimit(Long tenantId, int maxKeys) {
         long activeKeys = getActiveApiKeysCount(tenantId);
         return activeKeys >= maxKeys;
     }
     
-    /**
-     * Rotate API key (generate new key, revoke old)
-     */
+    //
+// Rotate API key (generate new key, revoke old)
+     
     @Transactional
     public ApiKey rotateApiKey(Long keyId, Long userId) {
         log.info("Rotating API key ID: {}", keyId);
@@ -240,9 +240,9 @@ public class ApiKeyService {
         return newKey;
     }
     
-    /**
-     * Update API key settings
-     */
+    //
+// Update API key settings
+     
     @Transactional
     public ApiKey updateApiKey(Long keyId, String name, String scopes, 
                                Integer rateLimitPerHour, String allowedIps) {

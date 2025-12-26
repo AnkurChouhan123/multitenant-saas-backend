@@ -3,9 +3,9 @@ package com.saas.platform.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-/**
- * Subscription Entity - Tracks tenant's subscription details
- */
+//
+// Subscription Entity - Tracks tenant's subscription details
+ 
 @Entity
 @Table(name = "subscriptions")
 public class Subscription {
@@ -168,24 +168,24 @@ public class Subscription {
         updatedAt = LocalDateTime.now();
     }
     
-    /**
-     * Check if subscription has expired
-     */
+    //
+// Check if subscription has expired
+     
     public boolean isExpired() {
         return endDate != null && LocalDateTime.now().isAfter(endDate);
     }
     
-    /**
-     * Check if user limit is reached
-     */
+    //
+// Check if user limit is reached
+     
     public boolean hasReachedUserLimit() {
         if (plan.isUnlimited()) return false;
         return currentUsers >= plan.getMaxUsers();
     }
     
-    /**
-     * Check if API call limit is reached
-     */
+    //
+// Check if API call limit is reached
+     
     public boolean hasReachedApiLimit() {
         if (plan.isUnlimited()) return false;
         return currentApiCalls >= plan.getMaxApiCalls();

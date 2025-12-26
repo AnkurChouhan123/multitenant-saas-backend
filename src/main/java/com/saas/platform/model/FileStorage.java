@@ -3,9 +3,9 @@ package com.saas.platform.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-/**
- * FileStorage Entity - Manages uploaded files per tenant
- */
+//
+// FileStorage Entity - Manages uploaded files per tenant
+ 
 @Entity
 @Table(name = "file_storage")
 public class FileStorage {

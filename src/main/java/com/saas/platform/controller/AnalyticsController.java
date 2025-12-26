@@ -14,12 +14,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * AnalyticsController with proper permissions:
- * - TENANT_OWNER, TENANT_ADMIN: Full access ✅
- * - USER: No access ❌
- * - VIEWER: No access ❌
- */
+//
+// AnalyticsController with proper permissions:
+// - TENANT_OWNER, TENANT_ADMIN: Full access ✅
+// - USER: No access ❌
+// - VIEWER: No access ❌
+ 
 @RestController
 @RequestMapping("/api/analytics")
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})
@@ -34,9 +34,9 @@ public class AnalyticsController {
         this.roleValidator = roleValidator;
     }
     
-    /**
-     * View analytics dashboard - ADMIN ONLY
-     */
+    //
+// View analytics dashboard - ADMIN ONLY
+     
     @GetMapping("/dashboard/{tenantId}")
     public ResponseEntity<?> getDashboard(@PathVariable Long tenantId) {
         try {
@@ -51,9 +51,9 @@ public class AnalyticsController {
         }
     }
     
-    /**
-     * View activities by range - ADMIN ONLY
-     */
+    //
+// View activities by range - ADMIN ONLY
+     
     @GetMapping("/activities/range")
     public ResponseEntity<?> getActivitiesByRange(
             @RequestParam Long tenantId,
@@ -72,9 +72,9 @@ public class AnalyticsController {
         }
     }
     
-    /**
-     * View activities by type - ADMIN ONLY
-     */
+    //
+// View activities by type - ADMIN ONLY
+     
     @GetMapping("/activities/type")
     public ResponseEntity<?> getActivitiesByType(
             @RequestParam Long tenantId,
@@ -91,9 +91,9 @@ public class AnalyticsController {
         }
     }
     
-    /**
-     * Check if current user can access analytics
-     */
+    //
+// Check if current user can access analytics
+     
     @GetMapping("/check-permission/{tenantId}")
     public ResponseEntity<Map<String, Object>> checkPermission(@PathVariable Long tenantId) {
         Map<String, Object> response = new HashMap<>();

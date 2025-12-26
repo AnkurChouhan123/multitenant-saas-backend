@@ -17,10 +17,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collections;
 
-/**
- * JWT Authentication Filter - SECURITY FIXED
- * Fixed: Added proper TenantContext cleanup to prevent data leakage
- */
+//
+// JWT Authentication Filter - SECURITY FIXED
+// Fixed: Added proper TenantContext cleanup to prevent data leakage
+ 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     

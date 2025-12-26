@@ -15,14 +15,14 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.nio.charset.StandardCharsets;
 
-/**
- * EmailService - FIXED VERSION
- * Fixed issues:
- * 1. Better error handling and logging
- * 2. Removed @Async from main method to ensure errors are visible
- * 3. Added template existence checking
- * 4. Improved exception handling
- */
+//
+// EmailService - FIXED VERSION
+// Fixed issues:
+// 1. Better error handling and logging
+// 2. Removed @Async from main method to ensure errors are visible
+// 3. Added template existence checking
+// 4. Improved exception handling
+ 
 @Service
 public class EmailService {
     
@@ -52,9 +52,9 @@ public class EmailService {
         log.info("═══════════════════════════════════════");
     }
     
-    /**
-     * Send email - SYNCHRONOUS to see errors immediately
-     */
+    //
+// Send email - SYNCHRONOUS to see errors immediately
+     
     public void sendEmail(String to, String subject, String htmlContent) {
         log.info("═══════════════════════════════════════");
         log.info("📧 SENDING EMAIL");
@@ -103,9 +103,9 @@ public class EmailService {
         }
     }
     
-    /**
-     * Send email asynchronously (for non-critical emails)
-     */
+    //
+// Send email asynchronously (for non-critical emails)
+     
     @Async
     public void sendEmailAsync(String to, String subject, String htmlContent) {
         try {
@@ -115,9 +115,9 @@ public class EmailService {
         }
     }
     
-    /**
-     * Send welcome email to new user
-     */
+    //
+// Send welcome email to new user
+     
     public void sendWelcomeEmail(User user, String tenantName) {
         log.info("Preparing welcome email for: {}", user.getEmail());
         
@@ -143,9 +143,9 @@ public class EmailService {
         }
     }
     
-    /**
-     * Send password reset email - CRITICAL, must work
-     */
+    //
+// Send password reset email - CRITICAL, must work
+     
     public void sendPasswordResetEmail(User user, String resetToken) {
         log.info("═══════════════════════════════════════");
         log.info("🔐 PREPARING PASSWORD RESET EMAIL");
@@ -194,9 +194,9 @@ public class EmailService {
         }
     }
     
-    /**
-     * Fallback HTML email (no template needed)
-     */
+    //
+// Fallback HTML email (no template needed)
+     
     private String createFallbackPasswordResetEmail(String userName, String resetUrl) {
         return """
             <!DOCTYPE html>
@@ -236,9 +236,9 @@ public class EmailService {
             """.formatted(userName, resetUrl, resetUrl, resetUrl);
     }
     
-    /**
-     * Send password changed confirmation email
-     */
+    //
+// Send password changed confirmation email
+     
     public void sendPasswordChangedEmail(User user) {
         log.info("Sending password changed confirmation to: {}", user.getEmail());
         
@@ -285,9 +285,9 @@ public class EmailService {
         }
     }
     
-    /**
-     * Test email configuration
-     */
+    //
+// Test email configuration
+     
     public void sendTestEmail(String toEmail) {
         log.info("Sending test email to: {}", toEmail);
         

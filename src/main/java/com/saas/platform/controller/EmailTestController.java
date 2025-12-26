@@ -7,10 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * EmailTestController - For testing email configuration
- * REMOVE THIS IN PRODUCTION!
- */
+// we have to remove this in production
 @RestController
 @RequestMapping("/api/test")
 @CrossOrigin(origins = "http://localhost:3000")

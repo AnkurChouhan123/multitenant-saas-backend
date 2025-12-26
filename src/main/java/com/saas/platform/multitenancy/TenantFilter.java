@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-/**
- * TenantFilter - SECURITY FIXED
- * Extracts tenant identifier from each HTTP request
- * This runs BEFORE any controller logic
- */
+//
+// TenantFilter - SECURITY FIXED
+// Extracts tenant identifier from each HTTP request
+// This runs BEFORE any controller logic
+ 
 @Component
 @Order(1)
 public class TenantFilter implements Filter {
@@ -48,9 +48,9 @@ public class TenantFilter implements Filter {
         }
     }
     
-    /**
-     * Extract tenant ID from request using multiple strategies
-     */
+    //
+// Extract tenant ID from request using multiple strategies
+     
     private String resolveTenantIdentifier(HttpServletRequest request) {
         
         // Strategy 1: Check X-Tenant-ID header (for API requests)

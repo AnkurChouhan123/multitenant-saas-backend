@@ -8,10 +8,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * TenantSettingsService - Business logic for tenant customization
- * Handles white-labeling and configuration options per tenant
- */
+//
+// TenantSettingsService - Business logic for tenant customization
+// Handles white-labeling and configuration options per tenant
+ 
 @Service
 public class TenantSettingsService {
     
@@ -29,17 +29,17 @@ public class TenantSettingsService {
         this.activityLogService = activityLogService;
     }
     
-    /**
-     * Get settings for a tenant (create default if not exists)
-     */
+    //
+// Get settings for a tenant (create default if not exists)
+     
     public TenantSettings getSettingsByTenantId(Long tenantId) {
         return settingsRepository.findByTenantId(tenantId)
             .orElseGet(() -> createDefaultSettings(tenantId));
     }
     
-    /**
-     * Create default settings for new tenant
-     */
+    //
+// Create default settings for new tenant
+     
     @Transactional
     public TenantSettings createDefaultSettings(Long tenantId) {
         log.info("Creating default settings for tenant ID: {}", tenantId);
@@ -55,9 +55,9 @@ public class TenantSettingsService {
         return saved;
     }
     
-    /**
-     * Update tenant settings
-     */
+    //
+// Update tenant settings
+     
     @Transactional
     public TenantSettings updateSettings(Long tenantId, TenantSettings updatedSettings, 
                                         Long userId, String userEmail) {
@@ -168,9 +168,9 @@ public class TenantSettingsService {
         return saved;
     }
     
-    /**
-     * Update branding only
-     */
+    //
+// Update branding only
+     
     @Transactional
     public TenantSettings updateBranding(Long tenantId, String primaryColor, 
                                         String secondaryColor, String logoUrl, 
@@ -193,9 +193,9 @@ public class TenantSettingsService {
         return saved;
     }
     
-    /**
-     * Reset settings to defaults
-     */
+    //
+// Reset settings to defaults
+     
     @Transactional
     public TenantSettings resetToDefaults(Long tenantId, Long userId, String userEmail) {
         log.info("Resetting settings to defaults for tenant ID: {}", tenantId);
@@ -212,9 +212,9 @@ public class TenantSettingsService {
         return defaults;
     }
     
-    /**
-     * Check if feature is enabled for tenant
-     */
+    //
+// Check if feature is enabled for tenant
+     
     public boolean isFeatureEnabled(Long tenantId, String feature) {
         TenantSettings settings = getSettingsByTenantId(tenantId);
         

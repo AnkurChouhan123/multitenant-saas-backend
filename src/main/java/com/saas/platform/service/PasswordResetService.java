@@ -11,10 +11,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * PasswordResetService - FIXED VERSION
- * Added comprehensive logging and better error handling
- */
+//
+// PasswordResetService - FIXED VERSION
+// Added comprehensive logging and better error handling
+ 
 @Service
 public class PasswordResetService {
     
@@ -42,9 +42,9 @@ public class PasswordResetService {
         log.info("═══════════════════════════════════════");
     }
     
-    /**
-     * Request password reset - Send email with reset link
-     */
+    //
+// Request password reset - Send email with reset link
+     
     @Transactional
     public void requestPasswordReset(String email) {
         log.info("═══════════════════════════════════════");
@@ -105,9 +105,9 @@ public class PasswordResetService {
         }
     }
     
-    /**
-     * Validate reset token
-     */
+    //
+// Validate reset token
+     
     public boolean validateResetToken(String token) {
         log.info("Validating reset token: {}...", token.substring(0, Math.min(10, token.length())));
         
@@ -130,9 +130,9 @@ public class PasswordResetService {
         return isValid;
     }
     
-    /**
-     * Reset password using token
-     */
+    //
+// Reset password using token
+     
     @Transactional
     public void resetPassword(String token, String newPassword) {
         log.info("═══════════════════════════════════════");
@@ -196,9 +196,9 @@ public class PasswordResetService {
         }
     }
     
-    /**
-     * Get user from reset token (for display purposes)
-     */
+    //
+// Get user from reset token (for display purposes)
+     
     public User getUserFromResetToken(String token) {
         log.info("Getting user from reset token...");
         
@@ -217,9 +217,9 @@ public class PasswordResetService {
             });
     }
     
-    /**
-     * Clean up expired tokens (can be called by scheduled job)
-     */
+    //
+// Clean up expired tokens (can be called by scheduled job)
+     
     @Transactional
     public void cleanupExpiredTokens() {
         log.info("Cleaning up expired password reset tokens...");

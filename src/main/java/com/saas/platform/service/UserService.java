@@ -15,12 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * UserService - VERIFIED VERSION WITH NOTIFICATIONS
- * 
- * This version has extensive logging to help debug notification issues.
- * Replace your current UserService with this one.
- */
+//
+// UserService - VERIFIED VERSION WITH NOTIFICATIONS
+// 
+// This version has extensive logging to help debug notification issues.
+// Replace your current UserService with this one.
+ 
 @Service
 public class UserService {
     
@@ -32,9 +32,9 @@ public class UserService {
   
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     
-    /**
-     * Constructor - Verify all dependencies are injected
-     */
+    //
+// Constructor - Verify all dependencies are injected
+     
     public UserService(UserRepository userRepository, 
                       TenantService tenantService,
                       ActivityLogService activityLogService) {
@@ -46,9 +46,9 @@ public class UserService {
       
     }
     
-    /**
-     * Create User - WITH EXTENSIVE LOGGING
-     */
+    //
+// Create User - WITH EXTENSIVE LOGGING
+     
     @Transactional
     public User createUser(User user, Long tenantId) {
         log.info("═══════════════════════════════════════");

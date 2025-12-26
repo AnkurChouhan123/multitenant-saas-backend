@@ -20,10 +20,10 @@ import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * WebhookService - FIXED
- * Fixed: RestTemplate now injected via constructor instead of new instance
- */
+//
+// WebhookService - FIXED
+// Fixed: RestTemplate now injected via constructor instead of new instance
+ 
 @Service
 public class WebhookService {
     
@@ -34,9 +34,9 @@ public class WebhookService {
     private final ActivityLogService activityLogService;
     private final RestTemplate restTemplate;
     
-    /**
-     * ✅ FIXED: RestTemplate injected via constructor
-     */
+    //
+// ✅ FIXED: RestTemplate injected via constructor
+     
     public WebhookService(WebhookRepository webhookRepository,
                          ActivityLogService activityLogService,
                          RestTemplate restTemplate) {
@@ -45,9 +45,9 @@ public class WebhookService {
         this.restTemplate = restTemplate;
     }
     
-    /**
-     * Create a new webhook
-     */
+    //
+// Create a new webhook
+     
     @Transactional
     public Webhook createWebhook(Long tenantId, String name, String url, 
                                  String events, Long userId) {
@@ -77,31 +77,31 @@ public class WebhookService {
         return saved;
     }
     
-    /**
-     * Get all webhooks for a tenant
-     */
+    //
+// Get all webhooks for a tenant
+     
     public List<Webhook> getWebhooksByTenant(Long tenantId) {
         return webhookRepository.findByTenantId(tenantId);
     }
     
-    /**
-     * Get active webhooks for a tenant
-     */
+    //
+// Get active webhooks for a tenant
+     
     public List<Webhook> getActiveWebhooks(Long tenantId) {
         return webhookRepository.findByTenantIdAndIsActiveTrue(tenantId);
     }
     
-    /**
-     * Get webhook by ID
-     */
+    //
+// Get webhook by ID
+     
     public Webhook getWebhookById(Long webhookId) {
         return webhookRepository.findById(webhookId)
             .orElseThrow(() -> new IllegalArgumentException("Webhook not found with ID: " + webhookId));
     }
     
-    /**
-     * Update webhook
-     */
+    //
+// Update webhook
+     
     @Transactional
     public Webhook updateWebhook(Long webhookId, String name, String url, 
                                  String events, Boolean isActive) {
@@ -121,9 +121,9 @@ public class WebhookService {
         return updated;
     }
     
-    /**
-     * Delete webhook
-     */
+    //
+// Delete webhook
+     
     @Transactional
     public void deleteWebhook(Long webhookId) {
         log.info("Deleting webhook ID: {}", webhookId);
@@ -134,9 +134,9 @@ public class WebhookService {
         log.info("Webhook deleted successfully");
     }
     
-    /**
-     * Trigger webhook for an event
-     */
+    //
+// Trigger webhook for an event
+     
     @Transactional
     public void triggerWebhook(Long tenantId, String eventType, Object payload) {
         log.info("Triggering webhooks for tenant {} with event: {}", tenantId, eventType);
@@ -150,9 +150,9 @@ public class WebhookService {
         }
     }
     
-    /**
-     * Send webhook notification asynchronously
-     */
+    //
+// Send webhook notification asynchronously
+     
     private void sendWebhookAsync(Webhook webhook, String eventType, Object payload) {
         new Thread(() -> {
             try {
@@ -163,9 +163,9 @@ public class WebhookService {
         }).start();
     }
     
-    /**
-     * Send webhook HTTP request
-     */
+    //
+// Send webhook HTTP request
+     
     @Transactional
     public void sendWebhook(Webhook webhook, String eventType, Object payload) {
         log.info("Sending webhook to URL: {}", webhook.getUrl());
@@ -221,9 +221,9 @@ public class WebhookService {
         }
     }
     
-    /**
-     * Retry failed webhook with exponential backoff
-     */
+    //
+// Retry failed webhook with exponential backoff
+     
     private void retryWebhook(Webhook webhook, String eventType, Object payload) {
         Integer retriesLeft = webhook.getRetryCount();
         
@@ -244,18 +244,18 @@ public class WebhookService {
         }
     }
     
-    /**
-     * Generate secret key for webhook signature
-     */
+    //
+// Generate secret key for webhook signature
+     
     private String generateSecretKey() {
         SecureRandom random = new SecureRandom();
         byte[] bytes = new byte[32];
         random.nextBytes(bytes);
         return "whsec_" + Base64.getEncoder().encodeToString(bytes).replace("=", "");
     }
-    /**
-     * Generate HMAC signature for webhook payload
-     */
+    //
+// Generate HMAC signature for webhook payload
+     
     private String generateSignature(String payload, String secretKey) {
         try {
             Mac hmac = Mac.getInstance("HmacSHA256");
@@ -274,17 +274,17 @@ public class WebhookService {
         }
     }
     
-    /**
-     * Verify webhook signature
-     */
+    //
+// Verify webhook signature
+     
     public boolean verifySignature(String payload, String signature, String secretKey) {
         String expectedSignature = generateSignature(payload, secretKey);
         return expectedSignature.equals(signature);
     }
     
-    /**
-     * Test webhook by sending a ping
-     */
+    //
+// Test webhook by sending a ping
+     
     public boolean testWebhook(Long webhookId) {
         log.info("Testing webhook ID: {}", webhookId);
         
@@ -299,9 +299,9 @@ public class WebhookService {
         }
     }
     
-    /**
-     * Get webhook statistics
-     */
+    //
+// Get webhook statistics
+     
     public WebhookStats getWebhookStats(Long webhookId) {
         Webhook webhook = getWebhookById(webhookId);
         

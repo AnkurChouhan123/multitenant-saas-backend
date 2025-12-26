@@ -6,19 +6,19 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-/**
- * SubscriptionRepository - Database operations for Subscription
- */
+//
+// SubscriptionRepository - Database operations for Subscription
+ 
 @Repository
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
     
-    /**
-     * Find subscription by tenant ID
-     */
+    //
+// Find subscription by tenant ID
+     
     Optional<Subscription> findByTenantId(Long tenantId);
     
-    /**
-     * Check if tenant has active subscription
-     */
+    //
+// Check if tenant has active subscription
+     
     boolean existsByTenantIdAndIsActiveTrue(Long tenantId);
 }

@@ -10,9 +10,9 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * NotificationRepository - Database operations for Notifications
- */
+//
+// NotificationRepository - Database operations for Notifications
+ 
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
     

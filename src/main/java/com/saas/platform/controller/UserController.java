@@ -13,12 +13,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * UserController with proper permissions:
- * - TENANT_OWNER, TENANT_ADMIN: Full management (view, create, edit, delete)
- * - USER: View only (can see user list, no modifications)
- * - VIEWER: No access to user management
- */
+//
+// UserController with proper permissions:
+// - TENANT_OWNER, TENANT_ADMIN: Full management (view, create, edit, delete)
+// - USER: View only (can see user list, no modifications)
+// - VIEWER: No access to user management
+ 
 @RestController
 @RequestMapping("/api/users")
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})
@@ -32,11 +32,11 @@ public class UserController {
         this.roleValidator = roleValidator;
     }
     
-    /**
-     * Get all users in tenant
-     * VIEW ACCESS: TENANT_OWNER, TENANT_ADMIN, USER (read-only)
-     * NO ACCESS: VIEWER
-     */
+    //
+// Get all users in tenant
+// VIEW ACCESS: TENANT_OWNER, TENANT_ADMIN, USER (read-only)
+// NO ACCESS: VIEWER
+     
     @GetMapping("/tenant/{tenantId}")
     public ResponseEntity<?> getUsersByTenant(@PathVariable Long tenantId) {
         try {
@@ -51,9 +51,9 @@ public class UserController {
         }
     }
     
-    /**
-     * Get user by ID - Anyone in tenant can view
-     */
+    //
+// Get user by ID - Anyone in tenant can view
+     
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
         try {
@@ -69,9 +69,9 @@ public class UserController {
         }
     }
     
-    /**
-     * Get user by email - Anyone in tenant can view
-     */
+    //
+// Get user by email - Anyone in tenant can view
+     
     @GetMapping("/email/{email}")
     public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
         try {
@@ -87,10 +87,10 @@ public class UserController {
         }
     }
     
-    /**
-     * Create new user
-     * MANAGEMENT ACCESS: TENANT_OWNER, TENANT_ADMIN only
-     */
+    //
+// Create new user
+// MANAGEMENT ACCESS: TENANT_OWNER, TENANT_ADMIN only
+     
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody User user, @RequestParam Long tenantId) {
         try {
@@ -108,9 +108,9 @@ public class UserController {
         }
     }
     
-    /**
-     * Change password - Users can change their own password
-     */
+    //
+// Change password - Users can change their own password
+     
     @PostMapping("/{id}/change-password")
     public ResponseEntity<?> changePassword(
             @PathVariable Long id,
@@ -130,10 +130,10 @@ public class UserController {
         }
     }
     
-    /**
-     * Update user
-     * MANAGEMENT ACCESS: TENANT_OWNER, TENANT_ADMIN only
-     */
+    //
+// Update user
+// MANAGEMENT ACCESS: TENANT_OWNER, TENANT_ADMIN only
+     
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User user) {
         try {
@@ -156,9 +156,9 @@ public class UserController {
         }
     }
     
-    /**
-     * Update own profile - Everyone can update their own profile
-     */
+    //
+// Update own profile - Everyone can update their own profile
+     
     @PatchMapping("/{id}/profile")
     public ResponseEntity<?> updateProfile(
             @PathVariable Long id,
@@ -178,10 +178,10 @@ public class UserController {
         }
     }
     
-    /**
-     * Delete user
-     * MANAGEMENT ACCESS: TENANT_OWNER, TENANT_ADMIN only
-     */
+    //
+// Delete user
+// MANAGEMENT ACCESS: TENANT_OWNER, TENANT_ADMIN only
+     
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         try {
@@ -199,9 +199,9 @@ public class UserController {
         }
     }
     
-    /**
-     * Check current user's permissions for user management
-     */
+    //
+// Check current user's permissions for user management
+     
     @GetMapping("/check-permission/{tenantId}")
     public ResponseEntity<Map<String, Object>> checkPermission(@PathVariable Long tenantId) {
         Map<String, Object> response = new HashMap<>();

@@ -1,8 +1,8 @@
 package com.saas.platform.model;
 
-/**
- * Tenant Status Enum
- */
+//
+// Tenant Status Enum
+ 
 public enum TenantStatus {
     TRIAL,      // Free trial period
     ACTIVE,     // Paid and active

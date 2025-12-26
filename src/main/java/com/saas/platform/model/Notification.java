@@ -3,9 +3,9 @@ package com.saas.platform.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-/**
- * Notification Entity - Real-time notifications for users
- */
+//
+// Notification Entity - Real-time notifications for users
+ 
 @Entity
 @Table(name = "notifications")
 public class Notification {

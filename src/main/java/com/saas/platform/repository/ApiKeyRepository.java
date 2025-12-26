@@ -8,44 +8,44 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * ApiKeyRepository - Database operations for API Keys
- */
+//
+// ApiKeyRepository - Database operations for API Keys
+ 
 @Repository
 public interface ApiKeyRepository extends JpaRepository<ApiKey, Long> {
     
-    /**
-     * Find API key by its value
-     */
+    //
+// Find API key by its value
+     
     Optional<ApiKey> findByKeyValue(String keyValue);
     
-    /**
-     * Find all API keys for a tenant
-     */
+    //
+// Find all API keys for a tenant
+     
     List<ApiKey> findByTenantIdOrderByCreatedAtDesc(Long tenantId);
     
-    /**
-     * Find active API keys for a tenant
-     */
+    //
+// Find active API keys for a tenant
+     
     List<ApiKey> findByTenantIdAndIsActiveTrue(Long tenantId);
     
-    /**
-     * Count active API keys for a tenant
-     */
+    //
+// Count active API keys for a tenant
+     
     long countByTenantIdAndIsActiveTrue(Long tenantId);
     
-    /**
-     * Find API keys created by a specific user
-     */
+    //
+// Find API keys created by a specific user
+     
     List<ApiKey> findByCreatedBy(Long userId);
     
-    /**
-     * Find expired API keys
-     */
+    //
+// Find expired API keys
+     
     List<ApiKey> findByExpiresAtBeforeAndIsActiveTrue(LocalDateTime dateTime);
     
-    /**
-     * Check if API key exists by value
-     */
+    //
+// Check if API key exists by value
+     
     boolean existsByKeyValue(String keyValue);
 }

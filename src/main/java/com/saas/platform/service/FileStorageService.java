@@ -21,10 +21,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * FileStorageService - NPE FIXED
- * Fixed: Added null checks in validation methods
- */
+//
+// FileStorageService - NPE FIXED
+// Fixed: Added null checks in validation methods
+ 
 @Service
 public class FileStorageService {
     
@@ -46,9 +46,9 @@ public class FileStorageService {
         this.activityLogService = activityLogService;
     }
     
-    /**
-     * Upload a file
-     */
+    //
+// Upload a file
+     
     @Transactional
     public FileStorage uploadFile(MultipartFile file, Long tenantId, Long userId,
                                   String description, String category) throws IOException {
@@ -100,9 +100,9 @@ public class FileStorageService {
         return saved;
     }
     
-    /**
-     * Download a file
-     */
+    //
+// Download a file
+     
     public Resource downloadFile(Long fileId, Long userId) throws IOException {
         log.info("Downloading file ID: {} by user: {}", fileId, userId);
         
@@ -134,38 +134,38 @@ public class FileStorageService {
         return resource;
     }
     
-    /**
-     * Get all files for a tenant
-     */
+    //
+// Get all files for a tenant
+     
     public List<FileStorage> getFilesByTenant(Long tenantId) {
         return fileStorageRepository.findByTenantIdAndDeletedAtIsNullOrderByCreatedAtDesc(tenantId);
     }
     
-    /**
-     * Get files uploaded by a user
-     */
+    //
+// Get files uploaded by a user
+     
     public List<FileStorage> getFilesByUser(Long userId) {
         return fileStorageRepository.findByUploadedByAndDeletedAtIsNullOrderByCreatedAtDesc(userId);
     }
     
-    /**
-     * Get files by category
-     */
+    //
+// Get files by category
+     
     public List<FileStorage> getFilesByCategory(Long tenantId, String category) {
         return fileStorageRepository.findByTenantIdAndCategoryAndDeletedAtIsNull(tenantId, category);
     }
     
-    /**
-     * Search files by name
-     */
+    //
+// Search files by name
+     
     public List<FileStorage> searchFiles(Long tenantId, String keyword) {
         return fileStorageRepository.findByTenantIdAndOriginalFilenameContainingIgnoreCaseAndDeletedAtIsNull(
             tenantId, keyword);
     }
     
-    /**
-     * Update file metadata
-     */
+    //
+// Update file metadata
+     
     @Transactional
     public FileStorage updateFileMetadata(Long fileId, String description,
                                          String category, String tags) {
@@ -178,9 +178,9 @@ public class FileStorageService {
         return fileStorageRepository.save(file);
     }
     
-    /**
-     * Share file with users
-     */
+    //
+// Share file with users
+     
     @Transactional
     public FileStorage shareFile(Long fileId, List<Long> userIds) {
         FileStorage file = getFileById(fileId);
@@ -197,9 +197,9 @@ public class FileStorageService {
         return saved;
     }
     
-    /**
-     * Soft delete a file
-     */
+    //
+// Soft delete a file
+     
     @Transactional
     public void deleteFile(Long fileId, Long userId) {
         log.info("Deleting file ID: {} by user: {}", fileId, userId);
@@ -220,9 +220,9 @@ public class FileStorageService {
         log.info("File deleted successfully");
     }
     
-    /**
-     * Permanently delete a file
-     */
+    //
+// Permanently delete a file
+     
     @Transactional
     public void permanentlyDeleteFile(Long fileId) throws IOException {
         log.info("Permanently deleting file ID: {}", fileId);
@@ -239,9 +239,9 @@ public class FileStorageService {
         log.info("File permanently deleted");
     }
     
-    /**
-     * Restore deleted file
-     */
+    //
+// Restore deleted file
+     
     @Transactional
     public FileStorage restoreFile(Long fileId) {
         FileStorage file = getFileById(fileId);
@@ -254,33 +254,33 @@ public class FileStorageService {
         return fileStorageRepository.save(file);
     }
     
-    /**
-     * Get total storage used by tenant
-     */
+    //
+// Get total storage used by tenant
+     
     public Long getTotalStorageUsed(Long tenantId) {
         return fileStorageRepository.sumFileSizeByTenantId(tenantId);
     }
     
-    /**
-     * Get file by ID
-     */
+    //
+// Get file by ID
+     
     public FileStorage getFileById(Long id) {
         return fileStorageRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("File not found with ID: " + id));
     }
     
-    /**
-     * Get recent files
-     */
+    //
+// Get recent files
+     
     public List<FileStorage> getRecentFiles(Long tenantId, int limit) {
         return fileStorageRepository.findTop10ByTenantIdAndDeletedAtIsNullOrderByCreatedAtDesc(tenantId);
     }
     
     // Private helper methods
     
-    /**
-     * ✅ FIXED: Added null check for file validation
-     */
+    //
+// ✅ FIXED: Added null check for file validation
+     
     private void validateFile(MultipartFile file) {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("File is empty or null");
@@ -317,9 +317,9 @@ public class FileStorageService {
         return uploadPath;
     }
     
-    /**
-     * ✅ FIXED: Added null safety check
-     */
+    //
+// ✅ FIXED: Added null safety check
+     
     private String getFileExtension(String filename) {
         if (filename == null || filename.trim().isEmpty() || !filename.contains(".")) {
             return "";

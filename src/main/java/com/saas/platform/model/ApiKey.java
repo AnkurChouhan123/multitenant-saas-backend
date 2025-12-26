@@ -4,9 +4,9 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * API Key Entity - For tenant API access management
- */
+//
+// API Key Entity - For tenant API access management
+ 
 @Entity
 @Table(name = "api_keys")
 public class ApiKey {

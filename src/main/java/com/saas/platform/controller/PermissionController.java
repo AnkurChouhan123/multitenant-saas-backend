@@ -8,12 +8,12 @@
 //import java.util.HashMap;
 //import java.util.Map;
 //
-///**
+////
 // * PermissionController - API for frontend to check user permissions
 // * 
 // * This controller provides endpoints for the frontend to determine
 // * what UI elements and pages the current user can access.
-// */
+// 
 //@RestController
 //@RequestMapping("/api/permissions")
 //@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})
@@ -25,10 +25,10 @@
 //        this.roleValidator = roleValidator;
 //    }
 //    
-//    /**
+//    //
 //     * Get all permissions for current user
 //     * Returns comprehensive permission set for UI rendering
-//     */
+//     
 //    @GetMapping("/current")
 //    public ResponseEntity<Map<String, Object>> getCurrentUserPermissions() {
 //        try {
@@ -85,9 +85,9 @@
 //        }
 //    }
 //    
-//    /**
+//    //
 //     * Check specific permission
-//     */
+//     
 //    @GetMapping("/check")
 //    public ResponseEntity<Map<String, Boolean>> checkPermission(
 //            @RequestParam String permission,
@@ -127,9 +127,9 @@
 //        }
 //    }
 //    
-//    /**
+//    //
 //     * Check if user can access a specific page
-//     */
+//     
 //    @GetMapping("/page-access")
 //    public ResponseEntity<Map<String, Object>> checkPageAccess(@RequestParam String page) {
 //        Map<String, Object> response = new HashMap<>();
@@ -172,10 +172,10 @@
 //        }
 //    }
 //    
-//    /**
+//    //
 //     * Get UI configuration based on user role
 //     * Tells frontend what to show/hide
-//     */
+//     
 //    @GetMapping("/ui-config")
 //    public ResponseEntity<Map<String, Object>> getUiConfig() {
 //        try {

@@ -18,9 +18,9 @@ public class PermissionCheckAspect {
         this.roleValidator = roleValidator;
     }
     
-    /**
-     * Check file permissions before method execution
-     */
+    //
+// Check file permissions before method execution
+     
     @Before("@annotation(com.saas.platform.security.RequireFilePermission)")
     public void checkFilePermission(JoinPoint joinPoint) throws Throwable {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
@@ -43,9 +43,9 @@ public class PermissionCheckAspect {
         }
     }
     
-    /**
-     * Check user permissions before method execution
-     */
+    //
+// Check user permissions before method execution
+     
     @Before("@annotation(com.saas.platform.security.RequireUserPermission)")
     public void checkUserPermission(JoinPoint joinPoint) throws Throwable {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();

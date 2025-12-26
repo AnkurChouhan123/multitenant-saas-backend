@@ -27,9 +27,9 @@ public class ActivityLogService {
         this.activityLogRepository = activityLogRepository;
     }
     
-    /**
-     * Log an activity
-     */
+    //
+// Log an activity
+     
     @Transactional
     public void logActivity(Long tenantId, Long userId, String userEmail, String userName,
                            String action, String actionType, String details) {
@@ -49,38 +49,38 @@ public class ActivityLogService {
         }
     }
     
-    /**
-     * Get all activities for a tenant
-     */
+    //
+// Get all activities for a tenant
+     
     public List<ActivityLog> getActivitiesByTenant(Long tenantId) {
         return activityLogRepository.findByTenantIdOrderByCreatedAtDesc(tenantId);
     }
     
-    /**
-     * Get activities with pagination
-     */
+    //
+// Get activities with pagination
+     
     public Page<ActivityLog> getActivitiesPage(Long tenantId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by("createdAt").descending());
         return activityLogRepository.findByTenantId(tenantId, pageRequest);
     }
     
-    /**
-     * Get activities by type
-     */
+    //
+// Get activities by type
+     
     public List<ActivityLog> getActivitiesByType(Long tenantId, String actionType) {
         return activityLogRepository.findByTenantIdAndActionType(tenantId, actionType);
     }
     
-    /**
-     * Get activities in date range
-     */
+    //
+// Get activities in date range
+     
     public List<ActivityLog> getActivitiesByDateRange(Long tenantId, LocalDateTime start, LocalDateTime end) {
         return activityLogRepository.findByTenantIdAndCreatedAtBetween(tenantId, start, end);
     }
     
-    /**
-     * Get client IP address from request
-     */
+    //
+// Get client IP address from request
+     
     private String getClientIpAddress() {
         try {
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();

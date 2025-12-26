@@ -1,8 +1,8 @@
 package com.saas.platform.model;
 
-/**
- * Subscription Plans with pricing and limits
- */
+//
+// Subscription Plans with pricing and limits
+ 
 public enum SubscriptionPlan {
     
     FREE(0.0, 5, 1000),

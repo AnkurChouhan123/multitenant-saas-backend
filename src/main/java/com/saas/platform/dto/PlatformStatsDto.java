@@ -2,9 +2,9 @@ package com.saas.platform.dto;
 
 import java.time.LocalDateTime;
 
-/**
- * PlatformStatsDto - Platform-wide statistics for Super Admin
- */
+//
+// PlatformStatsDto - Platform-wide statistics for Super Admin
+ 
 public class PlatformStatsDto {
     // Tenant metrics
     private Long totalTenants;

@@ -3,9 +3,9 @@ package com.saas.platform.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-/**
- * Webhook Entity - For tenant event notifications
- */
+//
+// Webhook Entity - For tenant event notifications
+ 
 @Entity
 @Table(name = "webhooks")
 public class Webhook {

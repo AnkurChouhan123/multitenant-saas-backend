@@ -3,9 +3,9 @@ package com.saas.platform.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-/**
- * TwoFactorAuth Entity - Manages 2FA for users
- */
+//
+// TwoFactorAuth Entity - Manages 2FA for users
+ 
 @Entity
 @Table(name = "two_factor_auth")
 public class TwoFactorAuth {

@@ -8,9 +8,9 @@ import jakarta.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
 
-/**
- * User Entity - Represents users within a tenant
- */
+//
+// User Entity - Represents users within a tenant
+ 
 @Entity
 @Table(name = "users")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

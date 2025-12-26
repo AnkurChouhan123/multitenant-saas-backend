@@ -3,10 +3,10 @@ package com.saas.platform.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-/**
- * Tenant Entity - Represents each company/organization
- * No Lombok - All getters/setters written manually
- */
+//
+// Tenant Entity - Represents each company/organization
+// No Lombok - All getters/setters written manually
+ 
 @Entity
 @Table(name = "tenants")
 public class Tenant {
