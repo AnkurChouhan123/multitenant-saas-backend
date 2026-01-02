@@ -4,6 +4,7 @@ public class LoginRequest {
     
     private String email;
     private String password;
+    private String twoFactorCode; // Optional 2FA code
     
     // Constructors
     public LoginRequest() {
@@ -12,6 +13,12 @@ public class LoginRequest {
     public LoginRequest(String email, String password) {
         this.email = email;
         this.password = password;
+    }
+    
+    public LoginRequest(String email, String password, String twoFactorCode) {
+        this.email = email;
+        this.password = password;
+        this.twoFactorCode = twoFactorCode;
     }
     
     // Getters and Setters
@@ -29,5 +36,13 @@ public class LoginRequest {
     
     public void setPassword(String password) {
         this.password = password;
+    }
+    
+    public String getTwoFactorCode() {
+        return twoFactorCode;
+    }
+    
+    public void setTwoFactorCode(String twoFactorCode) {
+        this.twoFactorCode = twoFactorCode;
     }
 }

@@ -22,21 +22,24 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final ActivityLogService activityLogService;
     private final EmailService emailService;
+    private final TwoFactorAuthService twoFactorAuthService;
     
     public AuthService(UserService userService,
-    		           TenantService tenantService, 
-                      JwtUtil jwtUtil,
-                      ActivityLogService activityLogService,
-                      EmailService emailService) {
+                       TenantService tenantService, 
+                       JwtUtil jwtUtil,
+                       ActivityLogService activityLogService,
+                       EmailService emailService,
+                       TwoFactorAuthService twoFactorAuthService) {
         this.userService = userService;
         this.tenantService = tenantService;
         this.jwtUtil = jwtUtil;
         this.activityLogService = activityLogService;
         this.emailService = emailService;
+        this.twoFactorAuthService = twoFactorAuthService;
     }
     
-    //
-// Login - Authenticate user and return JWT token
+    
+    //  Login - Authenticate user with optional 2FA
      
     public AuthResponse login(LoginRequest request) {
         log.info("Login attempt for email: {}", request.getEmail());
@@ -56,6 +59,26 @@ public class AuthService {
             throw new IllegalArgumentException("User account is inactive");
         }
         
+        // Check if 2FA is enabled
+        boolean twoFactorEnabled = twoFactorAuthService.isTwoFactorEnabled(user);
+        
+        if (twoFactorEnabled) {
+            // If 2FA code is not provided, ask for it
+            if (request.getTwoFactorCode() == null || request.getTwoFactorCode().isEmpty()) {
+                log.info("2FA required for user: {}", request.getEmail());
+                return AuthResponse.requireTwoFactor("TOTP", user.getEmail());
+            }
+            
+            // Verify 2FA code
+            boolean twoFactorValid = twoFactorAuthService.verifyLoginCode(user, request.getTwoFactorCode());
+            if (!twoFactorValid) {
+                log.warn("Invalid 2FA code for user: {}", request.getEmail());
+                throw new IllegalArgumentException("Invalid two-factor authentication code");
+            }
+            
+            log.info("2FA verification successful for user: {}", request.getEmail());
+        }
+        
         // Generate JWT token
         String token = jwtUtil.generateToken(
                 user.getEmail(),
@@ -70,7 +93,7 @@ public class AuthService {
             user.getId(),
             user.getEmail(),
             user.getFirstName() + " " + user.getLastName(),
-            "Logged in",
+            "Logged in" + (twoFactorEnabled ? " (with 2FA)" : ""),
             "auth",
             "User successfully authenticated"
         );
@@ -92,9 +115,8 @@ public class AuthService {
         return response;
     }
     
-    //
-// Register - Create new tenant and TENANT_OWNER user
-// UPDATED: First user is now TENANT_OWNER instead of TENANT_ADMIN
+    
+    //  Register - Create new tenant and TENANT_OWNER user
      
     @Transactional
     public AuthResponse register(RegisterRequest request) {
@@ -117,7 +139,7 @@ public class AuthService {
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
-        user.setRole(UserRole.TENANT_OWNER); // ✅ CHANGED: First user is TENANT_OWNER
+        user.setRole(UserRole.TENANT_OWNER);
         
         User savedUser = userService.createUser(user, savedTenant.getId());
         log.info("✅ TENANT_OWNER created: {} (ID: {})", savedUser.getEmail(), savedUser.getId());
@@ -128,7 +150,6 @@ public class AuthService {
             log.info("✅ Welcome email sent");
         } catch (Exception e) {
             log.error("❌ Failed to send welcome email: {}", e.getMessage());
-            // Don't fail registration if email fails
         }
         
         // Generate JWT token

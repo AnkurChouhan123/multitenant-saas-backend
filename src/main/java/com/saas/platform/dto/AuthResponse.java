@@ -13,6 +13,11 @@ public class AuthResponse {
     private String tenantName;
     private String subdomain;
     
+    // 2FA fields
+    private Boolean requiresTwoFactor = false;
+    private String twoFactorMethod;
+    private String message;
+    
     // Constructors
     public AuthResponse() {
     }
@@ -30,6 +35,16 @@ public class AuthResponse {
         this.tenantId = tenantId;
         this.tenantName = tenantName;
         this.subdomain = subdomain;
+    }
+    
+    // Static factory method for 2FA required response
+    public static AuthResponse requireTwoFactor(String method, String email) {
+        AuthResponse response = new AuthResponse();
+        response.setRequiresTwoFactor(true);
+        response.setTwoFactorMethod(method);
+        response.setEmail(email);
+        response.setMessage("Two-factor authentication required");
+        return response;
     }
     
     // Getters and Setters
@@ -111,5 +126,29 @@ public class AuthResponse {
     
     public void setSubdomain(String subdomain) {
         this.subdomain = subdomain;
+    }
+    
+    public Boolean getRequiresTwoFactor() {
+        return requiresTwoFactor;
+    }
+    
+    public void setRequiresTwoFactor(Boolean requiresTwoFactor) {
+        this.requiresTwoFactor = requiresTwoFactor;
+    }
+    
+    public String getTwoFactorMethod() {
+        return twoFactorMethod;
+    }
+    
+    public void setTwoFactorMethod(String twoFactorMethod) {
+        this.twoFactorMethod = twoFactorMethod;
+    }
+    
+    public String getMessage() {
+        return message;
+    }
+    
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
