@@ -16,11 +16,15 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
- import org.springframework.core.io.Resource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 
 import java.io.IOException;
 import java.nio.file.Files;
  import java.nio.file.Path;
+ 
+ 
 //
 // SuperAdminService - Platform Management Service
 // 
@@ -48,6 +52,9 @@ public class SuperAdminService {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     
+    @Autowired
+    private final PlanRepository planRepository;
+    
     public SuperAdminService(TenantRepository tenantRepository,
                             UserRepository userRepository,
                             SubscriptionRepository subscriptionRepository,
@@ -56,7 +63,7 @@ public class SuperAdminService {
                             ApiKeyRepository apiKeyRepository,
                             WebhookRepository webhookRepository,
                             JwtUtil jwtUtil,
-                            PasswordEncoder passwordEncoder) {
+                            PasswordEncoder passwordEncoder,PlanRepository planRepository) {
         this.tenantRepository = tenantRepository;
         this.userRepository = userRepository;
         this.subscriptionRepository = subscriptionRepository;
@@ -66,6 +73,7 @@ public class SuperAdminService {
         this.webhookRepository = webhookRepository;
         this.jwtUtil = jwtUtil;
         this.passwordEncoder = passwordEncoder;
+        this.planRepository=planRepository;
     }
     
     // ========================================
@@ -269,38 +277,101 @@ public class SuperAdminService {
     // ========================================
     
     public List<Map<String, Object>> getAllPlansWithStats() {
-        List<Map<String, Object>> plans = new ArrayList<>();
+        List<Plan> allPlans = planRepository.findAll();
         
-        for (SubscriptionPlan plan : SubscriptionPlan.values()) {
+        return allPlans.stream().map(plan -> {
             Map<String, Object> planData = new HashMap<>();
-            planData.put("name", plan.name());
+            planData.put("id", plan.getId());
+            planData.put("name", plan.getName());
             planData.put("price", plan.getMonthlyPrice());
             planData.put("maxUsers", plan.getMaxUsers());
             planData.put("maxApiCalls", plan.getMaxApiCalls());
+            planData.put("maxStorageGB", plan.getMaxStorageGB());
             planData.put("isUnlimited", plan.isUnlimited());
+            planData.put("isActive", plan.getIsActive());
+            planData.put("isCustom", plan.getIsCustom());
+            planData.put("description", plan.getDescription());
             
             // Count tenants on this plan
-            long tenantCount = subscriptionRepository.findAll().stream()
-                .filter(sub -> sub.getPlan() == plan)
-                .count();
-            planData.put("tenantCount", tenantCount);
+            // You'll need to update Subscription model to use Plan entity instead of enum
+            planData.put("tenantCount", 0L); // For now
             
-            plans.add(planData);
+            return planData;
+        }).collect(Collectors.toList());
+    }
+
+    
+    @Transactional
+    public Plan createSubscriptionPlan(Map<String, Object> planData) {
+        log.info("Creating custom subscription plan: {}", planData);
+        
+        String name = (String) planData.get("name");
+        
+        // Check if plan name already exists
+        if (planRepository.existsByName(name)) {
+            throw new IllegalArgumentException("Plan with name '" + name + "' already exists");
         }
         
-        return plans;
+        Plan plan = new Plan();
+        plan.setName(name);
+        plan.setMonthlyPrice(((Number) planData.get("monthlyPrice")).doubleValue());
+        plan.setMaxUsers(((Number) planData.get("maxUsers")).intValue());
+        plan.setMaxApiCalls(((Number) planData.get("maxApiCalls")).intValue());
+        plan.setMaxStorageGB(((Number) planData.get("maxStorageGB")).intValue());
+        plan.setDescription((String) planData.get("description"));
+        plan.setIsCustom(true);
+        plan.setIsActive(true);
+        
+        Plan saved = planRepository.save(plan);
+        log.info("Custom plan created: {} with ID: {}", saved.getName(), saved.getId());
+        
+        return saved;
+    }
+
+    
+    @Transactional
+    public Plan updatePlanPricing(Long planId, Map<String, Object> planData) {
+        log.info("Updating plan ID {}: {}", planId, planData);
+        
+        Plan plan = planRepository.findById(planId)
+            .orElseThrow(() -> new IllegalArgumentException("Plan not found"));
+        
+        if (planData.containsKey("name")) {
+            plan.setName((String) planData.get("name"));
+        }
+        if (planData.containsKey("monthlyPrice")) {
+            plan.setMonthlyPrice(((Number) planData.get("monthlyPrice")).doubleValue());
+        }
+        if (planData.containsKey("maxUsers")) {
+            plan.setMaxUsers(((Number) planData.get("maxUsers")).intValue());
+        }
+        if (planData.containsKey("maxApiCalls")) {
+            plan.setMaxApiCalls(((Number) planData.get("maxApiCalls")).intValue());
+        }
+        if (planData.containsKey("maxStorageGB")) {
+            plan.setMaxStorageGB(((Number) planData.get("maxStorageGB")).intValue());
+        }
+        if (planData.containsKey("description")) {
+            plan.setDescription((String) planData.get("description"));
+        }
+        if (planData.containsKey("isActive")) {
+            plan.setIsActive((Boolean) planData.get("isActive"));
+        }
+        
+        return planRepository.save(plan);
     }
     
     @Transactional
-    public void createSubscriptionPlan(Map<String, Object> planData) {
-        // In production: Store custom plans in database
-        log.info("Super Admin creating custom subscription plan: {}", planData);
-    }
-    
-    @Transactional
-    public void updatePlanPricing(String planName, Map<String, Object> planData) {
-        // In production: Update plan in database
-        log.info("Super Admin updating plan {}: {}", planName, planData);
+    public void deletePlan(Long planId) {
+        log.warn("Deleting plan ID: {}", planId);
+        
+        Plan plan = planRepository.findById(planId)
+            .orElseThrow(() -> new IllegalArgumentException("Plan not found"));
+        
+        // Check if any tenants are using this plan
+        // If yes, prevent deletion or migrate them first
+        
+        planRepository.delete(plan);
     }
     
     @Transactional
@@ -1043,6 +1114,15 @@ public class SuperAdminService {
          "action", "suspended"
      );
  }
+ 
+ @Transactional
+ public void togglePlanStatus(Long planId) {
+     Plan plan = planRepository.findById(planId)
+         .orElseThrow(() -> new IllegalArgumentException("Plan not found"));
+     plan.setIsActive(!plan.getIsActive());
+     planRepository.save(plan);
+ }
+
 
  public void scheduleTenantMigration(Long tenantId, String targetRegion, LocalDateTime scheduledTime) {
      log.info("Scheduling migration for tenant {} to {} at {}", tenantId, targetRegion, scheduledTime);

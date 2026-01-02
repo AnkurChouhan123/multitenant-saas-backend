@@ -4,6 +4,7 @@ import com.saas.platform.dto.PlatformStatsDto;
 import com.saas.platform.dto.TenantManagementDto;
 import com.saas.platform.model.Tenant;
 import com.saas.platform.model.TenantStatus;
+import com.saas.platform.model.Plan;
 import com.saas.platform.model.Subscription;
 import com.saas.platform.model.SubscriptionPlan;
 import com.saas.platform.service.SuperAdminService;
@@ -172,23 +173,82 @@ public class SuperAdminController {
 // Create new subscription plan
      
     @PostMapping("/plans")
-    public ResponseEntity<Map<String, String>> createPlan(@RequestBody Map<String, Object> planData) {
-        superAdminService.createSubscriptionPlan(planData);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Map.of("message", "Plan created successfully"));
+    public ResponseEntity<Map<String, Object>> createPlan(@RequestBody Map<String, Object> planData) {
+        try {
+            // Validate required fields
+            if (!planData.containsKey("name") || !planData.containsKey("monthlyPrice") ||
+                !planData.containsKey("maxUsers") || !planData.containsKey("maxApiCalls")) {
+                return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Missing required fields",
+                    "required", List.of("name", "monthlyPrice", "maxUsers", "maxApiCalls", "maxStorageGB")
+                ));
+            }
+            
+            Plan createdPlan = superAdminService.createSubscriptionPlan(planData);
+            
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "message", "Plan created successfully",
+                "plan", Map.of(
+                    "id", createdPlan.getId(),
+                    "name", createdPlan.getName(),
+                    "monthlyPrice", createdPlan.getMonthlyPrice(),
+                    "maxUsers", createdPlan.getMaxUsers(),
+                    "maxApiCalls", createdPlan.getMaxApiCalls(),
+                    "maxStorageGB", createdPlan.getMaxStorageGB()
+                )
+            ));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Failed to create plan: " + e.getMessage()));
+        }
     }
+
     
     //
 // Update plan pricing/limits
      
-    @PutMapping("/plans/{planName}")
-    public ResponseEntity<Map<String, String>> updatePlan(
-            @PathVariable String planName,
+    @PutMapping("/plans/{planId}")
+    public ResponseEntity<Map<String, Object>> updatePlan(
+            @PathVariable Long planId,
             @RequestBody Map<String, Object> planData) {
-        superAdminService.updatePlanPricing(planName, planData);
-        return ResponseEntity.ok(Map.of("message", "Plan updated successfully"));
+        try {
+            Plan updated = superAdminService.updatePlanPricing(planId, planData);
+            return ResponseEntity.ok(Map.of(
+                "message", "Plan updated successfully",
+                "plan", updated
+            ));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", e.getMessage()));
+        }
     }
     
+    @DeleteMapping("/plans/{planId}")
+    public ResponseEntity<Map<String, String>> deletePlan(@PathVariable Long planId) {
+        try {
+            superAdminService.deletePlan(planId);
+            return ResponseEntity.ok(Map.of("message", "Plan deleted successfully"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", "Cannot delete plan: " + e.getMessage()));
+        }
+    }
+    
+    @PutMapping("/plans/{planId}/toggle-active")
+    public ResponseEntity<Map<String, String>> togglePlanStatus(@PathVariable Long planId) {
+        try {
+            superAdminService.togglePlanStatus(planId);
+            return ResponseEntity.ok(Map.of("message", "Plan status toggled successfully"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", e.getMessage()));
+        }
+    }
     //
 // Assign plan to tenant
      
