@@ -1,15 +1,21 @@
 package com.saas.platform.controller;
 
+import com.saas.platform.model.Plan;
 import com.saas.platform.model.Subscription;
 import com.saas.platform.model.SubscriptionPlan;
+import com.saas.platform.repository.PlanRepository;
 import com.saas.platform.security.RoleValidator;
 import com.saas.platform.service.SubscriptionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 //  SubscriptionController with proper permission structure:
 //  - TENANT_OWNER: Full management access (create/upgrade/cancel)
@@ -24,10 +30,12 @@ public class SubscriptionController {
 
 	private final SubscriptionService subscriptionService;
 	private final RoleValidator roleValidator;
+	private final PlanRepository planRepository;
 
-	public SubscriptionController(SubscriptionService subscriptionService, RoleValidator roleValidator) {
+	public SubscriptionController(SubscriptionService subscriptionService, RoleValidator roleValidator, PlanRepository planRepository) {
 		this.subscriptionService = subscriptionService;
 		this.roleValidator = roleValidator;
+		this.planRepository = planRepository;
 	}
 
 //      Get tenant's subscription
@@ -58,18 +66,43 @@ public class SubscriptionController {
 	// Get all available plans
 	// VIEW ACCESS: TENANT_OWNER, TENANT_ADMIN, SUPER_ADMIN
 
-	@GetMapping("/plans")
-	public ResponseEntity<?> getPlans() {
-		try {
-			// Check if user has VIEW permission
-			if (!roleValidator.hasSubscriptionViewPermission()) {
-				throw new SecurityException("Access denied: Insufficient permissions to view plans");
-			}
-			return ResponseEntity.ok(SubscriptionPlan.values());
-		} catch (SecurityException e) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(createErrorResponse(e.getMessage()));
-		}
-	}
+	   @GetMapping("/plans")
+	    @PreAuthorize("hasAnyAuthority('ROLE_TENANT_OWNER', 'ROLE_TENANT_ADMIN', 'ROLE_SUPER_ADMIN')")
+	    public ResponseEntity<List<Map<String, Object>>> getAvailablePlans() {
+	        try {
+	            // Fetch all active plans
+	            List<Plan> activePlans = planRepository.findByIsActiveTrue();
+	            
+	            // Transform to response format
+	            List<Map<String, Object>> plansResponse = activePlans.stream()
+	                .map(plan -> {
+	                    Map<String, Object> planData = new HashMap<>();
+	                    planData.put("id", plan.getId());
+	                    planData.put("name", plan.getName());
+	                    planData.put("price", plan.getMonthlyPrice());
+	                    planData.put("monthlyPrice", plan.getMonthlyPrice());
+	                    planData.put("description", plan.getDescription());
+	                    planData.put("maxUsers", plan.getMaxUsers());
+	                    planData.put("max_users", plan.getMaxUsers());
+	                    planData.put("maxApiCalls", plan.getMaxApiCalls());
+	                    planData.put("max_api_calls", plan.getMaxApiCalls());
+	                    planData.put("maxStorageGB", plan.getMaxStorageGB());
+	                    planData.put("maxStorage", plan.getMaxStorageGB());
+	                    planData.put("max_storage_gb", plan.getMaxStorageGB());
+	                    planData.put("features", plan.getFeatures());
+	                    planData.put("isActive", plan.getIsActive());
+	                    planData.put("isCustom", plan.getIsCustom());
+	                    return planData;
+	                })
+	                .collect(Collectors.toList());
+	            
+	            return ResponseEntity.ok(plansResponse);
+	        } catch (Exception e) {
+//	            log.error("Error fetching plans: {}", e.getMessage());
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body(Collections.emptyList());
+	        }
+	    }
 
      // Change subscription plan
      // MANAGEMENT ACCESS: TENANT_OWNER ONLY

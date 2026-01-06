@@ -14,26 +14,29 @@ public class Plan {
     @Column(nullable = false, unique = true)
     private String name;
     
-    @Column(nullable = false)
+    @Column(name = "monthly_price", nullable = false)
     private Double monthlyPrice;
     
-    @Column(nullable = false)
+    @Column(name = "max_users", nullable = false)
     private Integer maxUsers;
     
-    @Column(nullable = false)
+    @Column(name = "max_api_calls", nullable = false)
     private Integer maxApiCalls;
     
-    @Column(nullable = false)
+    @Column(name = "max_storage_gb", nullable = false) // FIXED: Explicit column name
     private Integer maxStorageGB;
     
-    @Column(nullable = false)
+    @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
     
-    @Column(nullable = false)
-    private Boolean isCustom = false; // true = created by admin, false = default
+    @Column(name = "is_custom", nullable = false)
+    private Boolean isCustom = false;
     
     @Column(columnDefinition = "TEXT")
     private String description;
+    
+    @Column(columnDefinition = "TEXT")
+    private String features;
     
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -65,6 +68,10 @@ public class Plan {
     public Double getMonthlyPrice() { return monthlyPrice; }
     public void setMonthlyPrice(Double monthlyPrice) { this.monthlyPrice = monthlyPrice; }
     
+    // Convenience getter/setter for frontend compatibility
+    public Double getPrice() { return monthlyPrice; }
+    public void setPrice(Double price) { this.monthlyPrice = price; }
+    
     public Integer getMaxUsers() { return maxUsers; }
     public void setMaxUsers(Integer maxUsers) { this.maxUsers = maxUsers; }
     
@@ -74,6 +81,10 @@ public class Plan {
     public Integer getMaxStorageGB() { return maxStorageGB; }
     public void setMaxStorageGB(Integer maxStorageGB) { this.maxStorageGB = maxStorageGB; }
     
+    // Convenience getter/setter for frontend compatibility
+    public Integer getMaxStorage() { return maxStorageGB; }
+    public void setMaxStorage(Integer maxStorage) { this.maxStorageGB = maxStorage; }
+    
     public Boolean getIsActive() { return isActive; }
     public void setIsActive(Boolean isActive) { this.isActive = isActive; }
     
@@ -82,6 +93,9 @@ public class Plan {
     
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+    
+    public String getFeatures() { return features; }
+    public void setFeatures(String features) { this.features = features; }
     
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

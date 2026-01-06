@@ -250,27 +250,45 @@ public class SuperAdminService {
         log.info("Tenant {} soft-deleted", tenant.getName());
     }
     
-    public String impersonateTenantOwner(Long tenantId) {
-        log.warn("Super Admin impersonating tenant owner for tenant ID: {}", tenantId);
-        
-        // Find tenant owner
-        List<User> users = userRepository.findByTenantId(tenantId);
-        User owner = users.stream()
-            .filter(u -> u.getRole() == UserRole.TENANT_OWNER)
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("No tenant owner found"));
-        
-        // Generate temporary impersonation token (shorter expiry)
-        String token = jwtUtil.generateToken(
-            owner.getEmail(),
-            owner.getId(),
-            tenantId,
-            owner.getRole().toString()
-        );
-        
-        log.warn("Impersonation token generated for tenant owner: {}", owner.getEmail());
-        return token;
-    }
+    public Map<String, Object> impersonateTenantOwner(Long tenantId) {
+    log.warn("Super Admin impersonating tenant owner for tenant ID: {}", tenantId);
+    
+    // Find tenant
+    Tenant tenant = tenantRepository.findById(tenantId)
+        .orElseThrow(() -> new IllegalArgumentException("Tenant not found"));
+    
+    // Find tenant owner
+    List<User> users = userRepository.findByTenantId(tenantId);
+    User owner = users.stream()
+        .filter(u -> u.getRole() == UserRole.TENANT_OWNER)
+        .findFirst()
+        .orElseThrow(() -> new IllegalArgumentException("No tenant owner found"));
+    
+    // Generate temporary impersonation token (shorter expiry)
+    String token = jwtUtil.generateToken(
+        owner.getEmail(),
+        owner.getId(),
+        tenantId,
+        owner.getRole().toString()
+    );
+    
+    log.warn("Impersonation token generated for tenant owner: {}", owner.getEmail());
+    
+    // Return all data needed by frontend
+    Map<String, Object> response = new HashMap<>();
+    response.put("token", token);
+    response.put("userId", owner.getId());
+    response.put("email", owner.getEmail());
+    response.put("firstName", owner.getFirstName());
+    response.put("lastName", owner.getLastName());
+    response.put("role", owner.getRole().toString());
+    response.put("tenantId", tenant.getId());
+    response.put("tenantName", tenant.getName());
+    response.put("subdomain", tenant.getSubdomain());
+    response.put("message", "Impersonation successful");
+    
+    return response;
+}
     
     // ========================================
     // SUBSCRIPTION PLAN MANAGEMENT

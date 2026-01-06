@@ -151,11 +151,19 @@ public class SuperAdminController {
 // Impersonate tenant owner (generate temporary token)
      
     @PostMapping("/tenants/{tenantId}/impersonate")
-    public ResponseEntity<Map<String, String>> impersonateTenantOwner(@PathVariable Long tenantId) {
-        String token = superAdminService.impersonateTenantOwner(tenantId);
-        return ResponseEntity.ok(Map.of("token", token, "message", "Impersonation token generated"));
+    public ResponseEntity<Map<String, Object>> impersonateTenantOwner(@PathVariable Long tenantId) {
+        try {
+            Map<String, Object> impersonationData = superAdminService.impersonateTenantOwner(tenantId);
+            return ResponseEntity.ok(impersonationData);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+//            log.error("Impersonation failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Impersonation failed"));
+        }
     }
-    
     // ========================================
     // SUBSCRIPTION PLAN MANAGEMENT
     // ========================================
