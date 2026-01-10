@@ -257,16 +257,34 @@ public class FileStorageController {
     @GetMapping("/storage/{tenantId}")
     @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN', 'USER', 'VIEWER')")
     public ResponseEntity<Map<String, Object>> getStorageUsage(@PathVariable Long tenantId) {
-        // Validate tenant isolation
-        roleValidator.validateTenantIsolation(tenantId);
-        
-        Long totalStorage = fileStorageService.getTotalStorageUsed(tenantId);
-        
-        Map<String, Object> response = new HashMap<>();
-        response.put("totalStorageBytes", totalStorage);
-        response.put("totalStorageMB", totalStorage / (1024.0 * 1024));
-        response.put("totalStorageGB", totalStorage / (1024.0 * 1024 * 1024));
-        
-        return ResponseEntity.ok(response);
+        try {
+            // Validate tenant isolation
+            roleValidator.validateTenantIsolation(tenantId);
+            
+            // ✅ ENHANCED: Now includes plan-based quota info
+            Map<String, Object> response = fileStorageService.getStorageQuotaInfo(tenantId);
+            
+            return ResponseEntity.ok(response);
+        } catch (SecurityException e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+        }
+    }
+    
+    @GetMapping("/storage-quota/{tenantId}")
+    @PreAuthorize("hasAnyRole('TENANT_ADMIN', 'SUPER_ADMIN', 'USER', 'VIEWER')")
+    public ResponseEntity<Map<String, Object>> getStorageQuota(@PathVariable Long tenantId) {
+        try {
+            // Validate tenant isolation
+            roleValidator.validateTenantIsolation(tenantId);
+            
+            Map<String, Object> quotaInfo = fileStorageService.getStorageQuotaInfo(tenantId);
+            return ResponseEntity.ok(quotaInfo);
+        } catch (SecurityException e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+        }
     }
 }

@@ -18,8 +18,14 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import com.saas.platform.model.Subscription;
+import com.saas.platform.model.Plan;
+import com.saas.platform.repository.SubscriptionRepository;
+import org.springframework.beans.factory.annotation.Value;
 
 //
 // FileStorageService - NPE FIXED
@@ -30,6 +36,11 @@ public class FileStorageService {
     
     private static final Logger log = LoggerFactory.getLogger(FileStorageService.class);
     
+    @Value("${app.storage.default-quota-gb:10}")
+    private Integer defaultStorageQuotaGB;
+
+    private final SubscriptionRepository subscriptionRepository;
+    
     @Value("${file.upload.dir:uploads}")
     private String uploadDir;
     
@@ -38,12 +49,17 @@ public class FileStorageService {
     
     private final FileStorageRepository fileStorageRepository;
     private final ActivityLogService activityLogService;
+    private final WebhookService webhookService;
+
 
     
     public FileStorageService(FileStorageRepository fileStorageRepository,
-                            ActivityLogService activityLogService) {
+                            ActivityLogService activityLogService,
+                            SubscriptionRepository subscriptionRepository,WebhookService webhookService) {
         this.fileStorageRepository = fileStorageRepository;
         this.activityLogService = activityLogService;
+        this.subscriptionRepository = subscriptionRepository;
+        this.webhookService = webhookService;
     }
     
     //
@@ -86,6 +102,18 @@ public class FileStorageService {
         fileStorage.setChecksum(checksum);
         
         FileStorage saved = fileStorageRepository.save(fileStorage);
+        
+        webhookService.triggerWebhook(
+        	    tenantId,
+        	    "file.uploaded",
+        	    java.util.Map.of(
+        	        "fileId", saved.getId(),
+        	        "fileName", saved.getOriginalFilename(),
+        	        "fileSize", saved.getFileSize(),
+        	        "fileType", fileExtension,
+        	        "uploadedBy", userId
+        	    )
+        	);
         
         // Log activity
         activityLogService.logActivity(
@@ -209,6 +237,16 @@ public class FileStorageService {
         
         fileStorageRepository.save(file);
         
+        webhookService.triggerWebhook(
+        	    file.getTenantId(),
+        	    "file.deleted",
+        	    java.util.Map.of(
+        	        "fileId", fileId,
+        	        "fileName", file.getOriginalFilename(),
+        	        "deletedBy", userId
+        	    )
+        	);
+        
         // Log activity
         activityLogService.logActivity(
             file.getTenantId(), userId, "system", "System",
@@ -299,10 +337,18 @@ public class FileStorageService {
     
     private void checkStorageQuota(Long tenantId, Long fileSize) {
         Long currentStorage = getTotalStorageUsed(tenantId);
-        Long maxStorage = 1024L * 1024 * 1024 * 10; // 10GB default
         
-        if (currentStorage + fileSize > maxStorage) {
-            throw new IllegalArgumentException("Storage quota exceeded");
+        // ✅ FIXED: Get max storage from tenant's plan
+        Long maxStorageBytes = getMaxStorageForTenant(tenantId);
+        
+        if (currentStorage + fileSize > maxStorageBytes) {
+            double currentGB = currentStorage / (1024.0 * 1024 * 1024);
+            double maxGB = maxStorageBytes / (1024.0 * 1024 * 1024);
+            
+            throw new IllegalArgumentException(
+                String.format("Storage quota exceeded. Using %.2f GB of %.2f GB allowed. " +
+                    "Please upgrade your plan or delete some files.", 
+                    currentGB, maxGB));
         }
     }
     
@@ -344,4 +390,51 @@ public class FileStorageService {
             return "";
         }
     }
+    
+    private Long getMaxStorageForTenant(Long tenantId) {
+        try {
+            Subscription subscription = subscriptionRepository.findByTenantId(tenantId)
+                .orElse(null);
+            
+            if (subscription != null) {
+                Plan plan = subscription.getPlan();
+                
+                // If unlimited (-1), return very large number
+                if (plan.getMaxStorageGB() == -1) {
+                    return Long.MAX_VALUE; // Effectively unlimited
+                }
+                
+                // Convert GB to bytes
+                return (long) plan.getMaxStorageGB() * 1024 * 1024 * 1024;
+            }
+        } catch (Exception e) {
+            log.warn("Failed to get storage quota from subscription, using default: {}", 
+                e.getMessage());
+        }
+        
+        // Fallback to configured default
+        return (long) defaultStorageQuotaGB * 1024 * 1024 * 1024;
+    }
+    
+    public Map<String, Object> getStorageQuotaInfo(Long tenantId) {
+        Long usedBytes = getTotalStorageUsed(tenantId);
+        Long maxBytes = getMaxStorageForTenant(tenantId);
+        
+        double usedGB = usedBytes / (1024.0 * 1024 * 1024);
+        double maxGB = maxBytes / (1024.0 * 1024 * 1024);
+        double percentageUsed = maxBytes > 0 ? (usedBytes * 100.0) / maxBytes : 0;
+        
+        Map<String, Object> quotaInfo = new HashMap<>();
+        quotaInfo.put("usedBytes", usedBytes);
+        quotaInfo.put("maxBytes", maxBytes);
+        quotaInfo.put("usedGB", String.format("%.2f", usedGB));
+        quotaInfo.put("maxGB", maxBytes == Long.MAX_VALUE ? "Unlimited" : String.format("%.2f", maxGB));
+        quotaInfo.put("percentageUsed", String.format("%.1f", percentageUsed));
+        quotaInfo.put("isUnlimited", maxBytes == Long.MAX_VALUE);
+        quotaInfo.put("remainingBytes", maxBytes - usedBytes);
+        quotaInfo.put("remainingGB", String.format("%.2f", (maxBytes - usedBytes) / (1024.0 * 1024 * 1024)));
+        
+        return quotaInfo;
+    }
+
 }

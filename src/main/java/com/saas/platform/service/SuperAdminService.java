@@ -5,6 +5,11 @@ import com.saas.platform.dto.TenantManagementDto;
 import com.saas.platform.model.*;
 import com.saas.platform.repository.*;
 import com.saas.platform.security.JwtUtil;
+
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
@@ -42,6 +47,11 @@ public class SuperAdminService {
     
     private static final Logger log = LoggerFactory.getLogger(SuperAdminService.class);
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plan_id", nullable = false)
+    private Plan plan;
+
+    
     private final TenantRepository tenantRepository;
     private final UserRepository userRepository;
     private final SubscriptionRepository subscriptionRepository;
@@ -52,7 +62,6 @@ public class SuperAdminService {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     
-    @Autowired
     private final PlanRepository planRepository;
     
     public SuperAdminService(TenantRepository tenantRepository,
@@ -392,37 +401,61 @@ public class SuperAdminService {
         planRepository.delete(plan);
     }
     
+  @Transactional
+public void assignPlanToTenant(Long tenantId, String planName) {
+    log.info("Super Admin assigning plan {} to tenant ID: {}", planName, tenantId);
+    
+    // ✅ Get plan from database instead of enum
+    Plan newPlan = planRepository.findByName(planName)
+        .orElseThrow(() -> new IllegalArgumentException("Plan not found: " + planName));
+    
+    assignPlanToTenant(tenantId, newPlan.getId());
+}
     @Transactional
-    public void assignPlanToTenant(Long tenantId, String planName) {
-        log.info("Super Admin assigning plan {} to tenant ID: {}", planName, tenantId);
+    public void assignPlanToTenant(Long tenantId, Long planId) {
+        log.info("Super Admin assigning plan ID {} to tenant ID: {}", planId, tenantId);
         
         Subscription subscription = subscriptionRepository.findByTenantId(tenantId)
             .orElseThrow(() -> new IllegalArgumentException("Subscription not found"));
         
-        SubscriptionPlan newPlan = SubscriptionPlan.valueOf(planName.toUpperCase());
-        subscription.setPlan(newPlan);
+        // ✅ Get plan from database instead of enum
+        Plan newPlan = planRepository.findById(planId)
+            .orElseThrow(() -> new IllegalArgumentException("Plan not found with ID: " + planId));
         
-        // Extend subscription if upgrading
-        if (newPlan != SubscriptionPlan.FREE) {
+        if (!newPlan.getIsActive()) {
+            throw new IllegalArgumentException("Cannot assign inactive plan: " + newPlan.getName());
+        }
+        
+        subscription.setPlan(newPlan); // ✅ Set Plan entity
+        
+        // Extend subscription if upgrading to paid plan
+        if (newPlan.getMonthlyPrice() > 0) {
             subscription.setEndDate(LocalDateTime.now().plusMonths(1));
         }
         
         subscriptionRepository.save(subscription);
-        log.info("Plan assigned successfully");
+        log.info("Plan assigned successfully: {}", newPlan.getName());
     }
+
     
     public List<Map<String, Object>> getAllSubscriptionsWithRevenue() {
         List<Subscription> subscriptions = subscriptionRepository.findAll();
         
         return subscriptions.stream().map(sub -> {
+            Plan plan = sub.getPlan(); // ✅ Get Plan entity
+            
             Map<String, Object> data = new HashMap<>();
             data.put("tenantId", sub.getTenant().getId());
             data.put("tenantName", sub.getTenant().getName());
-            data.put("plan", sub.getPlan().toString());
-            data.put("revenue", sub.getPlan().getMonthlyPrice());
+            data.put("plan", plan.getName()); // ✅ Use plan.getName()
+            data.put("revenue", plan.getMonthlyPrice()); // ✅ Use plan.getMonthlyPrice()
             data.put("isActive", sub.getIsActive());
             data.put("startDate", sub.getStartDate());
             data.put("endDate", sub.getEndDate());
+            data.put("currentUsers", sub.getCurrentUsers());
+            data.put("maxUsers", plan.getMaxUsers());
+            data.put("currentApiCalls", sub.getCurrentApiCalls());
+            data.put("maxApiCalls", plan.getMaxApiCalls());
             return data;
         }).collect(Collectors.toList());
     }
@@ -664,9 +697,10 @@ public class SuperAdminService {
     private double calculateMRR() {
         return subscriptionRepository.findAll().stream()
             .filter(Subscription::getIsActive)
-            .mapToDouble(sub -> sub.getPlan().getMonthlyPrice())
+            .mapToDouble(sub -> sub.getPlan().getMonthlyPrice()) // ✅ FIXED
             .sum();
     }
+
     
     private double calculateTotalRevenue() {
         return calculateMRR() * 12; // Simplified
@@ -1114,7 +1148,7 @@ public class SuperAdminService {
  @Transactional
  public Map<String, Object> handleExpiredTrials() {
      List<Subscription> expiredTrials = subscriptionRepository.findAll().stream()
-         .filter(sub -> sub.getPlan() == SubscriptionPlan.FREE)
+         .filter(sub -> sub.getPlan().getMonthlyPrice() == 0)
          .filter(Subscription::isExpired)
          .collect(Collectors.toList());
      

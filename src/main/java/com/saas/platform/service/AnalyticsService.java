@@ -1,16 +1,14 @@
-
 package com.saas.platform.service;
 
 import com.saas.platform.dto.AnalyticsDashboardDto;
 import com.saas.platform.model.ActivityLog;
+import com.saas.platform.model.Plan;
 import com.saas.platform.model.Subscription;
-import com.saas.platform.model.SubscriptionPlan;
 import com.saas.platform.repository.ActivityLogRepository;
 import com.saas.platform.repository.SubscriptionRepository;
 import com.saas.platform.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,6 +16,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * AnalyticsService - FIXED VERSION
+ * Now works with Plan entity instead of SubscriptionPlan enum
+ */
 @Service
 public class AnalyticsService {
     
@@ -54,22 +56,23 @@ public class AnalyticsService {
             : allActivities;
         dashboard.setRecentActivities(recentActivities);
         
-        // Subscription Information
+        // Subscription Information - ✅ FIXED
         Optional<Subscription> subscription = subscriptionRepository.findByTenantId(tenantId);
         
         if (subscription.isPresent()) {
             Subscription sub = subscription.get();
+            Plan plan = sub.getPlan(); // ✅ Now gets Plan entity
             
-            dashboard.setCurrentPlan(sub.getPlan().toString());
+            dashboard.setCurrentPlan(plan.getName()); // ✅ Use plan.getName()
             dashboard.setSubscriptionActive(sub.getIsActive());
             dashboard.setCurrentApiCalls(sub.getCurrentApiCalls());
             dashboard.setCurrentUsersCount(sub.getCurrentUsers());
             dashboard.setSubscriptionStartDate(sub.getStartDate());
             dashboard.setSubscriptionEndDate(sub.getEndDate());
             
-            // Subscription Metrics
+            // Subscription Metrics - ✅ FIXED
             AnalyticsDashboardDto.SubscriptionMetricsDto metrics = 
-                buildSubscriptionMetrics(sub);
+                buildSubscriptionMetrics(sub, plan);
             dashboard.setSubscriptionMetrics(metrics);
         }
         
@@ -141,23 +144,24 @@ public class AnalyticsService {
         return apiUsage;
     }
     
-    private AnalyticsDashboardDto.SubscriptionMetricsDto buildSubscriptionMetrics(Subscription subscription) {
+    // ✅ FIXED: Now accepts both Subscription and Plan
+    private AnalyticsDashboardDto.SubscriptionMetricsDto buildSubscriptionMetrics(
+            Subscription subscription, Plan plan) {
+        
         AnalyticsDashboardDto.SubscriptionMetricsDto metrics = 
             new AnalyticsDashboardDto.SubscriptionMetricsDto();
         
-        SubscriptionPlan plan = subscription.getPlan();
-        
-        metrics.setPlanName(plan.toString());
+        metrics.setPlanName(plan.getName()); // ✅ Use plan.getName()
         metrics.setMaxUsers(plan.getMaxUsers() == -1 ? 999999 : plan.getMaxUsers());
         metrics.setMaxApiCalls(plan.getMaxApiCalls() == -1 ? 999999 : plan.getMaxApiCalls());
         metrics.setUsedUsers(subscription.getCurrentUsers());
         metrics.setUsedApiCalls(subscription.getCurrentApiCalls());
         
         // Calculate percentages
-        int usersPercentage = plan.getMaxUsers() == -1 ? 0 : 
+        int usersPercentage = plan.isUnlimited() ? 0 : 
             (subscription.getCurrentUsers() * 100) / plan.getMaxUsers();
         
-        int apiCallsPercentage = plan.getMaxApiCalls() == -1 ? 0 : 
+        int apiCallsPercentage = plan.isUnlimited() ? 0 : 
             (subscription.getCurrentApiCalls() * 100) / plan.getMaxApiCalls();
         
         metrics.setUsersPercentage(Math.min(usersPercentage, 100));
@@ -165,8 +169,10 @@ public class AnalyticsService {
         
         // Calculate days remaining
         if (subscription.getEndDate() != null) {
-            long daysRemaining = ChronoUnit.DAYS.between(LocalDateTime.now(), 
-                subscription.getEndDate());
+            long daysRemaining = ChronoUnit.DAYS.between(
+                LocalDateTime.now(), 
+                subscription.getEndDate()
+            );
             metrics.setDaysRemaining((int) daysRemaining);
         } else {
             metrics.setDaysRemaining(-1); // Unlimited

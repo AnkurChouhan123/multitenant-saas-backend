@@ -3,9 +3,6 @@ package com.saas.platform.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-//
-// Subscription Entity - Tracks tenant's subscription details
- 
 @Entity
 @Table(name = "subscriptions")
 public class Subscription {
@@ -14,13 +11,14 @@ public class Subscription {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @OneToOne
-    @JoinColumn(name = "tenant_id", nullable = false, unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tenant_id", nullable = false)
     private Tenant tenant;
     
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private SubscriptionPlan plan;
+    // CHANGED: Use Plan entity instead of enum
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "plan_id", nullable = false)
+    private Plan plan;
     
     @Column(name = "start_date", nullable = false)
     private LocalDateTime startDate;
@@ -28,11 +26,14 @@ public class Subscription {
     @Column(name = "end_date")
     private LocalDateTime endDate;
     
+    @Column(name = "renewal_date")
+    private LocalDateTime renewalDate;
+    
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
     
-    @Column(name = "auto_renew", nullable = false)
-    private Boolean autoRenew = true;
+    @Column(name = "auto_renew")
+    private Boolean autoRenew = false;
     
     @Column(name = "current_users")
     private Integer currentUsers = 0;
@@ -40,35 +41,53 @@ public class Subscription {
     @Column(name = "current_api_calls")
     private Integer currentApiCalls = 0;
     
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
     
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     
-    // Constructors
-    public Subscription() {
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
     
-    public Subscription(Long id, Tenant tenant, SubscriptionPlan plan, 
-                       LocalDateTime startDate, LocalDateTime endDate, 
-                       Boolean isActive, Boolean autoRenew, 
-                       Integer currentUsers, Integer currentApiCalls,
-                       LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = id;
-        this.tenant = tenant;
-        this.plan = plan;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.isActive = isActive;
-        this.autoRenew = autoRenew;
-        this.currentUsers = currentUsers;
-        this.currentApiCalls = currentApiCalls;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+    
+    // Business logic methods
+    
+    public boolean isExpired() {
+        if (endDate == null) return false;
+        return LocalDateTime.now().isAfter(endDate);
+    }
+    
+    public boolean hasReachedUserLimit() {
+        if (plan == null) return false;
+        // -1 means unlimited
+        if (plan.getMaxUsers() == -1) return false;
+        return currentUsers >= plan.getMaxUsers();
+    }
+    
+    public boolean hasReachedApiLimit() {
+        if (plan == null) return false;
+        // -1 means unlimited
+        if (plan.getMaxApiCalls() == -1) return false;
+        return currentApiCalls >= plan.getMaxApiCalls();
+    }
+    
+    public boolean hasReachedStorageLimit(Integer currentStorageGB) {
+        if (plan == null) return false;
+        // -1 means unlimited
+        if (plan.getMaxStorageGB() == -1) return false;
+        return currentStorageGB >= plan.getMaxStorageGB();
     }
     
     // Getters and Setters
+    
     public Long getId() {
         return id;
     }
@@ -85,11 +104,11 @@ public class Subscription {
         this.tenant = tenant;
     }
     
-    public SubscriptionPlan getPlan() {
+    public Plan getPlan() {
         return plan;
     }
     
-    public void setPlan(SubscriptionPlan plan) {
+    public void setPlan(Plan plan) {
         this.plan = plan;
     }
     
@@ -107,6 +126,14 @@ public class Subscription {
     
     public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
+    }
+    
+    public LocalDateTime getRenewalDate() {
+        return renewalDate;
+    }
+    
+    public void setRenewalDate(LocalDateTime renewalDate) {
+        this.renewalDate = renewalDate;
     }
     
     public Boolean getIsActive() {
@@ -155,39 +182,5 @@ public class Subscription {
     
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-    }
-    
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        startDate = LocalDateTime.now();
-    }
-    
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
-    
-    //
-// Check if subscription has expired
-     
-    public boolean isExpired() {
-        return endDate != null && LocalDateTime.now().isAfter(endDate);
-    }
-    
-    //
-// Check if user limit is reached
-     
-    public boolean hasReachedUserLimit() {
-        if (plan.isUnlimited()) return false;
-        return currentUsers >= plan.getMaxUsers();
-    }
-    
-    //
-// Check if API call limit is reached
-     
-    public boolean hasReachedApiLimit() {
-        if (plan.isUnlimited()) return false;
-        return currentApiCalls >= plan.getMaxApiCalls();
     }
 }

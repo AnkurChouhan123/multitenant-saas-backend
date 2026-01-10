@@ -1,10 +1,10 @@
 package com.saas.platform.service;
 
+import com.saas.platform.model.Plan;
 import com.saas.platform.model.Subscription;
-import com.saas.platform.model.SubscriptionPlan;
 import com.saas.platform.model.Tenant;
 import com.saas.platform.model.User;
-import com.saas.platform.model.NotificationType;
+import com.saas.platform.repository.PlanRepository;
 import com.saas.platform.repository.SubscriptionRepository;
 import com.saas.platform.repository.UserRepository;
 import org.slf4j.Logger;
@@ -16,9 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-//
-// SubscriptionService - FIXED with Notifications
- 
 @Service
 public class SubscriptionService {
     
@@ -27,33 +24,41 @@ public class SubscriptionService {
     
     private final SubscriptionRepository subscriptionRepository;
     private final TenantService tenantService;
-    private final UserRepository userRepository; // ADDED
-   
+    private final UserRepository userRepository;
+    private final PlanRepository planRepository;
+    private final WebhookService webhookService;
     
-    // UPDATED Constructor
     public SubscriptionService(SubscriptionRepository subscriptionRepository, 
                               TenantService tenantService,
-                              UserRepository userRepository) {
+                              UserRepository userRepository,
+                              PlanRepository planRepository,
+                              WebhookService webhookService) {
         this.subscriptionRepository = subscriptionRepository;
         this.tenantService = tenantService;
-        this.userRepository = userRepository; // ADDED
-   
+        this.userRepository = userRepository;
+        this.planRepository = planRepository;
+        this.webhookService = webhookService;
     }
     
-    //
-// Create FREE trial subscription for new tenant
-     
+    /**
+     * Create FREE trial subscription for new tenant
+     */
     @Transactional
     public Subscription createTrialSubscription(Long tenantId) {
         log.info("Creating trial subscription for tenant ID: {}", tenantId);
         
         Tenant tenant = tenantService.getTenantById(tenantId);
         
+        // Find the FREE plan from database
+        Plan freePlan = planRepository.findByName("FREE")
+                .orElseThrow(() -> new IllegalStateException("FREE plan not found in database"));
+        
         Subscription subscription = new Subscription();
         subscription.setTenant(tenant);
-        subscription.setPlan(SubscriptionPlan.FREE);
+        subscription.setPlan(freePlan);
         subscription.setStartDate(LocalDateTime.now());
         subscription.setEndDate(LocalDateTime.now().plusDays(TRIAL_DAYS));
+        subscription.setRenewalDate(LocalDateTime.now().plusDays(TRIAL_DAYS));
         subscription.setIsActive(true);
         subscription.setAutoRenew(false);
         subscription.setCurrentUsers(1);
@@ -61,31 +66,38 @@ public class SubscriptionService {
         
         Subscription saved = subscriptionRepository.save(subscription);
         
-
-      
         log.info("Trial subscription created with ID: {}", saved.getId());
         
         return saved;
     }
     
-    //
-// Get subscription by tenant ID
-     
+    /**
+     * Get subscription by tenant ID
+     */
     public Subscription getSubscriptionByTenantId(Long tenantId) {
         return subscriptionRepository.findByTenantId(tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "No subscription found for tenant ID: " + tenantId));
     }
     
-    //
-// Upgrade/Downgrade subscription plan
-     
+    /**
+     * Upgrade/Downgrade subscription plan
+     */
     @Transactional
-    public Subscription changePlan(Long tenantId, SubscriptionPlan newPlan) {
-        log.info("Changing plan for tenant ID: {} to {}", tenantId, newPlan);
+    public Subscription changePlan(Long tenantId, String planName) {
+        log.info("Changing plan for tenant ID: {} to {}", tenantId, planName);
         
         Subscription subscription = getSubscriptionByTenantId(tenantId);
-        SubscriptionPlan oldPlan = subscription.getPlan();
+        Plan oldPlan = subscription.getPlan();
+        
+        // Find the new plan from database
+        Plan newPlan = planRepository.findByName(planName)
+                .orElseThrow(() -> new IllegalArgumentException("Plan not found: " + planName));
+        
+        // Check if plan is active
+        if (!newPlan.getIsActive()) {
+            throw new IllegalStateException("Plan is not active: " + planName);
+        }
         
         // Check if downgrade is possible (user/API limits)
         if (isDowngrade(oldPlan, newPlan)) {
@@ -95,35 +107,64 @@ public class SubscriptionService {
         subscription.setPlan(newPlan);
         
         // Extend end date for paid plans
-        if (newPlan != SubscriptionPlan.FREE) {
+        if (newPlan.getMonthlyPrice() > 0) {
             subscription.setEndDate(LocalDateTime.now().plusMonths(1));
+            subscription.setRenewalDate(LocalDateTime.now().plusMonths(1));
             subscription.setAutoRenew(true);
         }
         
         Subscription updated = subscriptionRepository.save(subscription);
         
-        // FIXED: Notify all tenant admins about plan change
+        webhookService.triggerWebhook(
+        	    tenantId,
+        	    "subscription.changed",
+        	    java.util.Map.of(
+        	        "subscriptionId", updated.getId(),
+        	        "oldPlan", oldPlan.toString(),
+        	        "newPlan", newPlan.toString(),
+        	        "isUpgrade", isUpgrade(oldPlan, newPlan),
+        	        "endDate", updated.getEndDate()
+        	    )
+        	);
+
+        
+        // Notify all tenant admins about plan change
         try {
             List<User> tenantAdmins = userRepository.findByTenantId(tenantId);
             
             String message = isUpgrade(oldPlan, newPlan)
                 ? String.format("Your plan has been upgraded from %s to %s. Enjoy your new features!", 
-                    oldPlan, newPlan)
-                : String.format("Your plan has been changed from %s to %s.", oldPlan, newPlan);
+                    oldPlan.getName(), newPlan.getName())
+                : String.format("Your plan has been changed from %s to %s.", 
+                    oldPlan.getName(), newPlan.getName());
             
-                   } 
+            log.info("Plan change notification: {}", message);
+        } 
         catch (Exception e) {
             log.error("Failed to send plan change notification: {}", e.getMessage());
         }
         
-        log.info("Plan changed successfully");
+        log.info("Plan changed successfully from {} to {}", oldPlan.getName(), newPlan.getName());
         
         return updated;
     }
     
-    //
-// Cancel subscription
-     
+    /**
+     * Change plan by Plan ID
+     */
+    @Transactional
+    public Subscription changePlanById(Long tenantId, Long planId) {
+        log.info("Changing plan for tenant ID: {} to plan ID: {}", tenantId, planId);
+        
+        Plan plan = planRepository.findById(planId)
+                .orElseThrow(() -> new IllegalArgumentException("Plan not found with ID: " + planId));
+        
+        return changePlan(tenantId, plan.getName());
+    }
+    
+    /**
+     * Cancel subscription
+     */
     @Transactional
     public void cancelSubscription(Long tenantId) {
         log.info("Cancelling subscription for tenant ID: {}", tenantId);
@@ -134,9 +175,19 @@ public class SubscriptionService {
         
         subscriptionRepository.save(subscription);
         
-        // FIXED: Notify all tenant admins about cancellation
+        webhookService.triggerWebhook(
+        	    tenantId,
+        	    "subscription.cancelled",
+        	    java.util.Map.of(
+        	        "subscriptionId", subscription.getId(),
+        	        "plan", subscription.getPlan().toString(),
+        	        "endDate", subscription.getEndDate()
+        	    )
+        	);
+        
         try {
             List<User> tenantAdmins = userRepository.findByTenantId(tenantId);
+            log.info("Subscription cancelled for tenant: {}", tenantId);
         }
         catch (Exception e) {
             log.error("Failed to send cancellation notification: {}", e.getMessage());
@@ -145,9 +196,9 @@ public class SubscriptionService {
         log.info("Subscription cancelled");
     }
     
-    //
-// Increment user count
-     
+    /**
+     * Increment user count
+     */
     @Transactional
     public void incrementUserCount(Long tenantId) {
         Subscription subscription = getSubscriptionByTenantId(tenantId);
@@ -160,33 +211,37 @@ public class SubscriptionService {
         subscription.setCurrentUsers(subscription.getCurrentUsers() + 1);
         subscriptionRepository.save(subscription);
         
-        // FIXED: Notify if approaching user limit
         try {
-            SubscriptionPlan plan = subscription.getPlan();
+            Plan plan = subscription.getPlan();
             int maxUsers = plan.getMaxUsers();
             int currentUsers = subscription.getCurrentUsers();
             
             // Alert when 80% of user limit is reached
-            if (!plan.isUnlimited() && currentUsers >= maxUsers * 0.8) {
+            if (maxUsers != -1 && currentUsers >= maxUsers * 0.8) {
                 List<User> tenantAdmins = userRepository.findByTenantId(tenantId);
-                
-                         }
+                log.info("User limit warning: {} of {} users", currentUsers, maxUsers);
+            }
         } catch (Exception e) {
             log.error("Failed to send user limit notification: {}", e.getMessage());
         }
     }
     
-    @Scheduled(cron = "0 0 0 1 * ?") // First day of month at midnight
+    /**
+     * Reset monthly API counts - runs on first day of month at midnight
+     */
+    @Scheduled(cron = "0 0 0 1 * ?")
     public void resetMonthlyApiCounts() {
         List<Subscription> subscriptions = subscriptionRepository.findAll();
         subscriptions.forEach(sub -> {
             sub.setCurrentApiCalls(0);
             subscriptionRepository.save(sub);
         });
+        log.info("Monthly API counts reset for {} subscriptions", subscriptions.size());
     }
     
-    // Increment API call count
-
+    /**
+     * Increment API call count
+     */
     @Transactional
     public void incrementApiCallCount(Long tenantId) {
         Subscription subscription = getSubscriptionByTenantId(tenantId);
@@ -199,30 +254,28 @@ public class SubscriptionService {
         subscription.setCurrentApiCalls(subscription.getCurrentApiCalls() + 1);
         subscriptionRepository.save(subscription);
         
-        // FIXED: Notify if approaching API limit
         try {
-            SubscriptionPlan plan = subscription.getPlan();
+            Plan plan = subscription.getPlan();
             int maxApiCalls = plan.getMaxApiCalls();
             int currentApiCalls = subscription.getCurrentApiCalls();
             
             // Alert when 90% of API limit is reached
-            if (!plan.isUnlimited() && currentApiCalls >= maxApiCalls * 0.9) {
+            if (maxApiCalls != -1 && currentApiCalls >= maxApiCalls * 0.9) {
                 List<User> tenantAdmins = userRepository.findByTenantId(tenantId);
-                
-                         }
+                log.info("API limit warning: {} of {} calls", currentApiCalls, maxApiCalls);
+            }
         } catch (Exception e) {
             log.error("Failed to send API limit notification: {}", e.getMessage());
         }
     }
     
-    //
-// Check if subscription is valid
-     
+    /**
+     * Check if subscription is valid
+     */
     public boolean isSubscriptionValid(Long tenantId) {
         try {
             Subscription subscription = getSubscriptionByTenantId(tenantId);
             
-            // FIXED: Send expiration warning
             if (subscription.getIsActive() && subscription.getEndDate() != null) {
                 LocalDateTime expirationDate = subscription.getEndDate();
                 LocalDateTime now = LocalDateTime.now();
@@ -232,8 +285,7 @@ public class SubscriptionService {
                 if (daysUntilExpiration > 0 && daysUntilExpiration <= 7) {
                     try {
                         List<User> tenantAdmins = userRepository.findByTenantId(tenantId);
-                        
-                       
+                        log.info("Subscription expiring in {} days", daysUntilExpiration);
                     } catch (Exception e) {
                         log.error("Failed to send expiration notification: {}", e.getMessage());
                     }
@@ -248,19 +300,28 @@ public class SubscriptionService {
     
     // Helper methods
     
-    private boolean isDowngrade(SubscriptionPlan current, SubscriptionPlan newPlan) {
+    private boolean isDowngrade(Plan current, Plan newPlan) {
         return current.getMonthlyPrice() > newPlan.getMonthlyPrice();
     }
     
-    private boolean isUpgrade(SubscriptionPlan current, SubscriptionPlan newPlan) {
+    private boolean isUpgrade(Plan current, Plan newPlan) {
         return current.getMonthlyPrice() < newPlan.getMonthlyPrice();
     }
     
-    private void validateDowngrade(Subscription subscription, SubscriptionPlan newPlan) {
-        if (!newPlan.isUnlimited()) {
+    private void validateDowngrade(Subscription subscription, Plan newPlan) {
+        // Check user limit (skip if unlimited)
+        if (newPlan.getMaxUsers() != -1) {
             if (subscription.getCurrentUsers() > newPlan.getMaxUsers()) {
                 throw new IllegalStateException(
-                        "Cannot downgrade: Current users exceed new plan limit");
+                        String.format("Cannot downgrade: Current users (%d) exceed new plan limit (%d)",
+                                subscription.getCurrentUsers(), newPlan.getMaxUsers()));
+            }
+        }
+        
+        // Check API limit (skip if unlimited)
+        if (newPlan.getMaxApiCalls() != -1) {
+            if (subscription.getCurrentApiCalls() > newPlan.getMaxApiCalls()) {
+                log.warn("Current API calls exceed new plan limit. Will reset on next billing cycle.");
             }
         }
     }
