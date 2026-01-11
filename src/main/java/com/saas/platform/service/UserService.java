@@ -4,7 +4,6 @@ import com.saas.platform.dto.PasswordChangeRequest;
 import com.saas.platform.dto.UpdateProfileRequest;
 import com.saas.platform.model.Tenant;
 import com.saas.platform.model.User;
-import com.saas.platform.model.Notification;
 import com.saas.platform.model.NotificationType;
 import com.saas.platform.repository.UserRepository;
 import org.slf4j.Logger;
@@ -15,9 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-//
 // UserService - VERIFIED VERSION WITH NOTIFICATIONS
-// 
 // This version has extensive logging to help debug notification issues.
 // Replace your current UserService with this one.
 
@@ -33,8 +30,7 @@ public class UserService {
 
 	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-	//
-// Constructor - Verify all dependencies are injected
+   // Constructor - Verify all dependencies are injected
 
 	public UserService(UserRepository userRepository, TenantService tenantService,
 			ActivityLogService activityLogService, WebhookService webhookService) { // ADD THIS
@@ -46,16 +42,12 @@ public class UserService {
 
 
 
-	//
-// Create User - WITH EXTENSIVE LOGGING
+	
+     // Create User - WITH EXTENSIVE LOGGING
 
 	@Transactional
 	public User createUser(User user, Long tenantId) {
-		log.info("═══════════════════════════════════════");
-		log.info("🔹 USER CREATION STARTED");
-		log.info("  Email: {}", user.getEmail());
-		log.info("  Tenant ID: {}", tenantId);
-		log.info("═══════════════════════════════════════");
+	
 
 		// Step 1: Validate email
 		log.info("Step 1: Checking if email exists...");
