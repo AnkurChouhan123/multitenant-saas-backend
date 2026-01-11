@@ -41,38 +41,14 @@ public class FileStorage {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
     
-    @Column(name = "category", length = 50)
-    private String category; // documents, images, videos, etc.
-    
     @Column(name = "is_public", nullable = false)
     private Boolean isPublic = false;
     
     @Column(name = "download_count")
     private Long downloadCount = 0L;
     
-    @Column(name = "version")
-    private Integer version = 1;
-    
-    @Column(name = "parent_file_id")
-    private Long parentFileId; // For versioning
-    
     @Column(name = "storage_provider", length = 50)
     private String storageProvider = "LOCAL"; // LOCAL, S3, AZURE, etc.
-    
-    @Column(name = "cloud_storage_url", length = 500)
-    private String cloudStorageUrl;
-    
-    @Column(name = "checksum", length = 64)
-    private String checksum; // SHA-256 hash for integrity
-    
-    @Column(name = "tags", length = 500)
-    private String tags; // Comma-separated tags
-    
-    @Column(name = "shared_with")
-    private String sharedWith; // Comma-separated user IDs
-    
-    @Column(name = "expires_at")
-    private LocalDateTime expiresAt;
     
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -138,9 +114,6 @@ public class FileStorage {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
     
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
-    
     public Boolean getIsPublic() { return isPublic; }
     public void setIsPublic(Boolean isPublic) { this.isPublic = isPublic; }
     
@@ -149,35 +122,10 @@ public class FileStorage {
         this.downloadCount = downloadCount; 
     }
     
-    public Integer getVersion() { return version; }
-    public void setVersion(Integer version) { this.version = version; }
-    
-    public Long getParentFileId() { return parentFileId; }
-    public void setParentFileId(Long parentFileId) { 
-        this.parentFileId = parentFileId; 
-    }
-    
     public String getStorageProvider() { return storageProvider; }
     public void setStorageProvider(String storageProvider) { 
         this.storageProvider = storageProvider; 
     }
-    
-    public String getCloudStorageUrl() { return cloudStorageUrl; }
-    public void setCloudStorageUrl(String cloudStorageUrl) { 
-        this.cloudStorageUrl = cloudStorageUrl; 
-    }
-    
-    public String getChecksum() { return checksum; }
-    public void setChecksum(String checksum) { this.checksum = checksum; }
-    
-    public String getTags() { return tags; }
-    public void setTags(String tags) { this.tags = tags; }
-    
-    public String getSharedWith() { return sharedWith; }
-    public void setSharedWith(String sharedWith) { this.sharedWith = sharedWith; }
-    
-    public LocalDateTime getExpiresAt() { return expiresAt; }
-    public void setExpiresAt(LocalDateTime expiresAt) { this.expiresAt = expiresAt; }
     
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
@@ -212,9 +160,6 @@ public class FileStorage {
         return String.format("%.2f GB", fileSize / (1024.0 * 1024 * 1024));
     }
     
-    public boolean isExpired() {
-        return expiresAt != null && LocalDateTime.now().isAfter(expiresAt);
-    }
     
     public boolean isDeleted() {
         return deletedAt != null;

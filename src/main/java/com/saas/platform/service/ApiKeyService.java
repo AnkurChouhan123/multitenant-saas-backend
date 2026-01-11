@@ -209,78 +209,14 @@ public class ApiKeyService {
     //
 // Check if tenant has reached API key limit
      
-    public boolean hasReachedApiKeyLimit(Long tenantId, int maxKeys) {
-        long activeKeys = getActiveApiKeysCount(tenantId);
-        return activeKeys >= maxKeys;
-    }
+    
     
     //
 // Rotate API key (generate new key, revoke old)
      
-    @Transactional
-    public ApiKey rotateApiKey(Long keyId, Long userId) {
-        log.info("Rotating API key ID: {}", keyId);
-        
-        ApiKey oldKey = getApiKeyById(keyId);
-        
-        // Create new key with same settings
-        ApiKey newKey = createApiKey(
-            oldKey.getTenantId(),
-            userId,
-            oldKey.getName() + " (Rotated)",
-            oldKey.getScopes(),
-            null // No expiration by default
-        );
-        
-        // Revoke old key
-        revokeApiKey(keyId);
-        
-        log.info("API key rotated successfully");
-        
-        return newKey;
-    }
+    
     
     //
 // Update API key settings
-     
-    @Transactional
-    public ApiKey updateApiKey(Long keyId, String name, String scopes, 
-                               Integer rateLimitPerHour, String allowedIps) {
-        log.info("Updating API key ID: {}", keyId);
-        
-        ApiKey apiKey = getApiKeyById(keyId);
-        
-        if (name != null && !name.isEmpty()) {
-            apiKey.setName(name);
-        }
-        
-        if (scopes != null) {
-            apiKey.setScopes(scopes);
-        }
-        
-        if (rateLimitPerHour != null) {
-            apiKey.setRateLimitPerHour(rateLimitPerHour);
-        }
-        
-        if (allowedIps != null) {
-            apiKey.setAllowedIps(allowedIps);
-        }
-        
-        ApiKey updated = apiKeyRepository.save(apiKey);
-        
-        // Log activity
-        activityLogService.logActivity(
-            apiKey.getTenantId(),
-            apiKey.getCreatedBy(),
-            "system",
-            "System",
-            "API Key updated: " + apiKey.getName(),
-            "security",
-            "API key settings have been modified"
-        );
-        
-        log.info("API key updated successfully");
-        
-        return updated;
-    }
+
 }

@@ -28,9 +28,6 @@ import com.saas.platform.model.Plan;
 import com.saas.platform.repository.SubscriptionRepository;
 import org.springframework.beans.factory.annotation.Value;
 
-//
-// FileStorageService - NPE FIXED
-// Fixed: Added null checks in validation methods
 
 @Service
 public class FileStorageService {
@@ -122,8 +119,7 @@ public class FileStorageService {
 				filePath.toString(), savedFileSize, mimeType, fileExtension);
 
 		fileStorage.setDescription(description);
-		fileStorage.setCategory(category);
-		fileStorage.setChecksum(checksum);
+		
 
 		FileStorage saved = fileStorageRepository.save(fileStorage);
 
@@ -212,11 +208,7 @@ public class FileStorageService {
         throw new IllegalArgumentException("File has been deleted");
     }
     
-    // Check if file is expired
-    if (file.isExpired()) {
-        throw new IllegalArgumentException("File has expired");
-    }
-    
+   
     Path filePath = Paths.get(file.getFilePath());
     
     // Verify file exists
@@ -248,37 +240,17 @@ public class FileStorageService {
     return resource;
 }
 
-	//
-// Get all files for a tenant
 
 	public List<FileStorage> getFilesByTenant(Long tenantId) {
 		return fileStorageRepository.findByTenantIdAndDeletedAtIsNullOrderByCreatedAtDesc(tenantId);
 	}
 
-	//
-// Get files uploaded by a user
+
 
 	public List<FileStorage> getFilesByUser(Long userId) {
 		return fileStorageRepository.findByUploadedByAndDeletedAtIsNullOrderByCreatedAtDesc(userId);
 	}
 
-	//
-// Get files by category
-
-	public List<FileStorage> getFilesByCategory(Long tenantId, String category) {
-		return fileStorageRepository.findByTenantIdAndCategoryAndDeletedAtIsNull(tenantId, category);
-	}
-
-	//
-// Search files by name
-
-	public List<FileStorage> searchFiles(Long tenantId, String keyword) {
-		return fileStorageRepository.findByTenantIdAndOriginalFilenameContainingIgnoreCaseAndDeletedAtIsNull(tenantId,
-				keyword);
-	}
-
-	//
-// Update file metadata
 
 	@Transactional
 	public FileStorage updateFileMetadata(Long fileId, String description, String category, String tags) {
@@ -286,32 +258,11 @@ public class FileStorageService {
 
 		if (description != null)
 			file.setDescription(description);
-		if (category != null)
-			file.setCategory(category);
-		if (tags != null)
-			file.setTags(tags);
+		
 
 		return fileStorageRepository.save(file);
 	}
 
-	//
-// Share file with users
-
-	@Transactional
-	public FileStorage shareFile(Long fileId, List<Long> userIds) {
-		FileStorage file = getFileById(fileId);
-
-		String sharedWith = userIds.stream().map(String::valueOf).reduce((a, b) -> a + "," + b).orElse("");
-
-		file.setSharedWith(sharedWith);
-
-		FileStorage saved = fileStorageRepository.save(file);
-
-		return saved;
-	}
-
-	//
-// Soft delete a file
 
 	@Transactional
 	public void deleteFile(Long fileId, Long userId) {
@@ -384,9 +335,7 @@ public class FileStorageService {
 	//
 // Get recent files
 
-	public List<FileStorage> getRecentFiles(Long tenantId, int limit) {
-		return fileStorageRepository.findTop10ByTenantIdAndDeletedAtIsNullOrderByCreatedAtDesc(tenantId);
-	}
+	
 
 	// Private helper methods
 
@@ -523,25 +472,12 @@ public class FileStorageService {
 
 		// USER can access their own files or files shared with them
 		if ("ROLE_USER".equals(role)) {
-			return file.getUploadedBy().equals(userId) || isSharedWithUser(file, userId);
+			return file.getUploadedBy().equals(userId);
 		}
 
-		// VIEWER can only access files shared with them
-		if ("ROLE_VIEWER".equals(role)) {
-			return isSharedWithUser(file, userId);
-		}
+		
 
 		return false;
-	}
-
-	/**
-	 * Check if file is shared with a specific user
-	 */
-	private boolean isSharedWithUser(FileStorage file, Long userId) {
-		if (file.getSharedWith() == null || file.getSharedWith().isEmpty()) {
-			return false;
-		}
-		return file.getSharedWith().contains(userId.toString());
 	}
 
 	/**
@@ -551,87 +487,7 @@ public class FileStorageService {
 		List<FileStorage> allFiles = fileStorageRepository
 				.findByTenantIdAndDeletedAtIsNullOrderByCreatedAtDesc(tenantId);
 
-		return allFiles.stream().filter(file -> file.getUploadedBy().equals(userId) || isSharedWithUser(file, userId))
-				.collect(java.util.stream.Collectors.toList());
-	}
-
-	/**
-	 * Get files shared with VIEWER role
-	 */
-	public List<FileStorage> getSharedFilesForUser(Long tenantId, Long userId) {
-		List<FileStorage> allFiles = fileStorageRepository
-				.findByTenantIdAndDeletedAtIsNullOrderByCreatedAtDesc(tenantId);
-
-		return allFiles.stream().filter(file -> isSharedWithUser(file, userId))
-				.collect(java.util.stream.Collectors.toList());
-	}
-
-	/**
-	 * Get files by category for USER role
-	 */
-	public List<FileStorage> getFilesByCategoryForUser(Long tenantId, String category, Long userId) {
-		List<FileStorage> categoryFiles = fileStorageRepository.findByTenantIdAndCategoryAndDeletedAtIsNull(tenantId,
-				category);
-
-		return categoryFiles.stream()
-				.filter(file -> file.getUploadedBy().equals(userId) || isSharedWithUser(file, userId))
-				.collect(java.util.stream.Collectors.toList());
-	}
-
-	/**
-	 * Get shared files by category for VIEWER role
-	 */
-	public List<FileStorage> getSharedFilesByCategory(Long tenantId, String category, Long userId) {
-		List<FileStorage> categoryFiles = fileStorageRepository.findByTenantIdAndCategoryAndDeletedAtIsNull(tenantId,
-				category);
-
-		return categoryFiles.stream().filter(file -> isSharedWithUser(file, userId))
-				.collect(java.util.stream.Collectors.toList());
-	}
-
-	/**
-	 * Search files for USER role
-	 */
-	public List<FileStorage> searchFilesForUser(Long tenantId, String keyword, Long userId) {
-		List<FileStorage> searchResults = fileStorageRepository
-				.findByTenantIdAndOriginalFilenameContainingIgnoreCaseAndDeletedAtIsNull(tenantId, keyword);
-
-		return searchResults.stream()
-				.filter(file -> file.getUploadedBy().equals(userId) || isSharedWithUser(file, userId))
-				.collect(java.util.stream.Collectors.toList());
-	}
-
-	/**
-	 * Search shared files for VIEWER role
-	 */
-	public List<FileStorage> searchSharedFiles(Long tenantId, String keyword, Long userId) {
-		List<FileStorage> searchResults = fileStorageRepository
-				.findByTenantIdAndOriginalFilenameContainingIgnoreCaseAndDeletedAtIsNull(tenantId, keyword);
-
-		return searchResults.stream().filter(file -> isSharedWithUser(file, userId))
-				.collect(java.util.stream.Collectors.toList());
-	}
-
-	/**
-	 * Get recent files for USER role
-	 */
-	public List<FileStorage> getRecentFilesForUser(Long tenantId, Long userId, int limit) {
-		List<FileStorage> recentFiles = fileStorageRepository
-				.findTop10ByTenantIdAndDeletedAtIsNullOrderByCreatedAtDesc(tenantId);
-
-		return recentFiles.stream()
-				.filter(file -> file.getUploadedBy().equals(userId) || isSharedWithUser(file, userId)).limit(limit)
-				.collect(java.util.stream.Collectors.toList());
-	}
-
-	/**
-	 * Get recent shared files for VIEWER role
-	 */
-	public List<FileStorage> getRecentSharedFiles(Long tenantId, Long userId, int limit) {
-		List<FileStorage> recentFiles = fileStorageRepository
-				.findTop10ByTenantIdAndDeletedAtIsNullOrderByCreatedAtDesc(tenantId);
-
-		return recentFiles.stream().filter(file -> isSharedWithUser(file, userId)).limit(limit)
+		return allFiles.stream().filter(file -> file.getUploadedBy().equals(userId))
 				.collect(java.util.stream.Collectors.toList());
 	}
 

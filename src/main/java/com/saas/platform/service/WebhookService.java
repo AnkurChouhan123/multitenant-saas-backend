@@ -181,12 +181,11 @@ public class WebhookService {
             );
             
             // Generate signature
-            String signature = generateSignature(webhookPayload.toString(), webhook.getSecretKey());
+      
             
             // Prepare HTTP request
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set(SIGNATURE_HEADER, signature);
             headers.set("X-Webhook-Event", eventType);
             headers.set("X-Webhook-ID", webhook.getId().toString());
             
@@ -213,36 +212,14 @@ public class WebhookService {
             log.error("Failed to send webhook to {}: {}", webhook.getUrl(), e.getMessage());
             webhook.recordFailure();
             webhookRepository.save(webhook);
-            
-            // Retry logic
-            if (webhook.getRetryCount() > 0) {
-                retryWebhook(webhook, eventType, payload);
-            }
+           
         }
     }
     
     //
 // Retry failed webhook with exponential backoff
      
-    private void retryWebhook(Webhook webhook, String eventType, Object payload) {
-        Integer retriesLeft = webhook.getRetryCount();
-        
-        if (retriesLeft > 0) {
-            new Thread(() -> {
-                try {
-                    // Exponential backoff: 2^retry seconds
-                    int delay = (int) Math.pow(2, 3 - retriesLeft) * 1000;
-                    Thread.sleep(delay);
-                    
-                    webhook.setRetryCount(retriesLeft - 1);
-                    sendWebhook(webhook, eventType, payload);
-                    
-                } catch (InterruptedException e) {
-                    log.error("Webhook retry interrupted: {}", e.getMessage());
-                }
-            }).start();
-        }
-    }
+    
     
     //
 // Generate secret key for webhook signature
@@ -256,31 +233,12 @@ public class WebhookService {
     //
 // Generate HMAC signature for webhook payload
      
-    private String generateSignature(String payload, String secretKey) {
-        try {
-            Mac hmac = Mac.getInstance("HmacSHA256");
-            SecretKeySpec secretKeySpec = new SecretKeySpec(
-                secretKey.getBytes(StandardCharsets.UTF_8), 
-                "HmacSHA256"
-            );
-            hmac.init(secretKeySpec);
-            
-            byte[] hash = hmac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
-            return Base64.getEncoder().encodeToString(hash);
-            
-        } catch (Exception e) {
-            log.error("Failed to generate signature: {}", e.getMessage());
-            return "";
-        }
-    }
+    
     
     //
 // Verify webhook signature
      
-    public boolean verifySignature(String payload, String signature, String secretKey) {
-        String expectedSignature = generateSignature(payload, secretKey);
-        return expectedSignature.equals(signature);
-    }
+    
     
     //
 // Test webhook by sending a ping

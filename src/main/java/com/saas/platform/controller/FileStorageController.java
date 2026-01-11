@@ -68,12 +68,11 @@ public class FileStorageController {
 
 			Resource resource = fileStorageService.downloadFile(fileId, userId);
 
-		
 			String contentType = file.getMimeType();
 			if (contentType == null || contentType.isEmpty()) {
 				contentType = "application/octet-stream";
 			}
-			
+
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.parseMediaType(contentType));
 			headers.setContentDispositionFormData("attachment", file.getOriginalFilename());
@@ -81,7 +80,6 @@ public class FileStorageController {
 			headers.setCacheControl("no-cache, no-store, must-revalidate");
 			headers.setPragma("no-cache");
 			headers.setExpires(0);
-
 
 			return ResponseEntity.ok().headers(headers).body(resource);
 
@@ -100,7 +98,7 @@ public class FileStorageController {
 		roleValidator.validateTenantIsolation(tenantId);
 
 		String role = getCurrentUserRole();
-		List<FileStorage> files;
+		List<FileStorage> files = null;
 
 		// TENANT_OWNER and TENANT_ADMIN can see ALL files
 		if ("ROLE_TENANT_OWNER".equals(role) || "ROLE_TENANT_ADMIN".equals(role) || "ROLE_SUPER_ADMIN".equals(role)) {
@@ -110,14 +108,9 @@ public class FileStorageController {
 		else if ("ROLE_USER".equals(role)) {
 			files = fileStorageService.getFilesForUser(tenantId, userId);
 		}
-		// VIEWER can only see shared files
-		else {
-			files = fileStorageService.getSharedFilesForUser(tenantId, userId);
-		}
 
 		return ResponseEntity.ok(files);
 	}
-
 
 	// GET USER'S OWN FILES
 
@@ -127,73 +120,6 @@ public class FileStorageController {
 		List<FileStorage> files = fileStorageService.getFilesByUser(userId);
 		return ResponseEntity.ok(files);
 	}
-
-
-	@GetMapping("/category/{tenantId}/{category}")
-	@PreAuthorize("hasAnyRole('TENANT_OWNER', 'TENANT_ADMIN', 'SUPER_ADMIN', 'USER', 'VIEWER')")
-	public ResponseEntity<List<FileStorage>> getFilesByCategory(@PathVariable Long tenantId,
-			@PathVariable String category, @RequestParam(required = false) Long userId) {
-
-		roleValidator.validateTenantIsolation(tenantId);
-
-		String role = getCurrentUserRole();
-		List<FileStorage> files;
-
-		if ("ROLE_TENANT_OWNER".equals(role) || "ROLE_TENANT_ADMIN".equals(role) || "ROLE_SUPER_ADMIN".equals(role)) {
-			files = fileStorageService.getFilesByCategory(tenantId, category);
-		} else if ("ROLE_USER".equals(role)) {
-			files = fileStorageService.getFilesByCategoryForUser(tenantId, category, userId);
-		} else {
-			files = fileStorageService.getSharedFilesByCategory(tenantId, category, userId);
-		}
-
-		return ResponseEntity.ok(files);
-	}
-
-
-	@GetMapping("/search")
-	@PreAuthorize("hasAnyRole('TENANT_OWNER', 'TENANT_ADMIN', 'SUPER_ADMIN', 'USER', 'VIEWER')")
-	public ResponseEntity<List<FileStorage>> searchFiles(@RequestParam Long tenantId, @RequestParam String keyword,
-			@RequestParam(required = false) Long userId) {
-
-		roleValidator.validateTenantIsolation(tenantId);
-
-		String role = getCurrentUserRole();
-		List<FileStorage> files;
-
-		if ("ROLE_TENANT_OWNER".equals(role) || "ROLE_TENANT_ADMIN".equals(role) || "ROLE_SUPER_ADMIN".equals(role)) {
-			files = fileStorageService.searchFiles(tenantId, keyword);
-		} else if ("ROLE_USER".equals(role)) {
-			files = fileStorageService.searchFilesForUser(tenantId, keyword, userId);
-		} else {
-			files = fileStorageService.searchSharedFiles(tenantId, keyword, userId);
-		}
-
-		return ResponseEntity.ok(files);
-	}
-
-
-	@GetMapping("/recent/{tenantId}")
-	@PreAuthorize("hasAnyRole('TENANT_OWNER', 'TENANT_ADMIN', 'SUPER_ADMIN', 'USER', 'VIEWER')")
-	public ResponseEntity<List<FileStorage>> getRecentFiles(@PathVariable Long tenantId,
-			@RequestParam(defaultValue = "10") int limit, @RequestParam(required = false) Long userId) {
-
-		roleValidator.validateTenantIsolation(tenantId);
-
-		String role = getCurrentUserRole();
-		List<FileStorage> files;
-
-		if ("ROLE_TENANT_OWNER".equals(role) || "ROLE_TENANT_ADMIN".equals(role) || "ROLE_SUPER_ADMIN".equals(role)) {
-			files = fileStorageService.getRecentFiles(tenantId, limit);
-		} else if ("ROLE_USER".equals(role)) {
-			files = fileStorageService.getRecentFilesForUser(tenantId, userId, limit);
-		} else {
-			files = fileStorageService.getRecentSharedFiles(tenantId, userId, limit);
-		}
-
-		return ResponseEntity.ok(files);
-	}
-
 
 	@GetMapping("/{fileId}")
 	@PreAuthorize("hasAnyRole('TENANT_OWNER', 'TENANT_ADMIN', 'SUPER_ADMIN', 'USER', 'VIEWER')")
@@ -236,29 +162,6 @@ public class FileStorageController {
 		return ResponseEntity.ok(updated);
 	}
 
-	
-	@PostMapping("/{fileId}/share")
-	@PreAuthorize("hasAnyRole('TENANT_OWNER', 'TENANT_ADMIN', 'SUPER_ADMIN', 'USER')")
-	public ResponseEntity<FileStorage> shareFile(@PathVariable Long fileId, @RequestParam Long userId,
-			@RequestBody List<Long> userIds) {
-
-		FileStorage file = fileStorageService.getFileById(fileId);
-
-		// Validate tenant access
-		roleValidator.requireTenantAccess(file.getTenantId());
-
-		String role = getCurrentUserRole();
-
-		// USER can only share their own files
-		if ("ROLE_USER".equals(role) && !file.getUploadedBy().equals(userId)) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-		}
-
-		FileStorage shared = fileStorageService.shareFile(fileId, userIds);
-		return ResponseEntity.ok(shared);
-	}
-
-	
 	@DeleteMapping("/{fileId}")
 	@PreAuthorize("hasAnyRole('TENANT_OWNER', 'TENANT_ADMIN', 'SUPER_ADMIN', 'USER')")
 	public ResponseEntity<String> deleteFile(@PathVariable Long fileId, @RequestParam Long userId) {
@@ -279,7 +182,6 @@ public class FileStorageController {
 		return ResponseEntity.ok("File deleted successfully");
 	}
 
-	
 	@DeleteMapping("/{fileId}/permanent")
 	@PreAuthorize("hasAnyRole('TENANT_OWNER', 'TENANT_ADMIN', 'SUPER_ADMIN')")
 	public ResponseEntity<String> permanentlyDeleteFile(@PathVariable Long fileId) {
@@ -295,7 +197,6 @@ public class FileStorageController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete file");
 		}
 	}
-
 
 	@PutMapping("/{fileId}/restore")
 	@PreAuthorize("hasAnyRole('TENANT_OWNER', 'TENANT_ADMIN', 'SUPER_ADMIN', 'USER')")
@@ -316,7 +217,6 @@ public class FileStorageController {
 		FileStorage restored = fileStorageService.restoreFile(fileId);
 		return ResponseEntity.ok(restored);
 	}
-
 
 	@GetMapping("/storage/{tenantId}")
 	@PreAuthorize("hasAnyRole('TENANT_OWNER', 'TENANT_ADMIN', 'SUPER_ADMIN', 'USER', 'VIEWER')")
@@ -351,7 +251,6 @@ public class FileStorageController {
 		}
 	}
 
-	
 	private String getCurrentUserRole() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null && authentication.getAuthorities() != null) {
